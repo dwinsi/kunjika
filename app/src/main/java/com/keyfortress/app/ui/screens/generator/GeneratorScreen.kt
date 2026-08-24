@@ -44,6 +44,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -117,299 +118,129 @@ fun GeneratorScreen(
                 onClick = { generatorViewModel.setMode(GeneratorMode.PIN) },
                 text = { Text("PIN", fontWeight = FontWeight.SemiBold) }
             )
+            Tab(
+                selected = uiState.mode == GeneratorMode.HISTORY,
+                onClick = { generatorViewModel.setMode(GeneratorMode.HISTORY) },
+                text = { Text("History", fontWeight = FontWeight.SemiBold) }
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Generated Output Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        if (uiState.mode != GeneratorMode.HISTORY) {
+            // Generated Output Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                // Password Display Box
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = uiState.generatedPassword,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = if (uiState.generatedPassword.length > 24) 17.sp else 22.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Real-time Strength Indicator
-                if (uiState.isConfigValid || uiState.mode != GeneratorMode.PASSWORD) {
-                    StrengthIndicator(strengthResult = uiState.strengthResult)
-                } else {
+                    // Password Display Box
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+                            .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Please select at least 3 character types",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Action Buttons (Regenerate, Copy, Save)
-                val actionsEnabled = uiState.isConfigValid || uiState.mode != GeneratorMode.PASSWORD
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = { generatorViewModel.generate() },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        enabled = actionsEnabled
-                    ) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Regenerate", modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("New")
-                    }
-
-                    Button(
-                        onClick = {
-                            ClipboardHelper.copyToClipboard(
-                                context = context,
-                                label = "Generated Password",
-                                text = uiState.generatedPassword,
-                                isSensitive = true,
-                                autoClearSeconds = 30L
-                            )
-                            Toast.makeText(context, "Copied! Clipboard clears in 30s", Toast.LENGTH_SHORT).show()
-                        },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
-                    ) {
-                        Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Copy")
-                    }
-
-                    Button(
-                        onClick = { showSaveDialog = true },
-                        modifier = Modifier.weight(1.1f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                        enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
-                    ) {
-                        Icon(Icons.Default.BookmarkBorder, contentDescription = "Save", modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Save")
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Configuration Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                Text(
-                    text = "Customization Options",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                when (uiState.mode) {
-                    GeneratorMode.PASSWORD -> {
-                        // Length Slider
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Password Length", style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                text = "${uiState.length} chars",
-                                style = MaterialTheme.typography.bodyMedium,
+                            text = uiState.generatedPassword,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-
-                        Slider(
-                            value = uiState.length.toFloat(),
-                            onValueChange = { generatorViewModel.setLength(it.toInt()) },
-                            valueRange = 8f..64f,
-                            steps = 55,
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.primary,
-                                activeTrackColor = MaterialTheme.colorScheme.primary
-                            )
+                                fontSize = if (uiState.generatedPassword.length > 24) 17.sp else 22.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
                         )
+                    }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        // Charset toggles
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                    // Real-time Strength Indicator
+                    if (uiState.isConfigValid || uiState.mode != GeneratorMode.PASSWORD) {
+                        StrengthIndicator(strengthResult = uiState.strengthResult)
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            FilterChip(
-                                selected = uiState.includeUppercase,
-                                onClick = { generatorViewModel.toggleUppercase() },
-                                label = { Text("A-Z") }
-                            )
-                            FilterChip(
-                                selected = uiState.includeLowercase,
-                                onClick = { generatorViewModel.toggleLowercase() },
-                                label = { Text("a-z") }
-                            )
-                            FilterChip(
-                                selected = uiState.includeNumbers,
-                                onClick = { generatorViewModel.toggleNumbers() },
-                                label = { Text("0-9") }
-                            )
-                            FilterChip(
-                                selected = uiState.includeSymbols,
-                                onClick = { generatorViewModel.toggleSymbols() },
-                                label = { Text("!@#$%^&*()_") }
-                            )
-                            FilterChip(
-                                selected = uiState.excludeAmbiguous,
-                                onClick = { generatorViewModel.toggleExcludeAmbiguous() },
-                                label = { Text("No Ambiguous") }
+                            Text(
+                                text = "Please select at least 3 character types",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
 
-                    GeneratorMode.PASSPHRASE -> {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Action Buttons (Regenerate, Copy, Save)
+                    val actionsEnabled = uiState.isConfigValid || uiState.mode != GeneratorMode.PASSWORD
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { generatorViewModel.generate() },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            enabled = actionsEnabled
                         ) {
-                            Text(text = "Word Count", style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                text = "${uiState.wordCount} words",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            Icon(Icons.Default.Refresh, contentDescription = "Regenerate", modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("New")
                         }
 
-                        Slider(
-                            value = uiState.wordCount.toFloat(),
-                            onValueChange = { generatorViewModel.setWordCount(it.toInt()) },
-                            valueRange = 3f..8f,
-                            steps = 4,
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.primary,
-                                activeTrackColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            FilterChip(
-                                selected = uiState.capitalize,
-                                onClick = { generatorViewModel.toggleCapitalize() },
-                                label = { Text("Capitalize") }
-                            )
-                            FilterChip(
-                                selected = uiState.includeNumberInPassphrase,
-                                onClick = { generatorViewModel.toggleIncludeNumberInPassphrase() },
-                                label = { Text("Include Number") }
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text(text = "Separator", style = MaterialTheme.typography.bodySmall)
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            listOf("-", "_", ".", " ", "#").forEach { sep ->
-                                FilterChip(
-                                    selected = uiState.separator == sep,
-                                    onClick = { generatorViewModel.setSeparator(sep) },
-                                    label = { Text(if (sep == " ") "Space" else sep) }
+                        Button(
+                            onClick = {
+                                ClipboardHelper.copyToClipboard(
+                                    context = context,
+                                    label = "Generated Password",
+                                    text = uiState.generatedPassword,
+                                    isSensitive = true,
+                                    autoClearSeconds = 30L
                                 )
-                            }
-                        }
-                    }
-
-                    GeneratorMode.PIN -> {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                Toast.makeText(context, "Copied! Clipboard clears in 30s", Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
                         ) {
-                            Text(text = "PIN Digits", style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                text = "${uiState.pinLength} digits",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Copy")
                         }
 
-                        Slider(
-                            value = uiState.pinLength.toFloat(),
-                            onValueChange = { generatorViewModel.setPinLength(it.toInt()) },
-                            valueRange = 4f..12f,
-                            steps = 7,
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.primary,
-                                activeTrackColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
+                        Button(
+                            onClick = { showSaveDialog = true },
+                            modifier = Modifier.weight(1.1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                            enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
+                        ) {
+                            Icon(Icons.Default.BookmarkBorder, contentDescription = "Save", modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Save")
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        // History Card
-        if (history.isNotEmpty()) {
+            // Configuration Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -421,40 +252,229 @@ fun GeneratorScreen(
                         .fillMaxWidth()
                         .padding(20.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Generation History",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        TextButton(onClick = { generatorViewModel.clearHistory() }) {
-                            Text("Clear", color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        text = "Customization Options",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    when (uiState.mode) {
+                        GeneratorMode.PASSWORD -> {
+                            // Length Slider
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Password Length", style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    text = "${uiState.length} chars",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Slider(
+                                value = uiState.length.toFloat(),
+                                onValueChange = { generatorViewModel.setLength(it.toInt()) },
+                                valueRange = 8f..64f,
+                                steps = 55,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MaterialTheme.colorScheme.primary,
+                                    activeTrackColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Charset toggles
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                FilterChip(
+                                    selected = uiState.includeUppercase,
+                                    onClick = { generatorViewModel.toggleUppercase() },
+                                    label = { Text("A-Z") }
+                                )
+                                FilterChip(
+                                    selected = uiState.includeLowercase,
+                                    onClick = { generatorViewModel.toggleLowercase() },
+                                    label = { Text("a-z") }
+                                )
+                                FilterChip(
+                                    selected = uiState.includeNumbers,
+                                    onClick = { generatorViewModel.toggleNumbers() },
+                                    label = { Text("0-9") }
+                                )
+                                FilterChip(
+                                    selected = uiState.includeSymbols,
+                                    onClick = { generatorViewModel.toggleSymbols() },
+                                    label = { Text("!@#$%^&*()_") }
+                                )
+                                FilterChip(
+                                    selected = uiState.excludeAmbiguous,
+                                    onClick = { generatorViewModel.toggleExcludeAmbiguous() },
+                                    label = { Text("No Ambiguous") }
+                                )
+                            }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                        GeneratorMode.PASSPHRASE -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Word Count", style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    text = "${uiState.wordCount} words",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        history.forEach { item ->
-                            HistoryItemRow(
-                                item = item,
-                                onCopy = {
-                                    ClipboardHelper.copyToClipboard(
-                                        context = context,
-                                        label = "History Password",
-                                        text = item.plaintextPassword,
-                                        isSensitive = true
+                            Slider(
+                                value = uiState.wordCount.toFloat(),
+                                onValueChange = { generatorViewModel.setWordCount(it.toInt()) },
+                                valueRange = 3f..8f,
+                                steps = 4,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MaterialTheme.colorScheme.primary,
+                                    activeTrackColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                FilterChip(
+                                    selected = uiState.capitalize,
+                                    onClick = { generatorViewModel.toggleCapitalize() },
+                                    label = { Text("Capitalize") }
+                                )
+                                FilterChip(
+                                    selected = uiState.includeNumberInPassphrase,
+                                    onClick = { generatorViewModel.toggleIncludeNumberInPassphrase() },
+                                    label = { Text("Include Number") }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(text = "Separator", style = MaterialTheme.typography.bodySmall)
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                listOf("-", "_", ".", " ", "#").forEach { sep ->
+                                    FilterChip(
+                                        selected = uiState.separator == sep,
+                                        onClick = { generatorViewModel.setSeparator(sep) },
+                                        label = { Text(if (sep == " ") "Space" else sep) }
                                     )
-                                    Toast.makeText(context, "Copied!", Toast.LENGTH_SHORT).show()
                                 }
+                            }
+                        }
+
+                        GeneratorMode.PIN -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "PIN Digits", style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    text = "${uiState.pinLength} digits",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Slider(
+                                value = uiState.pinLength.toFloat(),
+                                onValueChange = { generatorViewModel.setPinLength(it.toInt()) },
+                                valueRange = 4f..12f,
+                                steps = 7,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MaterialTheme.colorScheme.primary,
+                                    activeTrackColor = MaterialTheme.colorScheme.primary
+                                )
                             )
                         }
+                        else -> {}
                     }
+                }
+            }
+        } else {
+            // History Tab Content
+            if (history.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Generation History",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            TextButton(onClick = { generatorViewModel.clearHistory() }) {
+                                Text("Clear", color = MaterialTheme.colorScheme.primary)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            history.forEach { item ->
+                                HistoryItemRow(
+                                    item = item,
+                                    onCopy = {
+                                        ClipboardHelper.copyToClipboard(
+                                            context = context,
+                                            label = "History Password",
+                                            text = item.plaintextPassword,
+                                            isSensitive = true
+                                        )
+                                        Toast.makeText(context, "Copied!", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 100.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No history yet",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.keyfortress.app
 
 import android.app.Application
 import android.os.StrictMode
-import com.keyfortress.app.BuildConfig
 
 class KeyFortressApp : Application() {
     override fun onCreate() {
@@ -22,7 +21,7 @@ class KeyFortressApp : Application() {
                 .detectAll()
                 .penaltyLog()
                 .penaltyFlashScreen()
-                .build()
+                .build(),
         )
         StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()
@@ -31,7 +30,7 @@ class KeyFortressApp : Application() {
                 .detectActivityLeaks()
                 .detectLeakedRegistrationObjects()
                 .penaltyLog()
-                .build()
+                .build(),
         )
     }
 }

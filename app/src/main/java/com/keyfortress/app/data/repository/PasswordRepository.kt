@@ -16,7 +16,8 @@ data class DecryptedPasswordItem(
     val notes: String,
     val createdAt: Long,
     val updatedAt: Long,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val expiryDays: Int
 )
 
 class PasswordRepository(private val passwordDao: PasswordDao) {
@@ -59,7 +60,8 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
         websiteUrl: String,
         category: String,
         notes: String,
-        isFavorite: Boolean = false
+        isFavorite: Boolean = false,
+        expiryDays: Int = 0
     ): Long {
         val encryptedPassword = KeystoreManager.encrypt(plainPassword)
         val entity = PasswordEntity(
@@ -72,7 +74,8 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
             notes = notes,
             createdAt = if (id == 0L) System.currentTimeMillis() else (passwordDao.getPasswordById(id)?.createdAt ?: System.currentTimeMillis()),
             updatedAt = System.currentTimeMillis(),
-            isFavorite = isFavorite
+            isFavorite = isFavorite,
+            expiryDays = expiryDays
         )
         return passwordDao.insertPassword(entity)
     }
@@ -105,7 +108,8 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
             notes = notes,
             createdAt = createdAt,
             updatedAt = updatedAt,
-            isFavorite = isFavorite
+            isFavorite = isFavorite,
+            expiryDays = expiryDays
         )
     }
 }

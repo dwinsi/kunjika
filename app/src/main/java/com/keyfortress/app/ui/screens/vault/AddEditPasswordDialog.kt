@@ -66,6 +66,7 @@ fun AddEditPasswordDialog(
     var websiteUrl by remember { mutableStateOf(existingItem?.websiteUrl ?: "") }
     var category by remember { mutableStateOf(existingItem?.category ?: "Personal") }
     var notes by remember { mutableStateOf(existingItem?.notes ?: "") }
+    var expiryDays by remember { mutableStateOf(existingItem?.expiryDays ?: 0) }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val strengthResult = remember(password) { PasswordStrengthEvaluator.evaluate(password) }
@@ -184,6 +185,29 @@ fun AddEditPasswordDialog(
                     maxLines = 3
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Rotation Period",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(0 to "None", 30 to "30d", 90 to "90d", 180 to "180d").forEach { (days, label) ->
+                        FilterChip(
+                            selected = expiryDays == days,
+                            onClick = { expiryDays = days },
+                            label = { Text(label) }
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
@@ -205,7 +229,8 @@ fun AddEditPasswordDialog(
                                     websiteUrl = websiteUrl.trim(),
                                     category = category,
                                     notes = notes.trim(),
-                                    isFavorite = existingItem?.isFavorite ?: false
+                                    isFavorite = existingItem?.isFavorite ?: false,
+                                    expiryDays = expiryDays
                                 )
                                 onDismiss()
                             }

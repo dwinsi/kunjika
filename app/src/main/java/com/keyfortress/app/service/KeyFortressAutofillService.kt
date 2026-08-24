@@ -1,12 +1,15 @@
 package com.keyfortress.app.service
 
 import android.app.assist.AssistStructure
+import android.os.Build
 import android.os.CancellationSignal
 import android.service.autofill.AutofillService
 import android.service.autofill.Dataset
+import android.service.autofill.Field
 import android.service.autofill.FillCallback
 import android.service.autofill.FillRequest
 import android.service.autofill.FillResponse
+import android.service.autofill.Presentations
 import android.service.autofill.SaveCallback
 import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillId
@@ -63,13 +66,37 @@ class KeyFortressAutofillService : AutofillService() {
             }
 
             val datasetBuilder = Dataset.Builder()
-            
-            parsedStructure.usernameId?.let { id ->
-                datasetBuilder.setValue(id, AutofillValue.forText(item.username), presentation)
-            }
-            
-            parsedStructure.passwordId?.let { id ->
-                datasetBuilder.setValue(id, AutofillValue.forText(item.plaintextPassword), presentation)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val presentations = Presentations.Builder()
+                    .setMenuPresentation(presentation)
+                    .build()
+
+                parsedStructure.usernameId?.let { id ->
+                    val field = Field.Builder()
+                        .setValue(AutofillValue.forText(item.username))
+                        .setPresentations(presentations)
+                        .build()
+                    datasetBuilder.setField(id, field)
+                }
+
+                parsedStructure.passwordId?.let { id ->
+                    val field = Field.Builder()
+                        .setValue(AutofillValue.forText(item.plaintextPassword))
+                        .setPresentations(presentations)
+                        .build()
+                    datasetBuilder.setField(id, field)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                parsedStructure.usernameId?.let { id ->
+                    datasetBuilder.setValue(id, AutofillValue.forText(item.username), presentation)
+                }
+
+                @Suppress("DEPRECATION")
+                parsedStructure.passwordId?.let { id ->
+                    datasetBuilder.setValue(id, AutofillValue.forText(item.plaintextPassword), presentation)
+                }
             }
 
             responseBuilder.addDataset(datasetBuilder.build())

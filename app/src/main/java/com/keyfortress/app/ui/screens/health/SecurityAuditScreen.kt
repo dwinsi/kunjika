@@ -169,7 +169,7 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel) {
                 modifier = Modifier.weight(1f)
             )
             AuditMetricCard(
-                title = "Old (>90d)",
+                title = "Old",
                 count = auditSummary.oldPasswords.size,
                 icon = Icons.Default.History,
                 tint = StrengthFair,
@@ -177,7 +177,34 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel) {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Expired Metric
+        if (auditSummary.expiredPasswords.isNotEmpty()) {
+            AuditMetricCard(
+                title = "Expired Passwords",
+                count = auditSummary.expiredPasswords.size,
+                icon = Icons.Default.Warning,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+        } else {
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        // Expired Passwords List
+        if (auditSummary.expiredPasswords.isNotEmpty()) {
+            AuditSectionList(
+                title = "Expired Passwords (${auditSummary.expiredPasswords.size})",
+                subtitle = "These passwords have exceeded their set rotation period",
+                items = auditSummary.expiredPasswords,
+                icon = Icons.Default.Warning,
+                badgeColor = MaterialTheme.colorScheme.error,
+                onItemClick = { selectedItemForEdit = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         // Weak Passwords List
         if (auditSummary.weakPasswords.isNotEmpty()) {

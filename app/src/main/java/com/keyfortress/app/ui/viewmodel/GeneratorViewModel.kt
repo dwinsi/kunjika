@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 enum class GeneratorMode {
     PASSWORD,
     PASSPHRASE,
-    PIN
+    PIN,
+    HISTORY
 }
 
 data class GeneratorUiState(
@@ -59,7 +60,9 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
 
     fun setMode(mode: GeneratorMode) {
         _uiState.value = _uiState.value.copy(mode = mode)
-        generate()
+        if (mode != GeneratorMode.HISTORY) {
+            generate()
+        }
     }
 
     fun setLength(length: Int) {
@@ -126,6 +129,8 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
 
     fun generate() {
         val state = _uiState.value
+        if (state.mode == GeneratorMode.HISTORY) return
+
         val selectedCount = listOf(
             state.includeUppercase,
             state.includeLowercase,
@@ -169,6 +174,7 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
             GeneratorMode.PIN -> {
                 PasswordGenerator.generatePin(state.pinLength)
             }
+            GeneratorMode.HISTORY -> "" // Should not reach here
         }
 
         val strength = PasswordStrengthEvaluator.evaluate(newPassword)

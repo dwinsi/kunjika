@@ -19,7 +19,8 @@ data class SecurityAuditSummary(
     val securityScore: Int = 100,
     val weakPasswords: List<DecryptedPasswordItem> = emptyList(),
     val reusedPasswords: List<DecryptedPasswordItem> = emptyList(),
-    val oldPasswords: List<DecryptedPasswordItem> = emptyList()
+    val oldPasswords: List<DecryptedPasswordItem> = emptyList(),
+    val expiredPasswords: List<DecryptedPasswordItem> = emptyList()
 )
 
 class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
@@ -77,7 +78,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         websiteUrl: String,
         category: String,
         notes: String,
-        isFavorite: Boolean = false
+        isFavorite: Boolean = false,
+        expiryDays: Int = 0
     ) {
         viewModelScope.launch {
             repository.savePassword(
@@ -88,7 +90,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
                 websiteUrl = websiteUrl,
                 category = category,
                 notes = notes,
-                isFavorite = isFavorite
+                isFavorite = isFavorite,
+                expiryDays = expiryDays
             )
         }
     }
@@ -107,6 +110,7 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         val ninetyDaysMillis = 90L * 24 * 60 * 60 * 1000L
         val now = System.currentTimeMillis()
         val old = mutableListOf<DecryptedPasswordItem>()
+        val expired = mutableListOf<DecryptedPasswordItem>()
 
         for (item in list) {
             val strength = PasswordStrengthEvaluator.evaluate(item.plaintextPassword)
@@ -121,6 +125,13 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
             if (now - item.updatedAt > ninetyDaysMillis) {
                 old.add(item)
             }
+
+            if (item.expiryDays > 0) {
+                val expiryMillis = item.expiryDays.toLong() * 24 * 60 * 60 * 1000L
+                if (now - item.updatedAt > expiryMillis) {
+                    expired.add(item)
+                }
+            }
         }
 
         val reused = list.filter { (passwordCountMap[it.plaintextPassword] ?: 0) > 1 }
@@ -129,6 +140,7 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         score -= (weak.size * 15)
         score -= (reused.size * 10)
         score -= (old.size * 5)
+        score -= (expired.size * 20)
         score = score.coerceIn(0, 100)
 
         return SecurityAuditSummary(
@@ -136,7 +148,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
             securityScore = score,
             weakPasswords = weak,
             reusedPasswords = reused,
-            oldPasswords = old
+            oldPasswords = old,
+            expiredPasswords = expired
         )
     }
 }
