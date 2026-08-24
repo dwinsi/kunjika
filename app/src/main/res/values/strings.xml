@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">KeyFortress</string>
+    <string name="nav_generator">Generator</string>
+    <string name="nav_vault">Vault</string>
+    <string name="nav_audit">Security</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Generator Screen -->
+    <string name="generator_title">Password Generator</string>
+    <string name="generate_new">Generate</string>
+    <string name="copy_password">Copy</string>
+    <string name="save_to_vault">Save to Vault</string>
+    <string name="length_label">Length</string>
+    <string name="mode_password">Password</string>
+    <string name="mode_passphrase">Passphrase</string>
+    <string name="mode_pin">PIN</string>
+    <string name="opt_uppercase">Uppercase (A-Z)</string>
+    <string name="opt_lowercase">Lowercase (a-z)</string>
+    <string name="opt_numbers">Numbers (0-9)</string>
+    <string name="opt_symbols">Symbols (!@#$...)</string>
+    <string name="opt_exclude_ambiguous">Exclude Ambiguous (0, O, 1, l, I)</string>
+    <string name="word_count">Words Count</string>
+    <string name="separator">Separator</string>
+
+    <!-- Vault Screen -->
+    <string name="vault_title">Password Vault</string>
+    <string name="search_vault">Search accounts, websites...</string>
+    <string name="no_passwords">No passwords saved yet</string>
+    <string name="add_password">Add New Password</string>
+    <string name="edit_password">Edit Entry</string>
+    <string name="delete_password">Delete</string>
+    <string name="category_all">All</string>
+    <string name="category_personal">Personal</string>
+    <string name="category_work">Work</string>
+    <string name="category_finance">Finance</string>
+    <string name="category_social">Social</string>
+    <string name="category_other">Other</string>
+
+    <!-- Security Audit Screen -->
+    <string name="audit_title">Security Health</string>
+    <string name="overall_score">Vault Security Score</string>
+    <string name="weak_passwords">Weak Passwords</string>
+    <string name="reused_passwords">Reused Passwords</string>
+    <string name="old_passwords">Old Passwords (>90d)</string>
+
+    <!-- Auth & Settings -->
+    <string name="auth_title">KeyFortress Lock</string>
+    <string name="enter_pin">Enter Master PIN</string>
+    <string name="setup_pin">Create Master PIN</string>
+    <string name="confirm_pin">Confirm Master PIN</string>
+    <string name="biometric_prompt_title">Unlock KeyFortress</string>
+    <string name="biometric_prompt_desc">Use your fingerprint or face to access your vault</string>
+    <string name="auto_lock">Auto-Lock Timeout</string>
+    <string name="export_backup">Export Encrypted Backup</string>
+    <string name="import_backup">Import Encrypted Backup</string>
+    <string name="offline_guarantee">100% Offline &amp; Air-Gapped. No network permissions.</string>
+</resources>
