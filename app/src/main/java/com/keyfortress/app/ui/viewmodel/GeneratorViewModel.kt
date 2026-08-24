@@ -1,15 +1,21 @@
 package com.keyfortress.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.keyfortress.app.core.generator.PassphraseConfig
 import com.keyfortress.app.core.generator.PassphraseGenerator
 import com.keyfortress.app.core.generator.PasswordGenerator
 import com.keyfortress.app.core.generator.PasswordGeneratorConfig
 import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
 import com.keyfortress.app.core.generator.StrengthResult
+import com.keyfortress.app.data.repository.DecryptedHistoryItem
+import com.keyfortress.app.data.repository.HistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 enum class GeneratorMode {
     PASSWORD,
@@ -36,15 +42,16 @@ data class GeneratorUiState(
     // PIN config
     val pinLength: Int = 6,
     // Validation
-    val isConfigValid: Boolean = true,
-    // History
-    val history: List<String> = emptyList()
+    val isConfigValid: Boolean = true
 )
 
-class GeneratorViewModel : ViewModel() {
+class GeneratorViewModel(private val historyRepository: HistoryRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GeneratorUiState())
     val uiState: StateFlow<GeneratorUiState> = _uiState.asStateFlow()
+
+    val history: StateFlow<List<DecryptedHistoryItem>> = historyRepository.recentHistory
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         generate()
@@ -165,15 +172,23 @@ class GeneratorViewModel : ViewModel() {
         }
 
         val strength = PasswordStrengthEvaluator.evaluate(newPassword)
-        val updatedHistory = if (newPassword.isNotEmpty()) {
-            listOf(newPassword) + state.history.take(9)
-        } else state.history
+
+        if (newPassword.isNotEmpty()) {
+            viewModelScope.launch {
+                historyRepository.addHistory(newPassword, state.mode.name)
+            }
+        }
 
         _uiState.value = state.copy(
             generatedPassword = newPassword,
             strengthResult = strength,
-            history = updatedHistory,
             isConfigValid = true
         )
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            historyRepository.clearHistory()
+        }
     }
 }

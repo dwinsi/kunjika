@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.keyfortress.app.data.local.AppDatabase
 import com.keyfortress.app.data.preferences.UserPreferences
+import com.keyfortress.app.data.repository.HistoryRepository
 import com.keyfortress.app.data.repository.PasswordRepository
 import com.keyfortress.app.ui.MainNavigation
 import com.keyfortress.app.ui.theme.KeyFortressTheme
@@ -40,6 +41,7 @@ class MainActivity : FragmentActivity() {
 
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = PasswordRepository(database.passwordDao())
+        val historyRepository = HistoryRepository(database.historyDao())
         val userPreferences = UserPreferences(applicationContext)
 
         authViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
@@ -49,7 +51,12 @@ class MainActivity : FragmentActivity() {
             }
         })[AuthViewModel::class.java]
 
-        generatorViewModel = ViewModelProvider(this)[GeneratorViewModel::class.java]
+        generatorViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return GeneratorViewModel(historyRepository) as T
+            }
+        })[GeneratorViewModel::class.java]
 
         vaultViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

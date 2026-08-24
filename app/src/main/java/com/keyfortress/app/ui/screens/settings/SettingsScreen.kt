@@ -1,6 +1,12 @@
 package com.keyfortress.app.ui.screens.settings
 
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import android.view.autofill.AutofillManager
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Fingerprint
@@ -26,6 +33,7 @@ import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
@@ -79,6 +87,15 @@ fun SettingsScreen(
     var showChangePinDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
     var showImportDialog by remember { mutableStateOf(false) }
+
+    val autofillManager = remember { context.getSystemService(AutofillManager::class.java) }
+    val isAutofillEnabled = autofillManager?.hasEnabledAutofillServices() == true
+
+    val autofillLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+        // Refresh check if needed
+    }
 
     Column(
         modifier = Modifier
@@ -175,6 +192,40 @@ fun SettingsScreen(
                     checked = lockOnExit,
                     onCheckedChange = { settingsViewModel.setLockOnExit(it) },
                     colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Enable Autofill Button
+            OutlinedButton(
+                onClick = {
+                    val intent = Intent(Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE).apply {
+                        data = android.net.Uri.parse("package:${context.packageName}")
+                    }
+                    try {
+                        autofillLauncher.launch(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Please enable KeyFortress in System Autofill settings", Toast.LENGTH_LONG).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                border = if (isAutofillEnabled) 
+                    androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                else 
+                    androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            ) {
+                Icon(
+                    imageVector = if (isAutofillEnabled) Icons.Default.CheckCircle else Icons.Default.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = if (isAutofillEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isAutofillEnabled) "Autofill: Enabled" else "Enable Autofill Service",
+                    color = if (isAutofillEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
             }
 

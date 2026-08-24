@@ -4,18 +4,39 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.keyfortress.app.core.security.KeystoreManager
+import com.keyfortress.app.data.local.history.PasswordHistoryDao
+import com.keyfortress.app.data.local.history.PasswordHistoryEntity
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 
-@Database(entities = [PasswordEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [PasswordEntity::class, PasswordHistoryEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun passwordDao(): PasswordDao
+    abstract fun historyDao(): PasswordHistoryDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
         private const val DB_NAME = "keyfortress_encrypted.db"
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `password_history` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`encryptedPassword` TEXT NOT NULL, " +
+                        "`type` TEXT NOT NULL, " +
+                        "`timestamp` INTEGER NOT NULL)"
+                )
+            }
+        }
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -31,7 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
                     DB_NAME,
                 )
                     .openHelperFactory(factory)
-                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_1_2)
                     .build()
 
                 INSTANCE = instance

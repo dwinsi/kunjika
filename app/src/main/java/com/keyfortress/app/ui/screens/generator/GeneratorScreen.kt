@@ -73,6 +73,7 @@ fun GeneratorScreen(
     vaultViewModel: VaultViewModel,
 ) {
     val uiState by generatorViewModel.uiState.collectAsState()
+    val history by generatorViewModel.history.collectAsState()
     val context = LocalContext.current
     var showSaveDialog by remember { mutableStateOf(value = false) }
 
@@ -404,6 +405,61 @@ fun GeneratorScreen(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // History Card
+        if (history.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Generation History",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        TextButton(onClick = { generatorViewModel.clearHistory() }) {
+                            Text("Clear", color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        history.forEach { item ->
+                            HistoryItemRow(
+                                item = item,
+                                onCopy = {
+                                    ClipboardHelper.copyToClipboard(
+                                        context = context,
+                                        label = "History Password",
+                                        text = item.plaintextPassword,
+                                        isSensitive = true
+                                    )
+                                    Toast.makeText(context, "Copied!", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 
     if (showSaveDialog) {
@@ -413,5 +469,43 @@ fun GeneratorScreen(
         ) {
             showSaveDialog = false
         }
+    }
+}
+
+@Composable
+fun HistoryItemRow(
+    item: com.keyfortress.app.data.repository.DecryptedHistoryItem,
+    onCopy: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .clickable { onCopy() }
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.plaintextPassword,
+                fontFamily = FontFamily.Monospace,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1
+            )
+            Text(
+                text = "${item.type} • ${android.text.format.DateUtils.getRelativeTimeSpanString(item.timestamp)}",
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Icon(
+            imageVector = Icons.Default.ContentCopy,
+            contentDescription = "Copy",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
     }
 }
