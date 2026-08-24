@@ -20,7 +20,6 @@ class KeyFortressApp : Application() {
                 .detectNetwork() // Should be none in this app!
                 .detectAll()
                 .penaltyLog()
-                .penaltyFlashScreen()
                 .build(),
         )
         StrictMode.setVmPolicy(

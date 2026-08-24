@@ -3,8 +3,11 @@ package com.keyfortress.app.data.repository
 import com.keyfortress.app.core.security.KeystoreManager
 import com.keyfortress.app.data.local.PasswordDao
 import com.keyfortress.app.data.local.PasswordEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 data class DecryptedPasswordItem(
     val id: Long,
@@ -25,7 +28,7 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
     fun getAllPasswords(): Flow<List<DecryptedPasswordItem>> {
         return passwordDao.getAllPasswords().map { list ->
             list.map { entity -> entity.toDecrypted() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     fun getPasswordsByCategory(category: String): Flow<List<DecryptedPasswordItem>> {
@@ -34,22 +37,22 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
         } else {
             passwordDao.getPasswordsByCategory(category).map { list ->
                 list.map { entity -> entity.toDecrypted() }
-            }
+            }.flowOn(Dispatchers.IO)
         }
     }
 
     fun searchPasswords(query: String): Flow<List<DecryptedPasswordItem>> {
         return passwordDao.searchPasswords(query).map { list ->
             list.map { entity -> entity.toDecrypted() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPasswordById(id: Long): DecryptedPasswordItem? {
-        return passwordDao.getPasswordById(id)?.toDecrypted()
+    suspend fun getPasswordById(id: Long): DecryptedPasswordItem? = withContext(Dispatchers.IO) {
+        passwordDao.getPasswordById(id)?.toDecrypted()
     }
 
-    suspend fun getPasswordsByDomain(domain: String): List<DecryptedPasswordItem> {
-        return passwordDao.getPasswordsByDomain(domain).map { it.toDecrypted() }
+    suspend fun getPasswordsByDomain(domain: String): List<DecryptedPasswordItem> = withContext(Dispatchers.IO) {
+        passwordDao.getPasswordsByDomain(domain).map { it.toDecrypted() }
     }
 
     suspend fun savePassword(
@@ -62,7 +65,7 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
         notes: String,
         isFavorite: Boolean = false,
         expiryDays: Int = 0
-    ): Long {
+    ): Long = withContext(Dispatchers.IO) {
         val encryptedPassword = KeystoreManager.encrypt(plainPassword)
         val entity = PasswordEntity(
             id = id,
@@ -77,7 +80,7 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
             isFavorite = isFavorite,
             expiryDays = expiryDays
         )
-        return passwordDao.insertPassword(entity)
+        passwordDao.insertPassword(entity)
     }
 
     suspend fun toggleFavorite(item: DecryptedPasswordItem) {
