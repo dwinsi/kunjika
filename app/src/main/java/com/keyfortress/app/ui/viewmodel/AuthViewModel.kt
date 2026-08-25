@@ -1,7 +1,9 @@
 package com.keyfortress.app.ui.viewmodel
 
+import androidx.biometric.BiometricPrompt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.keyfortress.app.core.security.BiometricKeyManager
 import com.keyfortress.app.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,9 +72,26 @@ class AuthViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         }
     }
 
-    fun unlockWithBiometrics() {
-        _errorMessage.value = null
-        _authState.value = AuthState.Authenticated
+    fun unlockWithBiometrics(result: BiometricPrompt.AuthenticationResult) {
+        // In a more advanced implementation, we would use the cipher from result.cryptoObject
+        // to decrypt the Master PIN or a session key.
+        // For now, the hardware-verified success is our trigger.
+        val cipher = result.cryptoObject?.cipher
+        if (cipher != null) {
+            _errorMessage.value = null
+            _authState.value = AuthState.Authenticated
+        } else {
+            _errorMessage.value = "Biometric authentication failed to provide crypto object"
+        }
+    }
+
+    fun getBiometricCryptoObject(): BiometricPrompt.CryptoObject? {
+        return try {
+            val cipher = BiometricKeyManager.getEncryptionCipher()
+            BiometricPrompt.CryptoObject(cipher)
+        } catch (_: Exception) {
+            null
+        }
     }
 
     fun lock() {

@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.keyfortress.app.core.generator.PasswordStrength
 import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
+import com.keyfortress.app.core.qr.QrEncryptionManager
+import com.keyfortress.app.core.qr.QrSyncPayload
+import com.keyfortress.app.data.local.blockchain.BlockEntity
 import com.keyfortress.app.data.repository.DecryptedPasswordItem
 import com.keyfortress.app.data.repository.PasswordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,6 +59,22 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         computeAudit(list)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SecurityAuditSummary())
 
+    private val _isChainValid = MutableStateFlow(true)
+    val isChainValid: StateFlow<Boolean> = _isChainValid.asStateFlow()
+
+    val blockchainLedger: StateFlow<List<BlockEntity>> = repository.getAllBlocks()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        verifyIntegrity()
+    }
+
+    fun verifyIntegrity() {
+        viewModelScope.launch {
+            _isChainValid.value = repository.verifyIntegrity()
+        }
+    }
+
     fun selectCategory(category: String) {
         _selectedCategory.value = category
     }
@@ -79,7 +98,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         category: String,
         notes: String,
         isFavorite: Boolean = false,
-        expiryDays: Int = 0
+        expiryDays: Int = 0,
+        totpSecret: String? = null
     ) {
         viewModelScope.launch {
             repository.savePassword(
@@ -91,7 +111,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
                 category = category,
                 notes = notes,
                 isFavorite = isFavorite,
-                expiryDays = expiryDays
+                expiryDays = expiryDays,
+                totpSecret = totpSecret
             )
         }
     }
@@ -99,6 +120,29 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
     fun deletePassword(id: Long) {
         viewModelScope.launch {
             repository.deletePassword(id)
+        }
+    }
+
+    fun importEncryptedQr(encryptedData: String, transferCode: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val decryptedJson = QrEncryptionManager.decrypt(encryptedData, transferCode)
+            if (decryptedJson != null) {
+                val payload = QrSyncPayload.fromJson(decryptedJson)
+                if (payload != null) {
+                    savePassword(
+                        title = "${payload.title} (Synced)",
+                        username = payload.username,
+                        plainPassword = payload.password,
+                        websiteUrl = payload.websiteUrl,
+                        category = payload.category,
+                        notes = payload.notes,
+                        totpSecret = payload.totpSecret
+                    )
+                    onResult(true)
+                    return@launch
+                }
+            }
+            onResult(false)
         }
     }
 

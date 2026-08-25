@@ -64,7 +64,7 @@ object TotpManager {
             var count = 0
             for (char in cleaned) {
                 val value = DECODE_TABLE[char.code]
-                if (value == -1) continue
+                if (value == -1) throw IllegalArgumentException("Invalid Base32 character: $char")
                 buffer = (buffer shl 5) or value
                 bitsLeft += 5
                 if (bitsLeft >= 8) {

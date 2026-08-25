@@ -71,9 +71,11 @@ fun AuthScreen(authViewModel: AuthViewModel) {
 
     fun triggerBiometric() {
         if (!isSetup && isBiometricEnabled && context is FragmentActivity && BiometricAuthManager.canAuthenticate(context)) {
+            val cryptoObject = authViewModel.getBiometricCryptoObject()
             BiometricAuthManager.promptBiometric(
                 activity = context,
-                onSuccess = { authViewModel.unlockWithBiometrics() },
+                cryptoObject = cryptoObject,
+                onSuccess = { result -> authViewModel.unlockWithBiometrics(result) },
                 onError = { /* fallback to PIN */ }
             )
         }

@@ -1,10 +1,14 @@
 package com.keyfortress.app.data.repository
 
+import com.keyfortress.app.core.blockchain.BlockchainManager
 import com.keyfortress.app.core.security.KeystoreManager
 import com.keyfortress.app.data.local.PasswordDao
 import com.keyfortress.app.data.local.PasswordEntity
+import com.keyfortress.app.data.local.blockchain.BlockDao
+import com.keyfortress.app.data.local.blockchain.BlockEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -20,10 +24,41 @@ data class DecryptedPasswordItem(
     val createdAt: Long,
     val updatedAt: Long,
     val isFavorite: Boolean,
-    val expiryDays: Int
+    val expiryDays: Int,
+    val totpSecret: String? = null
 )
 
-class PasswordRepository(private val passwordDao: PasswordDao) {
+class PasswordRepository(
+    private val passwordDao: PasswordDao,
+    private val blockDao: BlockDao
+) {
+
+    fun getAllBlocks(): Flow<List<BlockEntity>> = blockDao.getAllBlocks()
+
+    suspend fun verifyIntegrity(): Boolean = withContext(Dispatchers.IO) {
+        val blocks = blockDao.getAllBlocks().first()
+        BlockchainManager.verifyChain(blocks)
+    }
+
+    private suspend fun recordBlock(action: String, entity: PasswordEntity) {
+        val latestBlock = blockDao.getLatestBlock()
+        val previousHash = latestBlock?.let { 
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val contentHash = BlockchainManager.computeHash(entity.toString())
+        val timestamp = System.currentTimeMillis()
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
 
     fun getAllPasswords(): Flow<List<DecryptedPasswordItem>> {
         return passwordDao.getAllPasswords().map { list ->
@@ -64,9 +99,12 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
         category: String,
         notes: String,
         isFavorite: Boolean = false,
-        expiryDays: Int = 0
+        expiryDays: Int = 0,
+        totpSecret: String? = null
     ): Long = withContext(Dispatchers.IO) {
         val encryptedPassword = KeystoreManager.encrypt(plainPassword)
+        val encryptedTotp = if (totpSecret.isNullOrEmpty()) null else KeystoreManager.encrypt(totpSecret)
+        
         val entity = PasswordEntity(
             id = id,
             title = title,
@@ -78,18 +116,31 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
             createdAt = if (id == 0L) System.currentTimeMillis() else (passwordDao.getPasswordById(id)?.createdAt ?: System.currentTimeMillis()),
             updatedAt = System.currentTimeMillis(),
             isFavorite = isFavorite,
-            expiryDays = expiryDays
+            expiryDays = expiryDays,
+            totpSecret = encryptedTotp
         )
-        passwordDao.insertPassword(entity)
+        val rowId = passwordDao.insertPassword(entity)
+        val finalId = if (id == 0L) rowId else id
+        val savedEntity = passwordDao.getPasswordById(finalId)
+        if (savedEntity != null) {
+            recordBlock(if (id == 0L) "CREATE" else "UPDATE", savedEntity)
+        }
+        rowId
     }
 
     suspend fun toggleFavorite(item: DecryptedPasswordItem) {
         val entity = passwordDao.getPasswordById(item.id) ?: return
-        passwordDao.updatePassword(entity.copy(isFavorite = !entity.isFavorite, updatedAt = System.currentTimeMillis()))
+        val updated = entity.copy(isFavorite = !entity.isFavorite, updatedAt = System.currentTimeMillis())
+        passwordDao.updatePassword(updated)
+        recordBlock("UPDATE", updated)
     }
 
     suspend fun deletePassword(id: Long) {
-        passwordDao.deletePasswordById(id)
+        val entity = passwordDao.getPasswordById(id)
+        if (entity != null) {
+            passwordDao.deletePasswordById(id)
+            recordBlock("DELETE", entity)
+        }
     }
 
     suspend fun getRawEntities(): List<PasswordEntity> {
@@ -101,6 +152,14 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
     }
 
     private fun PasswordEntity.toDecrypted(): DecryptedPasswordItem {
+        val decryptedTotp = try {
+            if (totpSecret.isNullOrEmpty()) null 
+            else if (totpSecret.contains("]")) KeystoreManager.decrypt(totpSecret)
+            else totpSecret // Fallback for old plaintext secrets
+        } catch (e: Exception) {
+            totpSecret // Fallback for any decryption failure
+        }
+
         return DecryptedPasswordItem(
             id = id,
             title = title,
@@ -112,7 +171,8 @@ class PasswordRepository(private val passwordDao: PasswordDao) {
             createdAt = createdAt,
             updatedAt = updatedAt,
             isFavorite = isFavorite,
-            expiryDays = expiryDays
+            expiryDays = expiryDays,
+            totpSecret = decryptedTotp
         )
     }
 }

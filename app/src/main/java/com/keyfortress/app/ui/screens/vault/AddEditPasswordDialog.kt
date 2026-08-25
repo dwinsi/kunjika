@@ -67,6 +67,7 @@ fun AddEditPasswordDialog(
     var category by remember { mutableStateOf(existingItem?.category ?: "Personal") }
     var notes by remember { mutableStateOf(existingItem?.notes ?: "") }
     var expiryDays by remember { mutableStateOf(existingItem?.expiryDays ?: 0) }
+    var totpSecret by remember { mutableStateOf(existingItem?.totpSecret ?: "") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val strengthResult = remember(password) { PasswordStrengthEvaluator.evaluate(password) }
@@ -152,6 +153,22 @@ fun AddEditPasswordDialog(
                     placeholder = "https://..."
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                CustomTextField(
+                    value = totpSecret,
+                    onValueChange = { totpSecret = it },
+                    label = "2FA Secret (TOTP)",
+                    placeholder = "Base32 Secret (e.g. JBSW...)",
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+                    }
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
@@ -230,7 +247,8 @@ fun AddEditPasswordDialog(
                                     category = category,
                                     notes = notes.trim(),
                                     isFavorite = existingItem?.isFavorite ?: false,
-                                    expiryDays = expiryDays
+                                    expiryDays = expiryDays,
+                                    totpSecret = totpSecret.trim().ifEmpty { null }
                                 )
                                 onDismiss()
                             }

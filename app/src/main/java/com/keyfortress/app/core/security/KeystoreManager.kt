@@ -72,11 +72,4 @@ object KeystoreManager {
         val decryptedBytes = cipher.doFinal(cipherText)
         return String(decryptedBytes, Charsets.UTF_8)
     }
-
-    fun getDatabasePassphrase(): ByteArray {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
-        val key = getSecretKey()
-        // Deterministic hash derived from keystore key
-        return java.security.MessageDigest.getInstance("SHA-256").digest(key.encoded ?: KEY_ALIAS.toByteArray())
-    }
 }

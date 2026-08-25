@@ -86,7 +86,7 @@ object RecoveryPdfManager {
         currentY += 30f
         paint.textSize = 20f
         paint.color = Color.RED
-        paint.fontFamily = android.graphics.Typeface.MONOSPACE
+        paint.typeface = android.graphics.Typeface.MONOSPACE
         canvas.drawText(recoveryKey, 70f, currentY, paint)
 
         // Bottom Warning

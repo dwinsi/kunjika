@@ -41,7 +41,7 @@ class KeyFortressAutofillService : AutofillService() {
         // Search for matching credentials in the vault
         val searchKey = parsedStructure.domain ?: ""
         val database = AppDatabase.getDatabase(applicationContext)
-        val repository = PasswordRepository(database.passwordDao())
+        val repository = PasswordRepository(database.passwordDao(), database.blockDao())
         
         val matches = runBlocking {
             if (searchKey.isNotEmpty()) {

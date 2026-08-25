@@ -29,9 +29,11 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
@@ -80,6 +82,7 @@ fun SettingsScreen(
     val useDynamicColor by settingsViewModel.useDynamicColor.collectAsState()
     val useDarkTheme by settingsViewModel.useDarkTheme.collectAsState()
     val backupStatus by settingsViewModel.backupStatus.collectAsState()
+    val pinHint by settingsViewModel.pinHint.collectAsState()
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -87,6 +90,25 @@ fun SettingsScreen(
     var showChangePinDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
     var showImportDialog by remember { mutableStateOf(false) }
+
+    var exportFilePassphrase by remember { mutableStateOf("") }
+    var importFileUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var showImportFilePassphraseDialog by remember { mutableStateOf(false) }
+
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { settingsViewModel.exportToFile(context, it, exportFilePassphrase) }
+    }
+
+    val openDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { 
+            importFileUri = it
+            showImportFilePassphraseDialog = true
+        }
+    }
 
     val autofillManager = remember { context.getSystemService(AutofillManager::class.java) }
     val isAutofillEnabled = autofillManager?.hasEnabledAutofillServices() == true
@@ -146,6 +168,7 @@ fun SettingsScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
 
         // Security & Authentication Settings
         SettingsSection(title = "Security & Access") {
@@ -280,6 +303,57 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Emergency Recovery Section
+        SettingsSection(title = "Security & Recovery") {
+            Text(
+                text = "Set a hint for your Master PIN and generate a physical recovery kit. This is your ultimate safety net if you lose access to your device.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            CustomTextField(
+                value = pinHint,
+                onValueChange = { settingsViewModel.setPinHint(it) },
+                label = "Master PIN Hint",
+                placeholder = "e.g. My favorite car + graduation year"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    settingsViewModel.generateRecoveryKit(context) { file ->
+                        if (file != null) {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                val uri = androidx.core.content.FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.fileprovider",
+                                    file
+                                )
+                                setDataAndType(uri, "application/pdf")
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(intent, "Open Recovery Kit"))
+                        } else {
+                            Toast.makeText(context, "Failed to generate PDF", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Generate Recovery Kit (PDF)")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+
         // UI & Personalization Settings
         SettingsSection(title = "UI & Personalization") {
             // Dark Theme Toggle
@@ -331,6 +405,7 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+
         // Encrypted Backup & Restore
         SettingsSection(title = "Encrypted Offline Backup") {
             Text(
@@ -345,16 +420,44 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                OutlinedButton(
-                    onClick = { showExportDialog = true },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Export")
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Clipboard", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedButton(
+                        onClick = { showExportDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Export")
+                    }
                 }
 
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("File (.json)", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedButton(
+                        onClick = { 
+                            // We need a passphrase first, then launch picker
+                            showExportDialog = true 
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Save File")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
                 OutlinedButton(
                     onClick = { showImportDialog = true },
                     modifier = Modifier.weight(1f),
@@ -362,7 +465,17 @@ fun SettingsScreen(
                 ) {
                     Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Import")
+                    Text("Import Text")
+                }
+
+                OutlinedButton(
+                    onClick = { openDocumentLauncher.launch(arrayOf("application/json", "application/octet-stream", "*/*")) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.FolderOpen, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Load File")
                 }
             }
 
@@ -377,6 +490,7 @@ fun SettingsScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
 
         // Hardware & Architecture info
         SettingsSection(title = "Security Architecture") {
@@ -451,7 +565,7 @@ fun SettingsScreen(
             title = { Text("Export Encrypted Backup") },
             text = {
                 Column {
-                    Text("Choose a strong passphrase to encrypt your exported backup payload:")
+                    Text("Choose a strong passphrase to encrypt your exported backup payload. This passphrase is required to restore on any device.")
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomTextField(
                         value = exportPassphrase,
@@ -462,23 +576,75 @@ fun SettingsScreen(
                 }
             },
             confirmButton = {
-                Button(
-                    onClick = {
-                        if (exportPassphrase.isNotBlank()) {
-                            settingsViewModel.exportEncryptedBackup(exportPassphrase) { payload ->
-                                ClipboardHelper.copyToClipboard(context, "Encrypted Backup", payload, isSensitive = true)
-                                Toast.makeText(context, "Encrypted backup copied to clipboard!", Toast.LENGTH_LONG).show()
+                Row {
+                    TextButton(
+                        onClick = {
+                            if (exportPassphrase.isNotBlank()) {
+                                settingsViewModel.exportEncryptedBackup(exportPassphrase) { payload ->
+                                    ClipboardHelper.copyToClipboard(context, "Encrypted Backup", payload, isSensitive = true)
+                                    Toast.makeText(context, "Encrypted backup copied to clipboard!", Toast.LENGTH_LONG).show()
+                                }
+                                showExportDialog = false
                             }
-                            showExportDialog = false
-                        }
-                    },
-                    enabled = exportPassphrase.isNotBlank()
-                ) {
-                    Text("Export to Clipboard")
+                        },
+                        enabled = exportPassphrase.isNotBlank()
+                    ) {
+                        Text("To Clipboard")
+                    }
+                    Button(
+                        onClick = {
+                            if (exportPassphrase.isNotBlank()) {
+                                exportFilePassphrase = exportPassphrase
+                                createDocumentLauncher.launch("keyfortress_backup_${System.currentTimeMillis()}.json")
+                                showExportDialog = false
+                            }
+                        },
+                        enabled = exportPassphrase.isNotBlank()
+                    ) {
+                        Text("To File")
+                    }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExportDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    // Import from File Passphrase Dialog
+    if (showImportFilePassphraseDialog) {
+        var passphrase by remember { mutableStateOf("") }
+
+        AlertDialog(
+            onDismissRequest = { showImportFilePassphraseDialog = false },
+            title = { Text("Import from File") },
+            text = {
+                Column {
+                    Text("Enter the passphrase used to encrypt this backup file:")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CustomTextField(
+                        value = passphrase,
+                        onValueChange = { passphrase = it },
+                        label = "Backup Passphrase",
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        importFileUri?.let { uri ->
+                            settingsViewModel.importFromFile(context, uri, passphrase)
+                        }
+                        showImportFilePassphraseDialog = false
+                    },
+                    enabled = passphrase.isNotBlank()
+                ) {
+                    Text("Restore File")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showImportFilePassphraseDialog = false }) { Text("Cancel") }
             }
         )
     }

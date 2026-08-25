@@ -40,7 +40,7 @@ class MainActivity : FragmentActivity() {
         )
 
         val database = AppDatabase.getDatabase(applicationContext)
-        val repository = PasswordRepository(database.passwordDao())
+        val repository = PasswordRepository(database.passwordDao(), database.blockDao())
         val historyRepository = HistoryRepository(database.historyDao())
         val userPreferences = UserPreferences(applicationContext)
 

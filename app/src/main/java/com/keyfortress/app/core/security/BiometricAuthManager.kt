@@ -23,7 +23,8 @@ object BiometricAuthManager {
         title: String = "Unlock KeyFortress",
         subtitle: String = "Use biometric authentication to access your vault",
         negativeButtonText: String = "Use Master PIN",
-        onSuccess: () -> Unit,
+        cryptoObject: BiometricPrompt.CryptoObject? = null,
+        onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
         onError: (String) -> Unit
     ) {
         val executor = ContextCompat.getMainExecutor(activity)
@@ -33,7 +34,7 @@ object BiometricAuthManager {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    onSuccess()
+                    onSuccess(result)
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -52,9 +53,13 @@ object BiometricAuthManager {
             .setTitle(title)
             .setSubtitle(subtitle)
             .setNegativeButtonText(negativeButtonText)
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK)
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG) // Weak biometrics don't support CryptoObject
             .build()
 
-        prompt.authenticate(promptInfo)
+        if (cryptoObject != null) {
+            prompt.authenticate(promptInfo, cryptoObject)
+        } else {
+            prompt.authenticate(promptInfo)
+        }
     }
 }

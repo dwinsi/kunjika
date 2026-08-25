@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.keyfortress.app.ui.screens.auth.AuthScreen
 import com.keyfortress.app.ui.screens.generator.GeneratorScreen
+import com.keyfortress.app.ui.screens.health.AuditLogScreen
 import com.keyfortress.app.ui.screens.health.SecurityAuditScreen
 import com.keyfortress.app.ui.screens.settings.SettingsScreen
 import com.keyfortress.app.ui.screens.vault.VaultScreen
@@ -50,6 +51,7 @@ fun MainNavigation(
 ) {
     val authState by authViewModel.authState.collectAsState()
     var selectedTab by remember { mutableStateOf(NavigationTab.GENERATOR) }
+    var showAuditLog by remember { mutableStateOf(false) }
 
     if (authState != AuthState.Authenticated) {
         AuthScreen(authViewModel = authViewModel)
@@ -89,7 +91,19 @@ fun MainNavigation(
                         vaultViewModel = vaultViewModel
                     )
                     NavigationTab.VAULT -> VaultScreen(vaultViewModel = vaultViewModel)
-                    NavigationTab.AUDIT -> SecurityAuditScreen(vaultViewModel = vaultViewModel)
+                    NavigationTab.AUDIT -> {
+                        if (showAuditLog) {
+                            AuditLogScreen(
+                                vaultViewModel = vaultViewModel,
+                                onBack = { showAuditLog = false }
+                            )
+                        } else {
+                            SecurityAuditScreen(
+                                vaultViewModel = vaultViewModel,
+                                onViewAuditLog = { showAuditLog = true }
+                            )
+                        }
+                    }
                     NavigationTab.SETTINGS -> SettingsScreen(
                         settingsViewModel = settingsViewModel,
                         authViewModel = authViewModel

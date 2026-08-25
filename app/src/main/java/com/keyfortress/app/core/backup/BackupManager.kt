@@ -36,6 +36,7 @@ object BackupManager {
                 put("createdAt", item.createdAt)
                 put("updatedAt", item.updatedAt)
                 put("isFavorite", item.isFavorite)
+                put("expiryDays", item.expiryDays)
             }
             array.put(obj)
         }
@@ -98,7 +99,8 @@ object BackupManager {
                     notes = obj.optString("notes", ""),
                     createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
                     updatedAt = obj.optLong("updatedAt", System.currentTimeMillis()),
-                    isFavorite = obj.optBoolean("isFavorite", false)
+                    isFavorite = obj.optBoolean("isFavorite", false),
+                    expiryDays = obj.optInt("expiryDays", 0)
                 )
             )
         }
