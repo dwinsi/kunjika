@@ -1,8 +1,8 @@
-# 🏰 KeyFortress
+# 🏰 Kunjika
 
 ### *Military-Grade, Offline-First Password Vault & Generator*
 
-KeyFortress is a zero-network, ultra-secure Password Manager built for **Android 15+ (API 35)**. It provides a "Sovereign" security model where the user has 100% ownership of their data with cryptographic proofs of integrity.
+Kunjika is a zero-network, ultra-secure Password Manager built for **Android 15+ (API 35)**. It provides a "Sovereign" security model where the user has 100% ownership of their data with cryptographic proofs of integrity.
 
 ---
 
@@ -31,7 +31,7 @@ KeyFortress is a zero-network, ultra-secure Password Manager built for **Android
 
 ## 🏗️ Architecture
 
-KeyFortress follows **Clean Architecture** principles with a focus on cryptographic integrity.
+Kunjika follows **Clean Architecture** principles with a focus on cryptographic integrity.
 
 ```mermaid
 graph LR
@@ -87,4 +87,4 @@ Detailed documentation is available in the [`/docs`](file:///Users/ashwinsingh/D
 ---
 
 ## ⚖️ License
-KeyFortress is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Kunjika is licensed under the MIT License. See [LICENSE](LICENSE) for details.

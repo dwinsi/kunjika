@@ -125,7 +125,7 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "KeyFortress",
+                    text = "Kunjika",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface

@@ -7,7 +7,7 @@ import com.keyfortress.app.BuildConfig
  * Custom logging utility that ensures no logs are emitted in production/release builds.
  */
 object KLog {
-    private const val TAG = "KeyFortress"
+    private const val TAG = "Kunjika"
 
     fun d(message: String) {
         if (BuildConfig.DEBUG) {

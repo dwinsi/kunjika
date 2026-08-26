@@ -22,7 +22,7 @@ object QrEncryptionManager {
     private const val SEPARATOR = "]"
 
     // Static salt for QR sync - it's public knowledge, security comes from the transfer code
-    private val STATIC_SALT = "KeyFortressQrSyncSalt".toByteArray(Charsets.UTF_8)
+    private val STATIC_SALT = "KunjikaQrSyncSalt".toByteArray(Charsets.UTF_8)
 
     /**
      * Encrypts a payload string using a 6-digit transfer code.

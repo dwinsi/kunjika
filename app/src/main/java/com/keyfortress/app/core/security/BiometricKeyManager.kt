@@ -13,7 +13,7 @@ import javax.crypto.SecretKey
  */
 object BiometricKeyManager {
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private const val BIOMETRIC_KEY_ALIAS = "KeyFortressBiometricKey"
+    private const val BIOMETRIC_KEY_ALIAS = "KunjikaBiometricKey"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
 
     init {

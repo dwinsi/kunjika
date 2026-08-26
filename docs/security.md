@@ -1,10 +1,10 @@
 # 🛡️ Security Deep-Dive
 
-KeyFortress is engineered to exceed military-grade standards for local data protection. It operates on a **Zero-Network, Zero-Trust** model.
+Kunjika is engineered to exceed military-grade standards for local data protection. It operates on a **Zero-Network, Zero-Trust** model.
 
 ## 🗝️ Encryption Strategy: "Double-Lock" Architecture
 
-KeyFortress doesn't just encrypt the database; it encrypts the data *inside* the encrypted database.
+Kunjika doesn't just encrypt the database; it encrypts the data *inside* the encrypted database.
 
 ```mermaid
 graph LR
@@ -43,7 +43,7 @@ Sensitive keys are generated inside the device's **Trusted Execution Environment
 
 ## 🧱 Local Blockchain Audit Log
 
-To prevent "Offline Modification Attacks" (where an attacker with root access modifies the SQLite file directly), KeyFortress maintains a cryptographically signed ledger.
+To prevent "Offline Modification Attacks" (where an attacker with root access modifies the SQLite file directly), Kunjika maintains a cryptographically signed ledger.
 
 ```mermaid
 graph RL

@@ -1,11 +1,11 @@
-# Privacy Policy for KeyFortress
+# Privacy Policy for Kunjika
 
 **Effective Date: August 26, 2026**
 
-KeyFortress is a 100% offline password manager. We believe that your data belongs solely to you, and our application is designed to ensure it never leaves your device.
+Kunjika is a 100% offline password manager. We believe that your data belongs solely to you, and our application is designed to ensure it never leaves your device.
 
 ### 1. No Data Collection
-KeyFortress **does not collect, transmit, or share** any personal information, passwords, or usage statistics.
+Kunjika **does not collect, transmit, or share** any personal information, passwords, or usage statistics.
 - **Zero Network Permissions**: The application does not request the `INTERNET` permission.
 - **No Analytics**: We do not use any third-party analytics or tracking libraries.
 - **No Cloud Storage**: We do not provide cloud synchronization. Your data remains in the encrypted local database on your device.
@@ -21,7 +21,7 @@ All data stored within the app is protected using military-grade encryption:
 - **Vibrate**: To provide haptic feedback during authentication.
 
 ### 4. Third-Party Services
-KeyFortress is a standalone application and does not integrate with any third-party cloud services or APIs.
+Kunjika is a standalone application and does not integrate with any third-party cloud services or APIs.
 
 ### 5. Changes to This Policy
 We may update our Privacy Policy from time to time. Since the app is offline, any changes will be reflected in the updated version of the application and this document.

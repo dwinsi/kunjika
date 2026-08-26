@@ -2,11 +2,11 @@
 layout: default
 ---
 
-# 🏰 KeyFortress
+# 🏰 Kunjika
 
 ### *Military-Grade, Offline-First Password Vault & Generator for Android*
 
-KeyFortress is a zero-network, ultra-secure Password Manager. It provides a "Sovereign" security model where the user has 100% ownership of their data with cryptographic proofs of integrity.
+Kunjika is a zero-network, ultra-secure Password Manager. It provides a "Sovereign" security model where the user has 100% ownership of their data with cryptographic proofs of integrity.
 
 [**View Documentation**](./docs/) | [**Privacy Policy**](./PRIVACY_POLICY.html)
 

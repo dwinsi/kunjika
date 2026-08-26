@@ -230,7 +230,7 @@ fun SettingsScreen(
                     try {
                         autofillLauncher.launch(intent)
                     } catch (e: Exception) {
-                        Toast.makeText(context, "Please enable KeyFortress in System Autofill settings", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Please enable Kunjika in System Autofill settings", Toast.LENGTH_LONG).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -521,7 +521,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // About Section
-        SettingsSection(title = "About KeyFortress") {
+        SettingsSection(title = "About Kunjika") {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
@@ -534,7 +534,7 @@ fun SettingsScreen(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text("KeyFortress", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text("Kunjika", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                     Text("Version 1.0.0", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
@@ -542,7 +542,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "KeyFortress is a zero-network, hardware-hardened password manager designed for users who demand absolute privacy.",
+                text = "Kunjika is a zero-network, hardware-hardened password manager designed for users who demand absolute privacy.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -571,7 +571,7 @@ fun SettingsScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ashwinsingh.github.io/KeyFortress/PRIVACY_POLICY.html"))
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/PRIVACY_POLICY.html"))
                         context.startActivity(intent)
                     },
                     modifier = Modifier.weight(1f),
@@ -581,7 +581,7 @@ fun SettingsScreen(
                 }
                 OutlinedButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ashwinsingh.github.io/KeyFortress/docs/"))
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/docs/"))
                         context.startActivity(intent)
                     },
                     modifier = Modifier.weight(1f),
@@ -686,7 +686,7 @@ fun SettingsScreen(
                         onClick = {
                             if (exportPassphrase.isNotBlank()) {
                                 exportFilePassphrase = exportPassphrase
-                                createDocumentLauncher.launch("keyfortress_backup_${System.currentTimeMillis()}.json")
+                                createDocumentLauncher.launch("kunjika_backup_${System.currentTimeMillis()}.json")
                                 showExportDialog = false
                             }
                         },

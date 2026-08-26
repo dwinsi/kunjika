@@ -20,7 +20,7 @@ object BiometricAuthManager {
 
     fun promptBiometric(
         activity: FragmentActivity,
-        title: String = "Unlock KeyFortress",
+        title: String = "Unlock Kunjika",
         subtitle: String = "Use biometric authentication to access your vault",
         negativeButtonText: String = "Use Master PIN",
         cryptoObject: BiometricPrompt.CryptoObject? = null,

@@ -33,7 +33,7 @@ object RecoveryPdfManager {
         paint.color = Color.BLACK
         paint.textSize = 28f
         paint.isFakeBoldText = true
-        canvas.drawText("KeyFortress: Emergency Recovery Kit", 50f, 80f, paint)
+        canvas.drawText("Kunjika: Emergency Recovery Kit", 50f, 80f, paint)
 
         paint.textSize = 14f
         paint.isFakeBoldText = false
@@ -93,11 +93,11 @@ object RecoveryPdfManager {
         paint.color = Color.GRAY
         paint.textSize = 10f
         paint.isFakeBoldText = false
-        canvas.drawText("KeyFortress is a 100% localized application. Only you possess these keys.", 50f, 800f, paint)
+        canvas.drawText("Kunjika is a 100% localized application. Only you possess these keys.", 50f, 800f, paint)
 
         pdfDocument.finishPage(page)
 
-        val file = File(context.cacheDir, "KeyFortress_Recovery_Kit.pdf")
+        val file = File(context.cacheDir, "Kunjika_Recovery_Kit.pdf")
         try {
             pdfDocument.writeTo(FileOutputStream(file))
             onComplete(file)

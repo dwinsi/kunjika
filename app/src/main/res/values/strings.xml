@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KeyFortress</string>
+    <string name="app_name">Kunjika</string>
     <string name="nav_generator">Generator</string>
     <string name="nav_vault">Vault</string>
     <string name="nav_audit">Security</string>
@@ -44,11 +44,11 @@
     <string name="old_passwords">Old Passwords (>90d)</string>
 
     <!-- Auth & Settings -->
-    <string name="auth_title">KeyFortress Lock</string>
+    <string name="auth_title">Kunjika Lock</string>
     <string name="enter_pin">Enter Master PIN</string>
     <string name="setup_pin">Create Master PIN</string>
     <string name="confirm_pin">Confirm Master PIN</string>
-    <string name="biometric_prompt_title">Unlock KeyFortress</string>
+    <string name="biometric_prompt_title">Unlock Kunjika</string>
     <string name="biometric_prompt_desc">Use your fingerprint or face to access your vault</string>
     <string name="auto_lock">Auto-Lock Timeout</string>
     <string name="export_backup">Export Encrypted Backup</string>
@@ -62,7 +62,7 @@
     <string name="shortcut_vault_long">Open your password vault</string>
 
     <!-- About Section -->
-    <string name="about_title">About KeyFortress</string>
+    <string name="about_title">About Kunjika</string>
     <string name="developed_by">Developed by</string>
     <string name="developer_name">Ashwin Singh</string>
     <string name="version_label">Version</string>

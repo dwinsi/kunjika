@@ -43,7 +43,7 @@ fun OnboardingScreen(
     val pages = listOf(
         OnboardingPage(
             title = "Zero-Network Privacy",
-            description = "KeyFortress works 100% offline. No internet permission means your data never leaves your device. Total sovereignty over your secrets.",
+            description = "Kunjika works 100% offline. No internet permission means your data never leaves your device. Total sovereignty over your secrets.",
             icon = Icons.Default.WifiOff,
             color = MaterialTheme.colorScheme.primary
         ),

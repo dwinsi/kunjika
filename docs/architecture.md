@@ -1,6 +1,6 @@
-# 🏗️ KeyFortress Architecture
+# 🏗️ Kunjika Architecture
 
-KeyFortress is built on a **Security-First Clean Architecture**, utilizing the latest Android Jetpack components and hardware-backed cryptographic primitives.
+Kunjika is built on a **Security-First Clean Architecture**, utilizing the latest Android Jetpack components and hardware-backed cryptographic primitives.
 
 ## 🏛️ High-Level Component Overview
 
@@ -70,13 +70,13 @@ graph TB
 ```
 
 > [!NOTE]
-> **Component Overview Explanation**: This diagram illustrates the layered architecture of KeyFortress. The **UI Layer** (blue) interacts with **ViewModels** (purple), which communicate with the **Repository Layer** (orange). The **Security Core** (green) provides cryptographic services like hardware-backed encryption (KeyStore) and blockchain signatures. Data is persisted in **Encrypted Storage** using SQLCipher and DataStore.
+> **Component Overview Explanation**: This diagram illustrates the layered architecture of Kunjika. The **UI Layer** (blue) interacts with **ViewModels** (purple), which communicate with the **Repository Layer** (orange). The **Security Core** (green) provides cryptographic services like hardware-backed encryption (KeyStore) and blockchain signatures. Data is persisted in **Encrypted Storage** using SQLCipher and DataStore.
 
 
 ## 🔄 Core Data Flows
 
 ### 1. Hardware-Backed Encryption Flow
-KeyFortress uses a **Double Encryption** strategy. Passwords are first encrypted with a hardware-backed key before being stored in a database that is *also* encrypted with a random key.
+Kunjika uses a **Double Encryption** strategy. Passwords are first encrypted with a hardware-backed key before being stored in a database that is *also* encrypted with a random key.
 
 ### 2. Tamper-Proof Audit (Blockchain)
 Every write operation (Create/Update/Delete) generates a new block in a local blockchain.

@@ -11,7 +11,7 @@ import javax.crypto.spec.GCMParameterSpec
 
 object KeystoreManager {
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private const val KEY_ALIAS = "KeyFortressMasterSecretKey"
+    private const val KEY_ALIAS = "KunjikaMasterSecretKey"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val GCM_TAG_LENGTH = 128
     private const val IV_SEPARATOR = "]"

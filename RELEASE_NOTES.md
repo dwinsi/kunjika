@@ -1,14 +1,14 @@
-# KeyFortress Release Notes
+# Kunjika Release Notes
 
 ## v1.0.0 (First Official Release) - August 26, 2026
 
-We are proud to introduce **KeyFortress**, a zero-network password manager that prioritizes user sovereignty and hardware-backed security above all else.
+We are proud to introduce **Kunjika**, a zero-network password manager that prioritizes user sovereignty and hardware-backed security above all else.
 
 ### 🛡️ Security First
 - **100% Offline**: No internet permission requested. Your data never leaves your device.
 - **Double Encryption**: Every entry is encrypted twice using SQLCipher and hardware-backed AES-256-GCM (Android KeyStore).
 - **Blockchain Audit Log**: A cryptographically signed ledger tracks all changes to your vault, preventing unauthorized database tampering.
-- **PBKDF2 P[_config.yml](_config.yml)IN Hashing**: Your Master PIN is protected by 100,000 iterations of PBKDF2 with a unique per-device salt.
+- **PBKDF2 PIN Hashing**: Your Master PIN is protected by 100,000 iterations of PBKDF2 with a unique per-device salt.
 - **Biometric Binding**: Authentication is hardware-verified and cryptographically bound to your encryption keys.
 
 ### ✨ Key Features
@@ -25,4 +25,4 @@ We are proud to introduce **KeyFortress**, a zero-network password manager that 
 - **Privacy Protection**: Screenshot and screen recording prevention active throughout the app.
 
 ---
-*KeyFortress is developed by Ashwin Singh.*
+*Kunjika is developed by Ashwin Singh.*

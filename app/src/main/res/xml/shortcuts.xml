@@ -10,7 +10,7 @@
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.keyfortress.app"
             android:targetClass="com.keyfortress.app.MainActivity"
-            android:data="keyfortress://generator" />
+            android:data="kunjika://generator" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
     <shortcut
@@ -23,7 +23,7 @@
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.keyfortress.app"
             android:targetClass="com.keyfortress.app.MainActivity"
-            android:data="keyfortress://vault" />
+            android:data="kunjika://vault" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>

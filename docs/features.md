@@ -1,6 +1,6 @@
-# ✨ KeyFortress Features
+# ✨ Kunjika Features
 
-KeyFortress combines military-grade security with a modern, intuitive user interface.
+Kunjika combines military-grade security with a modern, intuitive user interface.
 
 ## 🚀 Key Modules
 

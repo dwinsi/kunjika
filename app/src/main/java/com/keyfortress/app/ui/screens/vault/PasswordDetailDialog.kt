@@ -413,7 +413,7 @@ fun QrCodeDisplayDialog(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Scan from another KeyFortress device",
+                    text = "Scan from another Kunjika device",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

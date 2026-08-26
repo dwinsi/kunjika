@@ -32,8 +32,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="keyfortress" android:host="generator" />
-                <data android:scheme="keyfortress" android:host="vault" />
+                <data android:scheme="kunjika" android:host="generator" />
+                <data android:scheme="kunjika" android:host="vault" />
             </intent-filter>
 
             <meta-data
@@ -44,7 +44,7 @@
         <!-- Android Autofill Service -->
         <service
             android:name=".service.KeyFortressAutofillService"
-            android:label="KeyFortress Autofill"
+            android:label="Kunjika Autofill"
             android:permission="android.permission.BIND_AUTOFILL_SERVICE"
             android:exported="true">
             <intent-filter>

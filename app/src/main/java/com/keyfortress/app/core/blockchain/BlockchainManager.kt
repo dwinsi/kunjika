@@ -15,7 +15,7 @@ import java.security.spec.ECGenParameterSpec
  */
 object BlockchainManager {
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private const val KEY_ALIAS = "KeyFortressIdentityKey"
+    private const val KEY_ALIAS = "KunjikaIdentityKey"
     private const val SIGN_ALGORITHM = "SHA256withECDSA"
 
     init {

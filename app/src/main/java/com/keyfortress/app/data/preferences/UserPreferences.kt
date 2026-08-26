@@ -16,7 +16,7 @@ import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "keyfortress_settings")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "kunjika_settings")
 
 class UserPreferences(private val context: Context) {
 
