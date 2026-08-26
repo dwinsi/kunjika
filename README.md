@@ -1,143 +1,90 @@
-# KeyFortress - 100% Offline Secure Password Generator & Vault
+# 🏰 KeyFortress
 
-A military-grade, zero-network, ultra-secure Password Generator and Password Vault built for **Android 16 (API 36) and higher** written in **100% Kotlin** and **Jetpack Compose (Material 3)**.
+### *Military-Grade, Offline-First Password Vault & Generator*
 
----
-
-## Security & Privacy Architecture
-
-- **Strict Zero-Network Guarantee (Air-Gapped)**:
-  `AndroidManifest.xml` does **not** declare `android.permission.INTERNET` or any network capabilities. No telemetry, no ads, no cloud sync, zero socket creation.
-- **Hardware-Backed Encryption**:
-  Master encryption key is generated and safely stored in the hardware-backed **Android KeyStore** using **AES-256-GCM**.
-- **SQLCipher Encrypted Database**:
-  All passwords, accounts, metadata, notes, and tags are stored in a local SQLite database encrypted with **SQLCipher** and **Room**.
-- **Biometric & Master PIN Unlock**:
-  Full `BiometricPrompt` integration with fallback Master PIN protection, customizable auto-lock timer, and automatic locking when the app is backgrounded.
-- **Screen Protection (`FLAG_SECURE`)**:
-  Protects all screens against screenshots, screen recording, and masks the preview in the Android App Switcher/Recents task list.
-- **Concealed Clipboard (`EXTRA_IS_SENSITIVE`) & Auto-Purge**:
-  Marks copied passwords as sensitive (Android 13+ standard) to prevent keyboard clipboard logging, paired with a 30-second automated clipboard memory wipe.
-- **Encrypted Local Backup & Restore**:
-  Export and import encrypted backups using AES-256-GCM with PBKDF2-HMAC-SHA256 key derivation.
+KeyFortress is a zero-network, ultra-secure Password Manager built for **Android 15+ (API 35)**. It provides a "Sovereign" security model where the user has 100% ownership of their data with cryptographic proofs of integrity.
 
 ---
 
-## Features
+## 🛡️ Security Highlights
 
-1. **Password Generator**:
-   - Customizable character sets (Uppercase, Lowercase, Numbers, Symbols, Exclude Ambiguous).
-   - Password Length slider (8 to 64 characters).
-   - **Passphrase Mode**: Diceware-style memorable multi-word passphrases with custom separators and word count.
-   - **PIN Mode**: Numeric PIN generator (4 to 12 digits).
-   - Live **Entropy Score & Crack Time Estimate**.
-   - One-tap copy with toast timer and direct **Save to Vault** action.
-
-2. **Encrypted Vault**:
-   - Store title, username/email, password, website URL, category, notes, and favorite status.
-   - Instant offline search across titles, usernames, URLs, and notes.
-   - Category filtering (Personal, Work, Finance, Social, Streaming, Other).
-   - Conceal / Reveal password toggle with quick copy actions.
-
-3. **Security Health & Password Audit**:
-   - 100% offline vulnerability scan.
-   - Calculates overall Vault Security Score (0 - 100).
-   - Detects weak passwords (< 50 bits of entropy).
-   - Detects reused/duplicate passwords across accounts.
-   - Flags stale passwords not updated in 90+ days.
-
-4. **Settings & Customization**:
-   - Toggle Biometric Unlock (Fingerprint / Face).
-   - Configure Auto-Lock Timeout (Instant, 30s, 1m, 5m).
-   - Change Master PIN.
-   - Export & Import Encrypted Backups.
+- **🚫 Zero Network**: No `INTERNET` permission. Data never leaves your device.
+- **🔐 Double Encryption**: AES-256-GCM (KeyStore) + SQLCipher (Database).
+- **🧱 Blockchain Audit Log**: A hardware-signed ledger of every vault action to prevent file-level tampering.
+- **📡 Air-Gapped Sync**: Encrypted QR-based transfer between devices using PBKDF2 and AES-GCM.
+- **💎 Hardware-Backed**: Master keys are generated and stored in the device's TEE/HSM.
+- **🛡️ Screen Protection**: App-wide `FLAG_SECURE` prevents screenshots and screen recording.
+- **🛡️ PIN Hardening**: Salted PBKDF2 hashing for Master PIN (100,000 iterations).
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```
-PasswordGenerator/
-├── build.gradle.kts
-├── settings.gradle.kts
-├── gradle.properties
-├── gradle/
-│   ├── libs.versions.toml
-│   └── wrapper/
-│       └── gradle-wrapper.properties
-└── app/
-    ├── build.gradle.kts
-    ├── proguard-rules.pro
-    └── src/
-        └── main/
-            ├── AndroidManifest.xml
-            ├── java/com/keyfortress/app/
-            │   ├── KeyFortressApp.kt
-            │   ├── MainActivity.kt
-            │   ├── core/
-            │   │   ├── security/
-            │   │   │   ├── KeystoreManager.kt
-            │   │   │   ├── BiometricAuthManager.kt
-            │   │   │   └── ClipboardHelper.kt
-            │   │   ├── generator/
-            │   │   │   ├── PasswordGenerator.kt
-            │   │   │   ├── PassphraseGenerator.kt
-            │   │   │   ├── WordList.kt
-            │   │   │   └── PasswordStrengthEvaluator.kt
-            │   │   └── backup/
-            │   │       └── BackupManager.kt
-            │   ├── data/
-            │   │   ├── local/
-            │   │   │   ├── AppDatabase.kt
-            │   │   │   ├── PasswordDao.kt
-            │   │   │   └── PasswordEntity.kt
-            │   │   ├── repository/
-            │   │   │   └── PasswordRepository.kt
-            │   │   └── preferences/
-            │   │       └── UserPreferences.kt
-            │   └── ui/
-            │       ├── theme/
-            │       │   ├── Color.kt
-            │       │   ├── Theme.kt
-            │       │   └── Type.kt
-            │       ├── components/
-            │       │   ├── StrengthIndicator.kt
-            │       │   ├── CategoryChip.kt
-            │       │   └── CustomTextField.kt
-            │       ├── screens/
-            │       │   ├── auth/AuthScreen.kt
-            │       │   ├── generator/GeneratorScreen.kt
-            │       │   ├── vault/
-            │       │   │   ├── VaultScreen.kt
-            │       │   │   ├── AddEditPasswordDialog.kt
-            │       │   │   └── PasswordDetailDialog.kt
-            │       │   ├── health/SecurityAuditScreen.kt
-            │       │   └── settings/SettingsScreen.kt
-            │       ├── viewmodel/
-            │       │   ├── AuthViewModel.kt
-            │       │   ├── GeneratorViewModel.kt
-            │       │   ├── VaultViewModel.kt
-            │       │   └── SettingsViewModel.kt
-            │       └── MainNavigation.kt
-            └── res/
-                ├── values/
-                │   ├── strings.xml
-                │   ├── colors.xml
-                │   └── themes.xml
-                ├── drawable/
-                │   └── ic_launcher_foreground.xml
-                └── mipmap-anydpi-v26/
-                    ├── ic_launcher.xml
-                    └── ic_launcher_round.xml
+- **🎯 Intelligent Generator**: Passwords, Passphrases (Diceware), and PINs.
+- **🗳️ Encrypted Vault**: Full management of credentials, URLs, and secure notes.
+- **⏰ TOTP Authenticator**: Built-in 2FA (Google Authenticator style) with encrypted secrets.
+- **🔍 Security Audit**: Real-time scan for weak, reused, or expired credentials.
+- **🪄 Native Autofill**: Seamless credential entry in apps and websites.
+- **📑 Recovery Kit**: Generate a secure PDF "Emergency Kit" with automated cache purging.
+
+---
+
+## 🏗️ Architecture
+
+KeyFortress follows **Clean Architecture** principles with a focus on cryptographic integrity.
+
+```mermaid
+graph LR
+    subgraph UI ["Compose UI"]
+        A[Vault]
+        B[Generator]
+    end
+    subgraph Core ["Security Core"]
+        C[Keystore]
+        D[Blockchain]
+        E[QR Sync]
+    end
+    subgraph Storage ["Encrypted Storage"]
+        F[(SQLCipher)]
+        G[(DataStore)]
+    end
+
+    UI --> Core
+    Core --> Storage
+    
+    style Core fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style Storage fill:#fff3e0,stroke:#e65100,stroke-width:2px
 ```
 
+> [!NOTE]
+> **Architecture Flow Explanation**: This high-level flow shows how **User Interface** actions trigger the **Security Core** to process data before it reaches the **Encrypted Storage**. This ensures that sensitive information is always handled by hardware-backed cryptographic modules before being persisted.
+
+
 ---
 
-## How to Open and Run in Android Studio
+## 📚 Documentation
 
-1. Open **Android Studio**.
-2. Click **Open** and select the folder:
-   `/Users/ashwinsingh/Desktop/myAnotherwork/PasswordGenerator`
-3. Allow Gradle to sync the dependencies.
-4. Select an **Android 16 (API 36)** emulator or connected device.
-5. Click **Run (Shift + F10)**.
+Detailed documentation is available in the [`/docs`](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/) directory:
+
+- [🏗️ Architecture Overview](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/architecture.md)
+- [🛡️ Security Deep-Dive](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/security.md)
+- [✨ Feature Guide](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/features.md)
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Android Studio Ladybug (or newer)
+- Android 15+ Device/Emulator
+
+### Build & Run
+1. Clone the repository.
+2. Open in Android Studio.
+3. Sync Gradle.
+4. Run on your device.
+
+---
+
+## ⚖️ License
+KeyFortress is licensed under the MIT License. See [LICENSE](LICENSE) for details.

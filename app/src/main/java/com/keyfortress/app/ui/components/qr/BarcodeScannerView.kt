@@ -1,6 +1,6 @@
 package com.keyfortress.app.ui.components.qr
 
-import android.util.Log
+import com.keyfortress.app.core.util.KLog
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
@@ -58,7 +58,7 @@ fun BarcodeScannerView(
                                 }
                             }
                             .addOnFailureListener {
-                                Log.e("BarcodeScanner", "Scan failure", it)
+                                KLog.e("Scan failure", it)
                             }
                             .addOnCompleteListener {
                                 imageProxy.close()
@@ -77,7 +77,7 @@ fun BarcodeScannerView(
                         imageAnalysis
                     )
                 } catch (e: Exception) {
-                    Log.e("BarcodeScanner", "Binding failure", e)
+                    KLog.e("Binding failure", e)
                 }
             }, ContextCompat.getMainExecutor(ctx))
 

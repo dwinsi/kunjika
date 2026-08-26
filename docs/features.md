@@ -1,37 +1,55 @@
-# Feature Documentation
+# ✨ KeyFortress Features
 
-This document describes the primary features of KeyFortress and how they improve user security and experience.
+KeyFortress combines military-grade security with a modern, intuitive user interface.
 
-## 1. Smart Generator
-Supports three distinct modes with high-entropy defaults:
-*   **Passwords**: Alphanumeric with specialized symbol sets (`!@#$%^&*()_`). Enforces at least 3 character types for production safety.
-*   **Passphrases**: Word-based keys using offline dictionaries (higher memorability, high entropy).
-*   **PINs**: Numeric-only keys for device or secondary app codes.
+## 🚀 Key Modules
 
-### Generator State Flow
+### 1. Smart Password Engine
+- **Entropy Analysis**: Real-time bit-strength calculation and "Time-to-Crack" estimation.
+- **Memorable Passphrases**: Diceware-style generation using a local 10,000-word dictionary.
+- **Custom Character Sets**: Full control over symbols, ambiguity, and length.
+
+### 2. The Secure Vault
+- **Double Encryption**: Every entry is encrypted twice before hitting the disk.
+- **TOTP Authenticator**: Built-in 2FA support with hardware-protected secrets.
+- **Categorization**: Organize by Personal, Work, Finance, Social, etc.
+
+### 3. Air-Gapped Sync (Zero-Network)
+Transfer credentials between devices without Bluetooth, Wi-Fi, or Cloud.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Generating: User Taps "New"
-    Generating --> Validating: Config Check (Min 3 types)
-    Validating --> Success: Matches Security Rules
-    Validating --> Error: Too Few Types Selected
-    Success --> Encrypting: Auto-History Save
-    Encrypting --> Idle: Display Result
+sequenceDiagram
+    participant S as Sender Device
+    participant R as Receiver Device
+    S->>S: Encrypt Payload (AES-GCM)
+    Note over S: Derive Key from Random 6-Digit Code
+    S->>S: Generate QR Code
+    S->>S: Display QR + 6-Digit Code
+    R->>S: Scan QR Code
+    Note over R: Prompt User for 6-Digit Code
+    R->>R: Derive Key & Decrypt
+    Note over R: Save to Vault
 ```
 
-## 2. Encrypted Vault & Audit
-*   **Search**: Real-time searching through Title, Username, or Notes.
-*   **Security Health**: Automatically calculates entropy (bits) for every entry.
-*   **Rotation Reminders**: Users can set 30, 90, or 180-day rotation periods. The vault flags "Expired" items in the Security Audit tab.
+> [!NOTE]
+> **QR Sync Sequence Explanation**: This sequence diagram shows the air-gapped synchronization process. The **Sender** encrypts the payload using a key derived from a random 6-digit code. The **Receiver** scans the QR code and prompts the user for the same 6-digit code to derive the decryption key. This ensures that the sensitive data is never exposed in plaintext, even within the QR code itself.
 
-## 3. System Autofill
-The app integrates natively with Android's `AutofillService`.
-*   **Matches by Domain**: Securely matches `websiteUrl` or `title` against the calling app's package name or web domain.
-*   **Modern API Support**: Uses `Field.Builder` for Android 13+ (API 33) and falls back gracefully for older versions.
 
-## 4. Encrypted History
-*   Stores the last 50 generations.
-*   Data is encrypted with the hardware key.
-*   Accessible via a dedicated "History" tab in the Generator screen.
+### 4. Security Audit & Health
+- **Vulnerability Scanner**: Detects weak, reused, and old passwords.
+- **Blockchain Verification**: One-tap verification of the entire vault's cryptographic integrity.
+- **Audit Logs**: Review every change made to your vault in the signed ledger.
+
+### 5. System Integration
+- **Autofill Service**: Native Android Autofill support for Apps and Chrome.
+- **Biometric Unlock**: Fingerprint, Face, and Iris support via Android Biometric Library.
+- **FLAG_SECURE**: Protection against screenshots and screen recording app-wide.
+
+## 📋 Feature Roadmap
+- [x] TOTP Support
+- [x] Local Blockchain Audit
+- [x] Encrypted QR Sync
+- [x] PBKDF2 PIN Hashing
+- [ ] Multi-Vault Support
+- [ ] Secure Notes Attachment
+- [ ] Browser Extension (Companion)
