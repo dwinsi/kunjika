@@ -8,7 +8,7 @@ We are proud to introduce **KeyFortress**, a zero-network password manager that 
 - **100% Offline**: No internet permission requested. Your data never leaves your device.
 - **Double Encryption**: Every entry is encrypted twice using SQLCipher and hardware-backed AES-256-GCM (Android KeyStore).
 - **Blockchain Audit Log**: A cryptographically signed ledger tracks all changes to your vault, preventing unauthorized database tampering.
-- **PBKDF2 PIN Hashing**: Your Master PIN is protected by 100,000 iterations of PBKDF2 with a unique per-device salt.
+- **PBKDF2 P[_config.yml](_config.yml)IN Hashing**: Your Master PIN is protected by 100,000 iterations of PBKDF2 with a unique per-device salt.
 - **Biometric Binding**: Authentication is hardware-verified and cryptographically bound to your encryption keys.
 
 ### ✨ Key Features

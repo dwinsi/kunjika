@@ -112,7 +112,10 @@ fun VaultScreen(vaultViewModel: VaultViewModel) {
                     contentColor = MaterialTheme.colorScheme.onSecondary,
                     shape = CircleShape,
                 ) {
-                    Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan to Import")
+                    Icon(
+                        imageVector = Icons.Default.QrCodeScanner,
+                        contentDescription = "Scan QR code to import password"
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -123,7 +126,10 @@ fun VaultScreen(vaultViewModel: VaultViewModel) {
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = CircleShape,
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Password")
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add new password to vault"
+                    )
                 }
             }
         },

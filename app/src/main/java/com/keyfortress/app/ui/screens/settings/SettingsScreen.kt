@@ -59,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -492,13 +493,103 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        // Hardware & Architecture info
+        // Security Architecture Info
         SettingsSection(title = "Security Architecture") {
-            Text(text = "• Target Platform: Android 16+ (API 36)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = "• Vault Encryption: SQLCipher + Android KeyStore (AES-GCM)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = "• Screen Security: FLAG_SECURE active (Screenshots blocked)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = "• Clipboard: Android 13+ EXTRA_IS_SENSITIVE with 30s auto-purge", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = "• Internet Permission: None (Zero network socket access)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            SecurityInfoRow(
+                label = "KeyStore Storage",
+                value = if (securityStatus.isHardwareBacked) "Hardware (TEE/HSM)" else "Software Bound",
+                isGood = securityStatus.isHardwareBacked
+            )
+            SecurityInfoRow(
+                label = "Device Integrity",
+                value = if (securityStatus.isRooted) "Compromised (Rooted)" else "Official / Secure",
+                isGood = !securityStatus.isRooted
+            )
+            SecurityInfoRow(
+                label = "Execution Environment",
+                value = if (securityStatus.isEmulator) "Virtual (Emulator)" else "Physical Device",
+                isGood = !securityStatus.isEmulator
+            )
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            Text(text = "• Vault Encryption: SQLCipher + AES-GCM", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            Text(text = "• Screen Security: FLAG_SECURE Active", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            Text(text = "• Internet Permission: None", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // About Section
+        SettingsSection(title = "About KeyFortress") {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text("KeyFortress", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text("Version 1.0.0", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "KeyFortress is a zero-network, hardware-hardened password manager designed for users who demand absolute privacy.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text("Developed by", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text("Ashwin Singh", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("License", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text("MIT License", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ashwinsingh.github.io/KeyFortress/PRIVACY_POLICY.html"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Privacy Policy", fontSize = 12.sp)
+                }
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ashwinsingh.github.io/KeyFortress/docs/"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Documentation", fontSize = 12.sp)
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(80.dp))
@@ -691,6 +782,29 @@ fun SettingsScreen(
             dismissButton = {
                 TextButton(onClick = { showImportDialog = false }) { Text("Cancel") }
             }
+        )
+    }
+}
+
+@Composable
+private fun SecurityInfoRow(
+    label: String,
+    value: String,
+    isGood: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isGood) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            fontWeight = FontWeight.Bold
         )
     }
 }

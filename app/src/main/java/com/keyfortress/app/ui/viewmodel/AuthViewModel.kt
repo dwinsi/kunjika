@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 sealed class AuthState {
     object Loading : AuthState()
+    object Onboarding : AuthState()
     object SetupRequired : AuthState()
     object Locked : AuthState()
     object Authenticated : AuthState()
@@ -37,14 +38,26 @@ class AuthViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     private fun checkInitialStatus() {
         viewModelScope.launch {
-            val isPinSet = userPreferences.isMasterPinSet.first()
+            val isFirstLaunch = userPreferences.isFirstLaunch.first()
             _isBiometricEnabled.value = userPreferences.isBiometricEnabled.first()
 
-            if (!isPinSet) {
-                _authState.value = AuthState.SetupRequired
+            if (isFirstLaunch) {
+                _authState.value = AuthState.Onboarding
             } else {
-                _authState.value = AuthState.Locked
+                val isPinSet = userPreferences.isMasterPinSet.first()
+                if (!isPinSet) {
+                    _authState.value = AuthState.SetupRequired
+                } else {
+                    _authState.value = AuthState.Locked
+                }
             }
+        }
+    }
+
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            userPreferences.setFirstLaunchCompleted()
+            _authState.value = AuthState.SetupRequired
         }
     }
 

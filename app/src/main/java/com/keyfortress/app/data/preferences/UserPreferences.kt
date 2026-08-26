@@ -31,6 +31,7 @@ class UserPreferences(private val context: Context) {
         private val KEY_LOCK_ON_EXIT = booleanPreferencesKey("lock_on_exit")
         private val KEY_LAST_BACKGROUND_TIME = stringPreferencesKey("last_background_time")
         private val KEY_PIN_HINT = stringPreferencesKey("pin_hint")
+        private val KEY_IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
 
         private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
         private const val ITERATIONS = 100000
@@ -63,6 +64,10 @@ class UserPreferences(private val context: Context) {
 
     val pinHint: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[KEY_PIN_HINT] ?: ""
+    }
+
+    val isFirstLaunch: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_IS_FIRST_LAUNCH] ?: true
     }
 
     suspend fun setMasterPin(pin: String) {
@@ -140,6 +145,12 @@ class UserPreferences(private val context: Context) {
     suspend fun setPinHint(hint: String) {
         context.dataStore.edit { preferences ->
             preferences[KEY_PIN_HINT] = hint
+        }
+    }
+
+    suspend fun setFirstLaunchCompleted() {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_IS_FIRST_LAUNCH] = false
         }
     }
 

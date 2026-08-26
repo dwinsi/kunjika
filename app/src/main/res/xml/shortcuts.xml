@@ -4,8 +4,8 @@
         android:shortcutId="generate_password"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_foreground"
-        android:shortcutShortLabel="New Password"
-        android:shortcutLongLabel="Generate a new password">
+        android:shortcutShortLabel="@string/shortcut_new_password_short"
+        android:shortcutLongLabel="@string/shortcut_new_password_long">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.keyfortress.app"
@@ -17,8 +17,8 @@
         android:shortcutId="open_vault"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_foreground"
-        android:shortcutShortLabel="Vault"
-        android:shortcutLongLabel="Open your password vault">
+        android:shortcutShortLabel="@string/shortcut_vault_short"
+        android:shortcutLongLabel="@string/shortcut_vault_long">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.keyfortress.app"

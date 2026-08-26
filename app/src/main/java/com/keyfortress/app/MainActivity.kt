@@ -17,6 +17,7 @@ import com.keyfortress.app.data.preferences.UserPreferences
 import com.keyfortress.app.data.repository.HistoryRepository
 import com.keyfortress.app.data.repository.PasswordRepository
 import com.keyfortress.app.ui.MainNavigation
+import com.keyfortress.app.ui.NavigationTab
 import com.keyfortress.app.ui.theme.KeyFortressTheme
 import com.keyfortress.app.ui.viewmodel.AuthViewModel
 import com.keyfortress.app.ui.viewmodel.GeneratorViewModel
@@ -45,6 +46,12 @@ class MainActivity : FragmentActivity() {
         val repository = PasswordRepository(database.passwordDao(), database.blockDao())
         val historyRepository = HistoryRepository(database.historyDao())
         val userPreferences = UserPreferences(applicationContext)
+
+        val initialTab = when (intent?.data?.host) {
+            "generator" -> NavigationTab.GENERATOR
+            "vault" -> NavigationTab.VAULT
+            else -> NavigationTab.GENERATOR
+        }
 
         authViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -97,7 +104,8 @@ class MainActivity : FragmentActivity() {
                     authViewModel = authViewModel,
                     generatorViewModel = generatorViewModel,
                     vaultViewModel = vaultViewModel,
-                    settingsViewModel = settingsViewModel
+                    settingsViewModel = settingsViewModel,
+                    initialTab = initialTab
                 )
             }
         }

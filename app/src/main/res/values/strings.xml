@@ -54,4 +54,20 @@
     <string name="export_backup">Export Encrypted Backup</string>
     <string name="import_backup">Import Encrypted Backup</string>
     <string name="offline_guarantee">100% Offline &amp; Air-Gapped. No network permissions.</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcut_new_password_short">New Password</string>
+    <string name="shortcut_new_password_long">Generate a new password</string>
+    <string name="shortcut_vault_short">Vault</string>
+    <string name="shortcut_vault_long">Open your password vault</string>
+
+    <!-- About Section -->
+    <string name="about_title">About KeyFortress</string>
+    <string name="developed_by">Developed by</string>
+    <string name="developer_name">Ashwin Singh</string>
+    <string name="version_label">Version</string>
+    <string name="license_label">License</string>
+    <string name="license_type">MIT License</string>
+    <string name="privacy_policy_label">Privacy Policy</string>
+    <string name="documentation_label">Documentation</string>
 </resources>

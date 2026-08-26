@@ -23,7 +23,8 @@ import java.io.File
 
 data class SecurityStatus(
     val isRooted: Boolean = false,
-    val isEmulator: Boolean = false
+    val isEmulator: Boolean = false,
+    val isHardwareBacked: Boolean = true
 )
 
 class SettingsViewModel(
@@ -52,7 +53,8 @@ class SettingsViewModel(
     val securityStatus = MutableStateFlow(
         SecurityStatus(
             isRooted = SecurityManager.isDeviceRooted(),
-            isEmulator = SecurityManager.isRunningOnEmulator()
+            isEmulator = SecurityManager.isRunningOnEmulator(),
+            isHardwareBacked = SecurityManager.isKeyHardwareBacked("KeyFortressMasterSecretKey")
         )
     ).asStateFlow()
 

@@ -1,7 +1,11 @@
 package com.keyfortress.app.core.security
 
 import android.os.Build
+import android.security.keystore.KeyInfo
 import java.io.File
+import java.security.KeyStore
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
 
 object SecurityManager {
 
@@ -74,5 +78,21 @@ object SecurityManager {
                 || Build.PRODUCT.contains("vbox86p")
                 || Build.PRODUCT.contains("emulator")
                 || Build.PRODUCT.contains("simulator")
+    }
+
+    /**
+     * Checks if a key in the Android KeyStore is hardware-backed (TEE/HSM).
+     */
+    fun isKeyHardwareBacked(alias: String): Boolean {
+        return try {
+            val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            val entry = keyStore.getEntry(alias, null) as? KeyStore.SecretKeyEntry
+            val key = entry?.secretKey ?: return false
+            val factory = SecretKeyFactory.getInstance(key.algorithm, "AndroidKeyStore")
+            val keyInfo = factory.getKeySpec(key, KeyInfo::class.java) as KeyInfo
+            keyInfo.isInsideSecureHardware
+        } catch (e: Exception) {
+            false
+        }
     }
 }

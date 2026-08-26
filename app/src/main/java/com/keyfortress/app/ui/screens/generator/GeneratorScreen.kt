@@ -197,7 +197,11 @@ fun GeneratorScreen(
                             shape = RoundedCornerShape(12.dp),
                             enabled = actionsEnabled
                         ) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Regenerate", modifier = Modifier.size(18.dp))
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Generate new random password",
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("New")
                         }
@@ -218,7 +222,11 @@ fun GeneratorScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
                         ) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(18.dp))
+                            Icon(
+                                imageVector = Icons.Default.ContentCopy,
+                                contentDescription = "Copy password to clipboard",
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Copy")
                         }
@@ -230,7 +238,11 @@ fun GeneratorScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
                         ) {
-                            Icon(Icons.Default.BookmarkBorder, contentDescription = "Save", modifier = Modifier.size(18.dp))
+                            Icon(
+                                imageVector = Icons.Default.BookmarkBorder,
+                                contentDescription = "Save generated password to vault",
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Save")
                         }

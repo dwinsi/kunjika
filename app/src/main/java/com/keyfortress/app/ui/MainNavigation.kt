@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.keyfortress.app.ui.screens.auth.AuthScreen
+import com.keyfortress.app.ui.screens.onboarding.OnboardingScreen
 import com.keyfortress.app.ui.screens.generator.GeneratorScreen
 import com.keyfortress.app.ui.screens.health.AuditLogScreen
 import com.keyfortress.app.ui.screens.health.SecurityAuditScreen
@@ -47,67 +48,77 @@ fun MainNavigation(
     authViewModel: AuthViewModel,
     generatorViewModel: GeneratorViewModel,
     vaultViewModel: VaultViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    initialTab: NavigationTab = NavigationTab.GENERATOR
 ) {
     val authState by authViewModel.authState.collectAsState()
-    var selectedTab by remember { mutableStateOf(NavigationTab.GENERATOR) }
+    var selectedTab by remember(initialTab) { mutableStateOf(initialTab) }
     var showAuditLog by remember { mutableStateOf(false) }
 
-    if (authState != AuthState.Authenticated) {
-        AuthScreen(authViewModel = authViewModel)
-    } else {
-        Scaffold(
-            bottomBar = {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.primary
-                ) {
-                    NavigationTab.values().forEach { tab ->
-                        NavigationBarItem(
-                            selected = selectedTab == tab,
-                            onClick = { selectedTab = tab },
-                            icon = { Icon(tab.icon, contentDescription = tab.title) },
-                            label = { Text(tab.title) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        )
-                    }
-                }
-            }
-        ) { paddingValues ->
-            AnimatedContent(
-                targetState = selectedTab,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                label = "tab_transition"
-            ) { targetTab ->
-                when (targetTab) {
-                    NavigationTab.GENERATOR -> GeneratorScreen(
-                        generatorViewModel = generatorViewModel,
-                        vaultViewModel = vaultViewModel
-                    )
-                    NavigationTab.VAULT -> VaultScreen(vaultViewModel = vaultViewModel)
-                    NavigationTab.AUDIT -> {
-                        if (showAuditLog) {
-                            AuditLogScreen(
-                                vaultViewModel = vaultViewModel,
-                                onBack = { showAuditLog = false }
-                            )
-                        } else {
-                            SecurityAuditScreen(
-                                vaultViewModel = vaultViewModel,
-                                onViewAuditLog = { showAuditLog = true }
+    when (authState) {
+        AuthState.Loading -> {
+            // Optional: Loading screen
+        }
+        AuthState.Onboarding -> {
+            OnboardingScreen(onFinished = { authViewModel.completeOnboarding() })
+        }
+        AuthState.SetupRequired, AuthState.Locked -> {
+            AuthScreen(authViewModel = authViewModel)
+        }
+        AuthState.Authenticated -> {
+            Scaffold(
+                bottomBar = {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        NavigationTab.entries.forEach { tab ->
+                            NavigationBarItem(
+                                selected = selectedTab == tab,
+                                onClick = { selectedTab = tab },
+                                icon = { Icon(tab.icon, contentDescription = tab.title) },
+                                label = { Text(tab.title) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                    indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
                             )
                         }
                     }
-                    NavigationTab.SETTINGS -> SettingsScreen(
-                        settingsViewModel = settingsViewModel,
-                        authViewModel = authViewModel
-                    )
+                }
+            ) { paddingValues ->
+                AnimatedContent(
+                    targetState = selectedTab,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    label = "tab_transition"
+                ) { targetTab ->
+                    when (targetTab) {
+                        NavigationTab.GENERATOR -> GeneratorScreen(
+                            generatorViewModel = generatorViewModel,
+                            vaultViewModel = vaultViewModel
+                        )
+                        NavigationTab.VAULT -> VaultScreen(vaultViewModel = vaultViewModel)
+                        NavigationTab.AUDIT -> {
+                            if (showAuditLog) {
+                                AuditLogScreen(
+                                    vaultViewModel = vaultViewModel,
+                                    onBack = { showAuditLog = false }
+                                )
+                            } else {
+                                SecurityAuditScreen(
+                                    vaultViewModel = vaultViewModel,
+                                    onViewAuditLog = { showAuditLog = true }
+                                )
+                            }
+                        }
+                        NavigationTab.SETTINGS -> SettingsScreen(
+                            settingsViewModel = settingsViewModel,
+                            authViewModel = authViewModel
+                        )
+                    }
                 }
             }
         }

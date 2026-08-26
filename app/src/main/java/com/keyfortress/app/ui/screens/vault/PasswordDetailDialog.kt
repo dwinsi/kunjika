@@ -140,7 +140,7 @@ fun PasswordDetailDialog(
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
+                            contentDescription = if (item.isFavorite) "Remove from favorites" else "Add to favorites",
                             tint = if (item.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -148,7 +148,7 @@ fun PasswordDetailDialog(
                     IconButton(onClick = { showQrDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.QrCode2,
-                            contentDescription = "Share via QR",
+                            contentDescription = "Show encrypted QR code for air-gapped sync",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
