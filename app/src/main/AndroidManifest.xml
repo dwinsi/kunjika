@@ -11,7 +11,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
-        android:name=".KeyFortressApp"
+        android:name=".KunjikaApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -43,7 +43,7 @@
 
         <!-- Android Autofill Service -->
         <service
-            android:name=".service.KeyFortressAutofillService"
+            android:name=".service.KunjikaAutofillService"
             android:label="Kunjika Autofill"
             android:permission="android.permission.BIND_AUTOFILL_SERVICE"
             android:exported="true">

@@ -10,7 +10,7 @@
 -keep class androidx.biometric.** { *; }
 -keep class androidx.security.crypto.** { *; }
 
-# KeyFortress Security Hardening
+# Kunjika Security Hardening
 # Obfuscate all core security managers but keep the names of classes used in XML or DI if necessary.
 # Since we use manual DI and no reflection-based XML bindings for these, we can obfuscate them.
 -keepclassmembers class com.keyfortress.app.core.security.** { *; }

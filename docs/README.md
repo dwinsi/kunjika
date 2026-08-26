@@ -1,6 +1,6 @@
-# 📚 KeyFortress Documentation Index
+# 📚 Kunjika Documentation Index
 
-Welcome to the technical documentation for **KeyFortress**. This guide provides a deep dive into the security architecture and features of the application.
+Welcome to the technical documentation for **Kunjika**. This guide provides a deep dive into the security architecture and features of the application.
 
 ## 📖 Table of Contents
 
@@ -22,4 +22,4 @@ All diagrams in this documentation are written in **Mermaid.js** format.
 ---
 
 ## 🔒 Security Promise
-KeyFortress is designed to be **100% offline**. We guarantee that no sensitive data ever leaves your device's secure hardware.
+Kunjika is designed to be **100% offline**. We guarantee that no sensitive data ever leaves your device's secure hardware.

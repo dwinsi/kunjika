@@ -20,7 +20,7 @@ import com.keyfortress.app.data.local.AppDatabase
 import com.keyfortress.app.data.repository.PasswordRepository
 import kotlinx.coroutines.runBlocking
 
-class KeyFortressAutofillService : AutofillService() {
+class KunjikaAutofillService : AutofillService() {
 
     override fun onFillRequest(
         request: FillRequest,

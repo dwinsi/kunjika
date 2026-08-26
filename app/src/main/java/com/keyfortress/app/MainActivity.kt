@@ -18,7 +18,7 @@ import com.keyfortress.app.data.repository.HistoryRepository
 import com.keyfortress.app.data.repository.PasswordRepository
 import com.keyfortress.app.ui.MainNavigation
 import com.keyfortress.app.ui.NavigationTab
-import com.keyfortress.app.ui.theme.KeyFortressTheme
+import com.keyfortress.app.ui.theme.KunjikaTheme
 import com.keyfortress.app.ui.viewmodel.AuthViewModel
 import com.keyfortress.app.ui.viewmodel.GeneratorViewModel
 import com.keyfortress.app.ui.viewmodel.SettingsViewModel
@@ -96,7 +96,7 @@ class MainActivity : FragmentActivity() {
             val useDynamicColor by settingsViewModel.useDynamicColor.collectAsState()
             val useDarkTheme by settingsViewModel.useDarkTheme.collectAsState()
 
-            KeyFortressTheme(
+            KunjikaTheme(
                 darkTheme = useDarkTheme,
                 dynamicColor = useDynamicColor
             ) {

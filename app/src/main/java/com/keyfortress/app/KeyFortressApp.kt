@@ -3,7 +3,7 @@ package com.keyfortress.app
 import android.app.Application
 import android.os.StrictMode
 
-class KeyFortressApp : Application() {
+class KunjikaApp : Application() {
     override fun onCreate() {
         super.onCreate()
         
