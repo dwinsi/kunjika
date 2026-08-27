@@ -1,4 +1,4 @@
-package com.keyfortress.app
+package com.kunjika.app
 
 import android.app.Application
 import android.os.StrictMode

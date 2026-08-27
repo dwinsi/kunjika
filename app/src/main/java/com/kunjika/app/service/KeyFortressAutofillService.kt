@@ -1,4 +1,4 @@
-package com.keyfortress.app.service
+package com.kunjika.app.service
 
 import android.app.assist.AssistStructure
 import android.os.Build
@@ -15,9 +15,9 @@ import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillId
 import android.view.autofill.AutofillValue
 import android.widget.RemoteViews
-import com.keyfortress.app.R
-import com.keyfortress.app.data.local.AppDatabase
-import com.keyfortress.app.data.repository.PasswordRepository
+import com.kunjika.app.R
+import com.kunjika.app.data.local.AppDatabase
+import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.runBlocking
 
 class KunjikaAutofillService : AutofillService() {

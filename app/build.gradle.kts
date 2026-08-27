@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.keyfortress.app"
+    namespace = "com.kunjika.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.keyfortress.app"
+        applicationId = "com.kunjika.app"
         minSdk = 26
         targetSdk = 36
         versionCode = libs.versions.appVersionCode.get().toInt()

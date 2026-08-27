@@ -1,11 +1,11 @@
-package com.keyfortress.app.data.repository
+package com.kunjika.app.data.repository
 
-import com.keyfortress.app.core.blockchain.BlockchainManager
-import com.keyfortress.app.core.security.KeystoreManager
-import com.keyfortress.app.data.local.PasswordDao
-import com.keyfortress.app.data.local.PasswordEntity
-import com.keyfortress.app.data.local.blockchain.BlockDao
-import com.keyfortress.app.data.local.blockchain.BlockEntity
+import com.kunjika.app.core.blockchain.BlockchainManager
+import com.kunjika.app.core.security.KeystoreManager
+import com.kunjika.app.data.local.PasswordDao
+import com.kunjika.app.data.local.PasswordEntity
+import com.kunjika.app.data.local.blockchain.BlockDao
+import com.kunjika.app.data.local.blockchain.BlockEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
