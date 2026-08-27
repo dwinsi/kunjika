@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui
+package com.kunjika.app.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,18 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.keyfortress.app.ui.screens.auth.AuthScreen
-import com.keyfortress.app.ui.screens.onboarding.OnboardingScreen
-import com.keyfortress.app.ui.screens.generator.GeneratorScreen
-import com.keyfortress.app.ui.screens.health.AuditLogScreen
-import com.keyfortress.app.ui.screens.health.SecurityAuditScreen
-import com.keyfortress.app.ui.screens.settings.SettingsScreen
-import com.keyfortress.app.ui.screens.vault.VaultScreen
-import com.keyfortress.app.ui.viewmodel.AuthState
-import com.keyfortress.app.ui.viewmodel.AuthViewModel
-import com.keyfortress.app.ui.viewmodel.GeneratorViewModel
-import com.keyfortress.app.ui.viewmodel.SettingsViewModel
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.ui.screens.auth.AuthScreen
+import com.kunjika.app.ui.screens.onboarding.OnboardingScreen
+import com.kunjika.app.ui.screens.generator.GeneratorScreen
+import com.kunjika.app.ui.screens.health.AuditLogScreen
+import com.kunjika.app.ui.screens.health.SecurityAuditScreen
+import com.kunjika.app.ui.screens.settings.SettingsScreen
+import com.kunjika.app.ui.screens.vault.VaultScreen
+import com.kunjika.app.ui.viewmodel.AuthState
+import com.kunjika.app.ui.viewmodel.AuthViewModel
+import com.kunjika.app.ui.viewmodel.GeneratorViewModel
+import com.kunjika.app.ui.viewmodel.SettingsViewModel
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 enum class NavigationTab(val title: String, val icon: ImageVector) {
     GENERATOR("Generator", Icons.Default.Autorenew),

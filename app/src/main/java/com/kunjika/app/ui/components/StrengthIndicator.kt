@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.components
+package com.kunjika.app.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -24,13 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.core.generator.PasswordStrength
-import com.keyfortress.app.core.generator.StrengthResult
-import com.keyfortress.app.ui.theme.StrengthFair
-import com.keyfortress.app.ui.theme.StrengthStrong
-import com.keyfortress.app.ui.theme.StrengthVeryStrong
-import com.keyfortress.app.ui.theme.StrengthVeryWeak
-import com.keyfortress.app.ui.theme.StrengthWeak
+import com.kunjika.app.core.generator.PasswordStrength
+import com.kunjika.app.core.generator.StrengthResult
+import com.kunjika.app.ui.theme.StrengthFair
+import com.kunjika.app.ui.theme.StrengthStrong
+import com.kunjika.app.ui.theme.StrengthVeryStrong
+import com.kunjika.app.ui.theme.StrengthVeryWeak
+import com.kunjika.app.ui.theme.StrengthWeak
 
 @Composable
 fun StrengthIndicator(

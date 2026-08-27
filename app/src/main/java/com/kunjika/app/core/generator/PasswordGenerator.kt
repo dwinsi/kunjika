@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.generator
+package com.kunjika.app.core.generator
 
 import java.security.SecureRandom
 

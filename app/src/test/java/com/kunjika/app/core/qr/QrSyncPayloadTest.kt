@@ -1,6 +1,6 @@
-package com.keyfortress.app.core.qr
+package com.kunjika.app.core.qr
 
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.data.repository.DecryptedPasswordItem
 import org.junit.Assert.*
 import org.junit.Test
 

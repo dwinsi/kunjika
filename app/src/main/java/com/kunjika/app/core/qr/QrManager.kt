@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.qr
+package com.kunjika.app.core.qr
 
 import android.graphics.Bitmap
 import android.graphics.Color

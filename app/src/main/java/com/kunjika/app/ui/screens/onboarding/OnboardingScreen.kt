@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.onboarding
+package com.kunjika.app.ui.screens.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

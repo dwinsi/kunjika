@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.vault
+package com.kunjika.app.ui.screens.vault
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -61,20 +61,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
-import com.keyfortress.app.core.qr.QrSyncPayload
-import com.keyfortress.app.core.security.ClipboardHelper
-import com.keyfortress.app.core.totp.TotpManager
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
-import com.keyfortress.app.ui.components.CategoryChip
-import com.keyfortress.app.ui.components.CustomTextField
-import com.keyfortress.app.ui.components.qr.BarcodeScannerView
-import com.keyfortress.app.ui.theme.StrengthFair
-import com.keyfortress.app.ui.theme.StrengthStrong
-import com.keyfortress.app.ui.theme.StrengthVeryStrong
-import com.keyfortress.app.ui.theme.StrengthVeryWeak
-import com.keyfortress.app.ui.theme.StrengthWeak
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.core.qr.QrSyncPayload
+import com.kunjika.app.core.security.ClipboardHelper
+import com.kunjika.app.core.totp.TotpManager
+import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.components.CategoryChip
+import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.components.qr.BarcodeScannerView
+import com.kunjika.app.ui.theme.StrengthFair
+import com.kunjika.app.ui.theme.StrengthStrong
+import com.kunjika.app.ui.theme.StrengthVeryStrong
+import com.kunjika.app.ui.theme.StrengthVeryWeak
+import com.kunjika.app.ui.theme.StrengthWeak
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 @Composable
 fun VaultScreen(vaultViewModel: VaultViewModel) {
@@ -389,11 +389,11 @@ private fun PasswordCardItem(
     }
 
     val strengthColor = when (strength.score) {
-        com.keyfortress.app.core.generator.PasswordStrength.VERY_WEAK -> StrengthVeryWeak
-        com.keyfortress.app.core.generator.PasswordStrength.WEAK -> StrengthWeak
-        com.keyfortress.app.core.generator.PasswordStrength.FAIR -> StrengthFair
-        com.keyfortress.app.core.generator.PasswordStrength.STRONG -> StrengthStrong
-        com.keyfortress.app.core.generator.PasswordStrength.VERY_STRONG -> StrengthVeryStrong
+        com.kunjika.app.core.generator.PasswordStrength.VERY_WEAK -> StrengthVeryWeak
+        com.kunjika.app.core.generator.PasswordStrength.WEAK -> StrengthWeak
+        com.kunjika.app.core.generator.PasswordStrength.FAIR -> StrengthFair
+        com.kunjika.app.core.generator.PasswordStrength.STRONG -> StrengthStrong
+        com.kunjika.app.core.generator.PasswordStrength.VERY_STRONG -> StrengthVeryStrong
     }
 
     Card(

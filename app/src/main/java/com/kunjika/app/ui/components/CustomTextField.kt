@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.components
+package com.kunjika.app.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

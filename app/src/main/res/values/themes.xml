@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.KeyFortress" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.Kunjika" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">#0B0F17</item>
         <item name="android:navigationBarColor">#0B0F17</item>
         <item name="android:windowBackground">#0B0F17</item>
@@ -9,6 +9,6 @@
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#0B0F17</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="postSplashScreenTheme">@style/Theme.KeyFortress</item>
+        <item name="postSplashScreenTheme">@style/Theme.Kunjika</item>
     </style>
 </resources>

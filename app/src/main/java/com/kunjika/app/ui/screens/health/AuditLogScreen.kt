@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.health
+package com.kunjika.app.ui.screens.health
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.data.local.blockchain.BlockEntity
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.data.local.blockchain.BlockEntity
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 

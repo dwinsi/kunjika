@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.theme
+package com.kunjika.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,15 +1,15 @@
-package com.keyfortress.app.ui.viewmodel
+package com.kunjika.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.keyfortress.app.core.generator.PassphraseConfig
-import com.keyfortress.app.core.generator.PassphraseGenerator
-import com.keyfortress.app.core.generator.PasswordGenerator
-import com.keyfortress.app.core.generator.PasswordGeneratorConfig
-import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
-import com.keyfortress.app.core.generator.StrengthResult
-import com.keyfortress.app.data.repository.DecryptedHistoryItem
-import com.keyfortress.app.data.repository.HistoryRepository
+import com.kunjika.app.core.generator.PassphraseConfig
+import com.kunjika.app.core.generator.PassphraseGenerator
+import com.kunjika.app.core.generator.PasswordGenerator
+import com.kunjika.app.core.generator.PasswordGeneratorConfig
+import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.core.generator.StrengthResult
+import com.kunjika.app.data.repository.DecryptedHistoryItem
+import com.kunjika.app.data.repository.HistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

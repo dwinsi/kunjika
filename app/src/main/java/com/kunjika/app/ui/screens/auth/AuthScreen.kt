@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.auth
+package com.kunjika.app.ui.screens.auth
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -49,10 +49,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
-import com.keyfortress.app.core.security.BiometricAuthManager
-import com.keyfortress.app.ui.components.CustomTextField
-import com.keyfortress.app.ui.viewmodel.AuthState
-import com.keyfortress.app.ui.viewmodel.AuthViewModel
+import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.viewmodel.AuthState
+import com.kunjika.app.ui.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(authViewModel: AuthViewModel) {

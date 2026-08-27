@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.settings
+package com.kunjika.app.ui.screens.settings
 
 import android.content.Context
 import android.content.Intent
@@ -66,10 +66,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.core.security.ClipboardHelper
-import com.keyfortress.app.ui.components.CustomTextField
-import com.keyfortress.app.ui.viewmodel.AuthViewModel
-import com.keyfortress.app.ui.viewmodel.SettingsViewModel
+import com.kunjika.app.core.security.ClipboardHelper
+import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.viewmodel.AuthViewModel
+import com.kunjika.app.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(

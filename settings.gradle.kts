@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "KeyFortress"
+rootProject.name = "kunjika"
 include(":app")

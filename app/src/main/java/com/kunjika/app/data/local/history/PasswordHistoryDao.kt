@@ -1,4 +1,4 @@
-package com.keyfortress.app.data.local.history
+package com.kunjika.app.data.local.history
 
 import androidx.room.Dao
 import androidx.room.Insert

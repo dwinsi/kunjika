@@ -1,4 +1,4 @@
-package com.keyfortress.app.data.local.blockchain
+package com.kunjika.app.data.local.blockchain
 
 import androidx.room.Dao
 import androidx.room.Insert

@@ -1,14 +1,14 @@
-package com.keyfortress.app.ui.viewmodel
+package com.kunjika.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.keyfortress.app.core.generator.PasswordStrength
-import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
-import com.keyfortress.app.core.qr.QrEncryptionManager
-import com.keyfortress.app.core.qr.QrSyncPayload
-import com.keyfortress.app.data.local.blockchain.BlockEntity
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
-import com.keyfortress.app.data.repository.PasswordRepository
+import com.kunjika.app.core.generator.PasswordStrength
+import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.core.qr.QrEncryptionManager
+import com.kunjika.app.core.qr.QrSyncPayload
+import com.kunjika.app.data.local.blockchain.BlockEntity
+import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

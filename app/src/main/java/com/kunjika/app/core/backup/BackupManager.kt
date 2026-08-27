@@ -1,7 +1,7 @@
-package com.keyfortress.app.core.backup
+package com.kunjika.app.core.backup
 
 import android.util.Base64
-import com.keyfortress.app.data.local.PasswordEntity
+import com.kunjika.app.data.local.PasswordEntity
 import org.json.JSONArray
 import org.json.JSONObject
 import java.security.SecureRandom

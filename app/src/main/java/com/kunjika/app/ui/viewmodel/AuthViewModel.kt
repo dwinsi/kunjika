@@ -1,10 +1,10 @@
-package com.keyfortress.app.ui.viewmodel
+package com.kunjika.app.ui.viewmodel
 
 import androidx.biometric.BiometricPrompt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.keyfortress.app.core.security.BiometricKeyManager
-import com.keyfortress.app.data.preferences.UserPreferences
+import com.kunjika.app.core.security.BiometricKeyManager
+import com.kunjika.app.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

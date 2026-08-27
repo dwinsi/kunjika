@@ -1,14 +1,14 @@
-package com.keyfortress.app.ui.viewmodel
+package com.kunjika.app.ui.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.keyfortress.app.core.backup.BackupManager
-import com.keyfortress.app.core.pdf.RecoveryPdfManager
-import com.keyfortress.app.core.security.SecurityManager
-import com.keyfortress.app.data.preferences.UserPreferences
-import com.keyfortress.app.data.repository.PasswordRepository
+import com.kunjika.app.core.backup.BackupManager
+import com.kunjika.app.core.pdf.RecoveryPdfManager
+import com.kunjika.app.core.security.SecurityManager
+import com.kunjika.app.data.preferences.UserPreferences
+import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -54,7 +54,7 @@ class SettingsViewModel(
         SecurityStatus(
             isRooted = SecurityManager.isDeviceRooted(),
             isEmulator = SecurityManager.isRunningOnEmulator(),
-            isHardwareBacked = SecurityManager.isKeyHardwareBacked("KeyFortressMasterSecretKey")
+            isHardwareBacked = SecurityManager.isKeyHardwareBacked("KunjikaMasterSecretKey")
         )
     ).asStateFlow()
 
@@ -122,7 +122,7 @@ class SettingsViewModel(
 
     fun clearRecoveryKit(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            val file = File(context.cacheDir, "KeyFortress_Recovery_Kit.pdf")
+            val file = File(context.cacheDir, "Kunjika_Recovery_Kit.pdf")
             if (file.exists()) {
                 file.delete()
             }

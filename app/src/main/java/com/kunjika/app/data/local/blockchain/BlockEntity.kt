@@ -1,4 +1,4 @@
-package com.keyfortress.app.data.local.blockchain
+package com.kunjika.app.data.local.blockchain
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

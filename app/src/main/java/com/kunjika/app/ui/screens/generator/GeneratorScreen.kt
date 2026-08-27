@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.generator
+package com.kunjika.app.ui.screens.generator
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -60,12 +60,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.core.security.ClipboardHelper
-import com.keyfortress.app.ui.components.StrengthIndicator
-import com.keyfortress.app.ui.screens.vault.AddEditPasswordDialog
-import com.keyfortress.app.ui.viewmodel.GeneratorMode
-import com.keyfortress.app.ui.viewmodel.GeneratorViewModel
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.core.security.ClipboardHelper
+import com.kunjika.app.ui.components.StrengthIndicator
+import com.kunjika.app.ui.screens.vault.AddEditPasswordDialog
+import com.kunjika.app.ui.viewmodel.GeneratorMode
+import com.kunjika.app.ui.viewmodel.GeneratorViewModel
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -506,7 +506,7 @@ fun GeneratorScreen(
 
 @Composable
 fun HistoryItemRow(
-    item: com.keyfortress.app.data.repository.DecryptedHistoryItem,
+    item: com.kunjika.app.data.repository.DecryptedHistoryItem,
     onCopy: () -> Unit
 ) {
     Row(

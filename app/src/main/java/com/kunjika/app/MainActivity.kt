@@ -1,4 +1,4 @@
-package com.keyfortress.app
+package com.kunjika.app
 
 import android.os.Bundle
 import android.view.WindowManager
@@ -12,17 +12,17 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.keyfortress.app.data.local.AppDatabase
-import com.keyfortress.app.data.preferences.UserPreferences
-import com.keyfortress.app.data.repository.HistoryRepository
-import com.keyfortress.app.data.repository.PasswordRepository
-import com.keyfortress.app.ui.MainNavigation
-import com.keyfortress.app.ui.NavigationTab
-import com.keyfortress.app.ui.theme.KunjikaTheme
-import com.keyfortress.app.ui.viewmodel.AuthViewModel
-import com.keyfortress.app.ui.viewmodel.GeneratorViewModel
-import com.keyfortress.app.ui.viewmodel.SettingsViewModel
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.data.local.AppDatabase
+import com.kunjika.app.data.preferences.UserPreferences
+import com.kunjika.app.data.repository.HistoryRepository
+import com.kunjika.app.data.repository.PasswordRepository
+import com.kunjika.app.ui.MainNavigation
+import com.kunjika.app.ui.NavigationTab
+import com.kunjika.app.ui.theme.KunjikaTheme
+import com.kunjika.app.ui.viewmodel.AuthViewModel
+import com.kunjika.app.ui.viewmodel.GeneratorViewModel
+import com.kunjika.app.ui.viewmodel.SettingsViewModel
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 class MainActivity : FragmentActivity() {
 

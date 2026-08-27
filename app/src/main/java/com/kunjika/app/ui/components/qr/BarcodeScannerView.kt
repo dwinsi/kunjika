@@ -1,6 +1,6 @@
-package com.keyfortress.app.ui.components.qr
+package com.kunjika.app.ui.components.qr
 
-import com.keyfortress.app.core.util.KLog
+import com.kunjika.app.core.util.KLog
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage

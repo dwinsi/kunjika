@@ -8,8 +8,8 @@
         android:shortcutLongLabel="@string/shortcut_new_password_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.keyfortress.app"
-            android:targetClass="com.keyfortress.app.MainActivity"
+            android:targetPackage="com.kunjika.app"
+            android:targetClass="com.kunjika.app.MainActivity"
             android:data="kunjika://generator" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
@@ -21,8 +21,8 @@
         android:shortcutLongLabel="@string/shortcut_vault_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.keyfortress.app"
-            android:targetClass="com.keyfortress.app.MainActivity"
+            android:targetPackage="com.kunjika.app"
+            android:targetClass="com.kunjika.app.MainActivity"
             android:data="kunjika://vault" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>

@@ -1,4 +1,4 @@
-package com.keyfortress.app.data.local
+package com.kunjika.app.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete

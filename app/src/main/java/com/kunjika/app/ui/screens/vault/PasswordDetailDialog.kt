@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.vault
+package com.kunjika.app.ui.screens.vault
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -52,14 +52,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
-import com.keyfortress.app.core.qr.QrEncryptionManager
-import com.keyfortress.app.core.qr.QrManager
-import com.keyfortress.app.core.qr.QrSyncPayload
-import com.keyfortress.app.core.security.ClipboardHelper
-import com.keyfortress.app.core.totp.TotpManager
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
-import com.keyfortress.app.ui.components.StrengthIndicator
+import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.core.qr.QrEncryptionManager
+import com.kunjika.app.core.qr.QrManager
+import com.kunjika.app.core.qr.QrSyncPayload
+import com.kunjika.app.core.security.ClipboardHelper
+import com.kunjika.app.core.totp.TotpManager
+import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.components.StrengthIndicator
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

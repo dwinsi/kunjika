@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui
+package com.kunjika.app.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,9 +18,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.ui.screens.onboarding.OnboardingScreen
-import com.keyfortress.app.ui.theme.KunjikaTheme
-import com.keyfortress.app.ui.theme.StrengthVeryStrong
+import com.kunjika.app.ui.screens.onboarding.OnboardingScreen
+import com.kunjika.app.ui.theme.KunjikaTheme
+import com.kunjika.app.ui.theme.StrengthVeryStrong
 
 @Preview(device = "spec:width=1080px,height=2340px,dpi=440", showBackground = true)
 @Composable

@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.totp
+package com.kunjika.app.core.totp
 
 import org.junit.Assert.*
 import org.junit.Test

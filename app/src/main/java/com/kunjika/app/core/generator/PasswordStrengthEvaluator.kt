@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.generator
+package com.kunjika.app.core.generator
 
 import kotlin.math.log2
 import kotlin.math.pow

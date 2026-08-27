@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.qr
+package com.kunjika.app.core.qr
 
 import android.util.Base64
 import java.security.SecureRandom

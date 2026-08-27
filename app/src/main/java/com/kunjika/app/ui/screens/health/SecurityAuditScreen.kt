@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.health
+package com.kunjika.app.ui.screens.health
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,14 +47,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
-import com.keyfortress.app.ui.screens.vault.AddEditPasswordDialog
-import com.keyfortress.app.ui.theme.StrengthFair
-import com.keyfortress.app.ui.theme.StrengthStrong
-import com.keyfortress.app.ui.theme.StrengthVeryStrong
-import com.keyfortress.app.ui.theme.StrengthVeryWeak
-import com.keyfortress.app.ui.theme.StrengthWeak
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.screens.vault.AddEditPasswordDialog
+import com.kunjika.app.ui.theme.StrengthFair
+import com.kunjika.app.ui.theme.StrengthStrong
+import com.kunjika.app.ui.theme.StrengthVeryStrong
+import com.kunjika.app.ui.theme.StrengthVeryWeak
+import com.kunjika.app.ui.theme.StrengthWeak
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 @Composable
 fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Unit) {

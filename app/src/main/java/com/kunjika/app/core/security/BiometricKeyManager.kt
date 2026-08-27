@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.security
+package com.kunjika.app.core.security
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties

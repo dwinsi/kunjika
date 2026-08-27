@@ -1,4 +1,4 @@
-package com.keyfortress.app.core.generator
+package com.kunjika.app.core.generator
 
 object WordList {
     val words: List<String> = listOf(

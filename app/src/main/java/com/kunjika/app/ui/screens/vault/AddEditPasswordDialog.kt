@@ -1,4 +1,4 @@
-package com.keyfortress.app.ui.screens.vault
+package com.kunjika.app.ui.screens.vault
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,13 +44,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.keyfortress.app.core.generator.PasswordGenerator
-import com.keyfortress.app.core.generator.PasswordGeneratorConfig
-import com.keyfortress.app.core.generator.PasswordStrengthEvaluator
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
-import com.keyfortress.app.ui.components.CustomTextField
-import com.keyfortress.app.ui.components.StrengthIndicator
-import com.keyfortress.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.core.generator.PasswordGenerator
+import com.kunjika.app.core.generator.PasswordGeneratorConfig
+import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.components.StrengthIndicator
+import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

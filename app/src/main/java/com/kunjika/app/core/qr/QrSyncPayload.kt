@@ -1,7 +1,7 @@
-package com.keyfortress.app.core.qr
+package com.kunjika.app.core.qr
 
 import com.google.gson.Gson
-import com.keyfortress.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.data.repository.DecryptedPasswordItem
 
 data class QrSyncPayload(
     val title: String,

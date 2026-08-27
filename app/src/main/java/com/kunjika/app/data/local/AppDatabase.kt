@@ -1,4 +1,4 @@
-package com.keyfortress.app.data.local
+package com.kunjika.app.data.local
 
 import android.content.Context
 import androidx.room.Database
@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.keyfortress.app.data.local.history.PasswordHistoryDao
-import com.keyfortress.app.data.local.history.PasswordHistoryEntity
-import com.keyfortress.app.data.local.blockchain.BlockDao
-import com.keyfortress.app.data.local.blockchain.BlockEntity
-import com.keyfortress.app.data.preferences.UserPreferences
+import com.kunjika.app.data.local.history.PasswordHistoryDao
+import com.kunjika.app.data.local.history.PasswordHistoryEntity
+import com.kunjika.app.data.local.blockchain.BlockDao
+import com.kunjika.app.data.local.blockchain.BlockEntity
+import com.kunjika.app.data.preferences.UserPreferences
 import kotlinx.coroutines.runBlocking
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 

@@ -1,7 +1,7 @@
-package com.keyfortress.app.core.util
+package com.kunjika.app.core.util
 
 import android.util.Log
-import com.keyfortress.app.BuildConfig
+import com.kunjika.app.BuildConfig
 
 /**
  * Custom logging utility that ensures no logs are emitted in production/release builds.
