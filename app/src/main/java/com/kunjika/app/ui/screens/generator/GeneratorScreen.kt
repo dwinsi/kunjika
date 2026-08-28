@@ -151,13 +151,15 @@ fun GeneratorScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = uiState.generatedPassword,
+                            text = uiState.generatedPassword.ifEmpty { "Tap Generate to start" },
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = if (uiState.generatedPassword.length > 24) 17.sp else 22.sp
                             ),
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = if (uiState.generatedPassword.isEmpty())
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            else MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -165,9 +167,9 @@ fun GeneratorScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Real-time Strength Indicator
-                    if (uiState.isConfigValid || uiState.mode != GeneratorMode.PASSWORD) {
+                    if (uiState.generatedPassword.isNotEmpty()) {
                         StrengthIndicator(strengthResult = uiState.strengthResult)
-                    } else {
+                    } else if (!uiState.isConfigValid && uiState.mode == GeneratorMode.PASSWORD) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -181,6 +183,8 @@ fun GeneratorScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                    } else {
+                        Spacer(modifier = Modifier.height(48.dp))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -191,22 +195,22 @@ fun GeneratorScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        OutlinedButton(
+                        Button(
                             onClick = { generatorViewModel.generate() },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1.2f),
                             shape = RoundedCornerShape(12.dp),
                             enabled = actionsEnabled
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Generate new random password",
+                                contentDescription = "Generate",
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("New")
+                            Text(if (uiState.generatedPassword.isEmpty()) "Generate" else "Regenerate")
                         }
 
-                        Button(
+                        OutlinedButton(
                             onClick = {
                                 ClipboardHelper.copyToClipboard(
                                     context = context,
@@ -219,7 +223,6 @@ fun GeneratorScreen(
                             },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
                         ) {
                             Icon(
@@ -231,11 +234,10 @@ fun GeneratorScreen(
                             Text("Copy")
                         }
 
-                        Button(
+                        OutlinedButton(
                             onClick = { showSaveDialog = true },
-                            modifier = Modifier.weight(1.1f),
+                            modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             enabled = actionsEnabled && uiState.generatedPassword.isNotEmpty()
                         ) {
                             Icon(

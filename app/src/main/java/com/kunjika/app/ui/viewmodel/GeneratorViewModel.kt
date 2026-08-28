@@ -54,97 +54,85 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
     val history: StateFlow<List<DecryptedHistoryItem>> = historyRepository.recentHistory
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    init {
-        generate()
-    }
-
     fun setMode(mode: GeneratorMode) {
-        _uiState.value = _uiState.value.copy(mode = mode)
-        if (mode != GeneratorMode.HISTORY) {
-            generate()
-        }
+        _uiState.value = _uiState.value.copy(
+            mode = mode,
+            generatedPassword = "",
+            strengthResult = PasswordStrengthEvaluator.evaluate("")
+        )
     }
 
     fun setLength(length: Int) {
         _uiState.value = _uiState.value.copy(length = length)
-        generate()
     }
 
     fun setPinLength(length: Int) {
         _uiState.value = _uiState.value.copy(pinLength = length)
-        generate()
     }
 
     fun setWordCount(count: Int) {
         _uiState.value = _uiState.value.copy(wordCount = count)
-        generate()
     }
 
     fun setSeparator(separator: String) {
         _uiState.value = _uiState.value.copy(separator = separator)
-        generate()
     }
 
     fun toggleUppercase() {
         val current = _uiState.value
         _uiState.value = current.copy(includeUppercase = !current.includeUppercase)
-        generate()
+        validateConfig()
     }
 
     fun toggleLowercase() {
         val current = _uiState.value
         _uiState.value = current.copy(includeLowercase = !current.includeLowercase)
-        generate()
+        validateConfig()
     }
 
     fun toggleNumbers() {
         val current = _uiState.value
         _uiState.value = current.copy(includeNumbers = !current.includeNumbers)
-        generate()
+        validateConfig()
     }
 
     fun toggleSymbols() {
         val current = _uiState.value
         _uiState.value = current.copy(includeSymbols = !current.includeSymbols)
-        generate()
+        validateConfig()
     }
 
     fun toggleExcludeAmbiguous() {
         val current = _uiState.value
         _uiState.value = current.copy(excludeAmbiguous = !current.excludeAmbiguous)
-        generate()
     }
 
     fun toggleCapitalize() {
         val current = _uiState.value
         _uiState.value = current.copy(capitalize = !current.capitalize)
-        generate()
     }
 
     fun toggleIncludeNumberInPassphrase() {
         val current = _uiState.value
         _uiState.value = current.copy(includeNumberInPassphrase = !current.includeNumberInPassphrase)
-        generate()
     }
 
-    fun generate() {
+    private fun validateConfig() {
         val state = _uiState.value
-        if (state.mode == GeneratorMode.HISTORY) return
-
         val selectedCount = listOf(
             state.includeUppercase,
             state.includeLowercase,
             state.includeNumbers,
             state.includeSymbols
         ).count { it }
-        val isConfigValid = selectedCount >= 3
+        _uiState.value = state.copy(isConfigValid = selectedCount >= 3)
+    }
 
-        if (!isConfigValid && state.mode == GeneratorMode.PASSWORD) {
-            _uiState.value = state.copy(
-                generatedPassword = "",
-                strengthResult = PasswordStrengthEvaluator.evaluate(""),
-                isConfigValid = false
-            )
+    fun generate() {
+        val state = _uiState.value
+        if (state.mode == GeneratorMode.HISTORY) return
+
+        if (!state.isConfigValid && state.mode == GeneratorMode.PASSWORD) {
             return
         }
 
