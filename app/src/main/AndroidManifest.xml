@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- STRICT ZERO-NETWORK / OFFLINE GUARANTEE: NO android.permission.INTERNET -->
+    <!-- STRICT ZERO-NETWORK / OFFLINE GUARANTEE: Strip any transitive network permissions injected by libraries (e.g. ML Kit) -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
     
     <!-- Local Bluetooth Low Energy (BLE) for 100% Air-Gapped Transfer to PC -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
