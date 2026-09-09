@@ -1,5 +1,21 @@
 # Kunjika Release Notes
 
+## v1.1.0 (Air-Gapped Web Drop & Cross-Device Sync) - September 9, 2026
+
+### 🚀 Major New Feature: Air-Gapped Web Drop
+- **Zero-Network Desktop Transfer**: Send 32+ character high-entropy credentials directly from your phone to any modern PC/Mac desktop browser without internet access, accounts, or cloud relays.
+- **Web Bluetooth (BLE GATT)**: Phone operates as a BLE GATT peripheral server (`e9a30001-...`), streaming chunked AES-256-GCM ciphertext directly to the browser.
+- **Client-Side Proof of Work (PoW)**: Dynamic QR session challenge generated in browser RAM using SHA-256 (`< 0x0800...`), auto-refreshing every 60 seconds to eliminate replay attacks.
+- **Ephemeral ECDH P-256 Key Agreement**: In-memory key generation and Diffie-Hellman scalar multiplication with HKDF-SHA256 (`"kunjika-web-drop-v1"`).
+- **Visual Short Authentication String (SAS)**: 6-digit TOTP verification code calculated independently on both devices; user visually verifies parity to prevent Man-in-the-Middle (MitM) attacks.
+- **Biometric Hardware Authorization**: Android `BiometricPrompt` (`BIOMETRIC_STRONG`) is required before initiating BLE transmission.
+- **Tamper-Evident Audit Logging**: Automatically appends an `EXPORT_BLE` block to the local hardware-signed blockchain ledger for complete traceability.
+- **Zero-Install Web Companion**: Available at [https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/) with RAM-only decryption and automatic 30-second clipboard wipe.
+- **UI & Settings Integration**:
+  - "Send to PC (Air-Gapped)" button in Password Detail dialog.
+  - "Air-Gapped PC Sync" feature card in Settings.
+  - Quick-launch Web Drop action in Settings About section.
+
 ## v1.0.1 (UI Refinement & Stability) - August 28, 2026
 
 ### 🛠️ Improvements

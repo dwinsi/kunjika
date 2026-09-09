@@ -74,6 +74,68 @@ graph RL
 - **Auto-Lock**: Foreground/Background lifecycle observers trigger an immediate vault lock.
 
 ## 📂 Secure Export & Sync
-- **QR Sync**: AES-GCM encryption with keys derived via PBKDF2 from a 6-digit Transfer Code.
-- **Backup**: AES-256-GCM backups with user-provided passphrases.
-- **Cache Purge**: Recovery Kits (PDFs) are automatically deleted from the cache after use to prevent data residue.
+
+### 1. Phone-to-Phone QR Sync
+- **Key Derivation**: PBKDF2 with 100,000 iterations derived from a randomly generated 6-digit Transfer Code.
+- **Payload Encryption**: Authenticated AES-256-GCM.
+- **Zero-Network**: Air-gapped visual transfer via camera and screen.
+
+### 2. Air-Gapped Web Drop (Phone-to-PC Sync)
+Web Drop enables wireless transfer of credentials directly to desktop/laptop browsers without internet access, third-party relays, or accounts.
+
+```mermaid
+graph TD
+    subgraph Browser ["💻 Web Companion (RAM Only)"]
+        POW[Compute SHA-256 PoW] --> B_KP[Generate Ephemeral P-256 Keypair]
+        B_KP --> QR[Display Dynamic QR Code]
+        B_SAS[Compute 6-Digit Visual SAS]
+        B_DEC[AES-256-GCM Decrypt in RAM]
+        WIPE[30s Clipboard & Memory Auto-Wipe]
+    end
+
+    subgraph Phone ["📱 Kunjika Android App"]
+        CAM[Scan QR Code via CameraX] --> P_POW[Verify PoW & Extract Public Key]
+        P_POW --> P_KP[Generate Ephemeral P-256 Keypair]
+        P_KP --> ECDH[Derive Shared Secret via HKDF]
+        ECDH --> P_SAS[Compute 6-Digit Visual SAS]
+        P_SAS --> BIO{Biometric Prompt}
+        BIO -->|Success| P_ENC[AES-256-GCM Encrypt Payload]
+        P_ENC --> BLE_TX[BLE GATT Server Stream]
+        P_ENC --> LEDGER[Record EXPORT_BLE in Blockchain]
+    end
+
+    QR -.->|Visual Scan| CAM
+    P_SAS <===>|User Confirms Visual Parity| B_SAS
+    BLE_TX ==>|Web Bluetooth GATT Chunks| B_DEC
+    B_DEC --> WIPE
+
+    style Browser fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style Phone fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+```
+
+#### Cryptographic Architecture & Guarantees:
+- **Client-Side Proof of Work (PoW)**:
+  - The browser calculates `SHA-256(SessionID + Nonce) < Target` (target prefix `< 0x0800...`) before rendering the QR code.
+  - The Android app verifies the PoW difficulty before performing any cryptographic operations.
+  - Sessions automatically renew every 60 seconds to prevent replay attacks and pre-computation.
+- **Ephemeral ECDH P-256 Key Agreement**:
+  - The Web Companion generates an in-memory EC P-256 keypair using the WebCrypto API.
+  - The Android device generates its own ephemeral EC keypair, parses the uncompressed public key (65 bytes: `0x04 || X || Y`), and computes the Diffie-Hellman shared secret.
+  - Shared keys are derived using HKDF-SHA256 with the domain separation string `"kunjika-web-drop-v1"`.
+- **Short Authentication String (SAS) Verification**:
+  - To prevent Man-in-the-Middle (MitM) attacks over the BLE airwaves, both devices compute a 6-digit visual code using `HMAC-SHA256` of the shared secret.
+  - Both screens independently display this code. The user visually confirms that both numbers match before authorizing the transfer.
+- **Biometric Hardware Authorization**:
+  - Android `BiometricPrompt` (`BIOMETRIC_STRONG`) is required to authorize the BLE GATT advertising and transmission.
+- **Direct Web Bluetooth (BLE GATT) Layer**:
+  - The phone acts as a peripheral GATT server advertising Service `e9a30001-c852-4e08-9bfa-87bb0f592658`.
+  - Payloads are chunked into 512-byte GATT notifications, carrying AES-256-GCM ciphertext, a 12-byte random IV, and a 16-byte authentication tag.
+- **Zero Disk Persistence & RAM Auto-Wipe**:
+  - The Web Companion stores zero data in `localStorage`, `sessionStorage`, `IndexedDB`, or cookies.
+  - Upon user copy, a 30-second countdown is initiated, after which the browser wipes the credentials from RAM and clears the operating system clipboard.
+- **Local Blockchain Audit Trail**:
+  - Every Web Drop transfer is committed as an `EXPORT_BLE` block into the device's hardware-signed blockchain ledger.
+
+### 3. Encrypted Backups & Cache Purge
+- **Encrypted Backup**: AES-256-GCM vault backups with user-provided passphrases.
+- **Cache Purge**: Recovery Kits (PDFs) are automatically shredded from device cache after sharing to prevent file system residue.

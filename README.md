@@ -12,6 +12,7 @@ Kunjika is a zero-network, ultra-secure Password Manager built for **Android 15+
 - **🔐 Double Encryption**: AES-256-GCM (KeyStore) + SQLCipher (Database).
 - **🧱 Blockchain Audit Log**: A hardware-signed ledger of every vault action to prevent file-level tampering.
 - **📡 Air-Gapped Sync**: Encrypted QR-based transfer between devices using PBKDF2 and AES-GCM.
+- **⚡ Web Drop (BLE + Proof of Work)**: Air-gapped wireless password transfer directly to desktop browsers with zero internet.
 - **💎 Hardware-Backed**: Master keys are generated and stored in the device's TEE/HSM.
 - **🛡️ Screen Protection**: App-wide `FLAG_SECURE` prevents screenshots and screen recording.
 - **🛡️ PIN Hardening**: Salted PBKDF2 hashing for Master PIN (100,000 iterations).
@@ -20,6 +21,7 @@ Kunjika is a zero-network, ultra-secure Password Manager built for **Android 15+
 
 ## ✨ Features
 
+- **⚡ Air-Gapped Web Drop**: Wireless transfer to PC/Mac browsers via [Web Companion](https://dwinsi.github.io/kunjika/web-companion/) over Web Bluetooth (BLE), Proof of Work, and TOTP verification.
 - **🎯 Intelligent Generator**: Passwords, Passphrases (Diceware), and PINs.
 - **🗳️ Encrypted Vault**: Full management of credentials, URLs, and secure notes.
 - **⏰ TOTP Authenticator**: Built-in 2FA (Google Authenticator style) with encrypted secrets.
@@ -64,11 +66,12 @@ graph LR
 
 ## 📚 Documentation
 
-Detailed documentation is available in the [`/docs`](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/) directory:
+Detailed documentation is available in the [`/docs`](docs/) directory:
 
-- [🏗️ Architecture Overview](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/architecture.md)
-- [🛡️ Security Deep-Dive](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/security.md)
-- [✨ Feature Guide](file:///Users/ashwinsingh/Desktop/PasswordGenerator/docs/features.md)
+- [🏗️ Architecture Overview](docs/architecture.md)
+- [🛡️ Security Deep-Dive](docs/security.md)
+- [✨ Feature Guide](docs/features.md)
+- [🌐 Web Companion](https://dwinsi.github.io/kunjika/web-companion/)
 
 ---
 

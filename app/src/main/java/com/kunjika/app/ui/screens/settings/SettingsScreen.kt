@@ -559,7 +559,7 @@ fun SettingsScreen(
 
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/"))
+                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/web-companion/"))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -624,7 +624,7 @@ fun SettingsScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/"))
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/web-companion/"))
                         context.startActivity(intent)
                     },
                     modifier = Modifier.weight(1f),
