@@ -1,5 +1,15 @@
 # Kunjika Release Notes
 
+## v1.0.1 (UI Refinement & Stability) - August 28, 2026
+
+### 🛠️ Improvements
+- **Manual Password Generation**: The password generator no longer auto-generates strings on every setting change. This prevents history pollution and ensures only user-requested passwords are saved.
+- **Enhanced UI Logic**: 
+    - Added "Generate" and "Regenerate" actions for clearer interaction.
+    - Updated copy/save actions to remain disabled until a string is generated.
+    - Added placeholder guidance in the generator output box.
+- **Internal Optimization**: Refined viewmodel logic to reduce unnecessary background operations.
+
 ## v1.0.0 (First Official Release) - August 26, 2026
 
 We are proud to introduce **Kunjika**, a zero-network password manager that prioritizes user sovereignty and hardware-backed security above all else.

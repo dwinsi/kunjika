@@ -263,7 +263,10 @@ fun VaultScreen(vaultViewModel: VaultViewModel) {
             },
             onDelete = { vaultViewModel.deletePassword(item.id) },
             onToggleFavorite = { vaultViewModel.toggleFavorite(item) },
-            onDismiss = { selectedItemForDetail = null }
+            onDismiss = { selectedItemForDetail = null },
+            onRecordAudit = { action, itemId, title ->
+                vaultViewModel.recordExportBlock(action, itemId, title)
+            }
         )
     }
 

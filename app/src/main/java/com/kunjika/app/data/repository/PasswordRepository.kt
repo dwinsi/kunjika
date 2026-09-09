@@ -60,6 +60,26 @@ class PasswordRepository(
         blockDao.insertBlock(block)
     }
 
+    suspend fun recordExportBlock(action: String, itemId: Long, title: String) = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val contentHash = BlockchainManager.computeHash("ITEM_ID:$itemId|TITLE:$title|TIMESTAMP:${System.currentTimeMillis()}")
+        val timestamp = System.currentTimeMillis()
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
     fun getAllPasswords(): Flow<List<DecryptedPasswordItem>> {
         return passwordDao.getAllPasswords().map { list ->
             list.map { entity -> entity.toDecrypted() }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -70,12 +72,14 @@ fun PasswordDetailDialog(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onToggleFavorite: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onRecordAudit: ((action: String, itemId: Long, title: String) -> Unit)? = null
 ) {
     val context = LocalContext.current
     var isPasswordVisible by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showQrDialog by remember { mutableStateOf(false) }
+    var showWebDropDialog by remember { mutableStateOf(false) }
 
     val strengthResult = remember(item.plaintextPassword) {
         PasswordStrengthEvaluator.evaluate(item.plaintextPassword)
@@ -152,6 +156,14 @@ fun PasswordDetailDialog(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
+
+                    IconButton(onClick = { showWebDropDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Bluetooth,
+                            contentDescription = "Send to PC (Web Drop Air-Gapped)",
+                            tint = Color(0xFF00E676)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -226,6 +238,23 @@ fun PasswordDetailDialog(
 
                     Spacer(modifier = Modifier.height(8.dp))
                     StrengthIndicator(strengthResult = strengthResult)
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = { showWebDropDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E676).copy(alpha = 0.15f))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Bluetooth,
+                            contentDescription = null,
+                            tint = Color(0xFF00E676),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Send to PC (Air-Gapped)", color = Color(0xFF00E676), fontWeight = FontWeight.Bold)
+                    }
                 }
 
                 if (totpCode.isNotEmpty()) {
@@ -381,6 +410,16 @@ fun PasswordDetailDialog(
         QrCodeDisplayDialog(
             item = item,
             onDismiss = { showQrDialog = false }
+        )
+    }
+
+    if (showWebDropDialog) {
+        WebDropScannerDialog(
+            item = item,
+            onDismiss = { showWebDropDialog = false },
+            onRecordAudit = { action, itemId, title ->
+                onRecordAudit?.invoke(action, itemId, title)
+            }
         )
     }
 }

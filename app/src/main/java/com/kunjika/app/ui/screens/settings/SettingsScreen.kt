@@ -25,8 +25,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.FolderOpen
@@ -48,6 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -520,6 +523,56 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Air-Gapped PC Sync (Web Drop) Section
+        SettingsSection(title = "Air-Gapped PC Sync") {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color(0xFF00E676).copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Bluetooth,
+                        contentDescription = null,
+                        tint = Color(0xFF00E676),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text("Kunjika Web Drop", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    Text("Zero-Internet transfer to PC browser", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "Transfer passwords directly to your laptop or desktop browser without typing, user accounts, or cloud servers. Powered by local Web Bluetooth (BLE) and Proof of Work.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/"))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Icon(Icons.Default.Devices, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Open Web Companion Page")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // About Section
         SettingsSection(title = "About Kunjika") {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -571,13 +624,23 @@ fun SettingsScreen(
             ) {
                 OutlinedButton(
                     onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Web Drop", fontSize = 12.sp)
+                }
+                OutlinedButton(
+                    onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://dwinsi.github.io/kunjika/PRIVACY_POLICY.html"))
                         context.startActivity(intent)
                     },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Privacy Policy", fontSize = 12.sp)
+                    Text("Privacy", fontSize = 12.sp)
                 }
                 OutlinedButton(
                     onClick = {
@@ -587,7 +650,7 @@ fun SettingsScreen(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Documentation", fontSize = 12.sp)
+                    Text("Docs", fontSize = 12.sp)
                 }
             }
         }

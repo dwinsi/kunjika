@@ -196,4 +196,10 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
             expiredPasswords = expired
         )
     }
+
+    fun recordExportBlock(action: String, itemId: Long, title: String) {
+        viewModelScope.launch {
+            repository.recordExportBlock(action, itemId, title)
+        }
+    }
 }
