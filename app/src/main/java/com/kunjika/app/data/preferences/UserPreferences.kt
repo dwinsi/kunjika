@@ -1,6 +1,7 @@
 package com.kunjika.app.data.preferences
 
 import android.content.Context
+import android.util.Base64
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.security.SecureRandom
+import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -24,6 +26,8 @@ class UserPreferences(private val context: Context) {
         private val KEY_MASTER_PIN_HASH = stringPreferencesKey("master_pin_hash")
         private val KEY_MASTER_PIN_SALT = stringPreferencesKey("master_pin_salt")
         private val KEY_ENCRYPTED_DB_PASSPHRASE = stringPreferencesKey("encrypted_db_passphrase")
+        private val KEY_BIOMETRIC_ENCRYPTED_PIN = stringPreferencesKey("biometric_encrypted_pin")
+        private val KEY_BIOMETRIC_IV = stringPreferencesKey("biometric_iv")
         private val KEY_IS_BIOMETRIC_ENABLED = booleanPreferencesKey("is_biometric_enabled")
         private val KEY_AUTO_LOCK_TIMEOUT_SEC = intPreferencesKey("auto_lock_timeout_sec")
         private val KEY_DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
@@ -120,6 +124,46 @@ class UserPreferences(private val context: Context) {
     suspend fun setBiometricEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[KEY_IS_BIOMETRIC_ENABLED] = enabled
+            if (!enabled) {
+                preferences.remove(KEY_BIOMETRIC_ENCRYPTED_PIN)
+                preferences.remove(KEY_BIOMETRIC_IV)
+            }
+        }
+    }
+
+    suspend fun saveBiometricEncryptedPin(pin: String, cipher: Cipher) {
+        try {
+            val encryptedBytes = cipher.doFinal(pin.toByteArray(Charsets.UTF_8))
+            val iv = cipher.iv
+            val encryptedBase64 = Base64.encodeToString(encryptedBytes, Base64.NO_WRAP)
+            val ivBase64 = Base64.encodeToString(iv, Base64.NO_WRAP)
+
+            context.dataStore.edit { preferences ->
+                preferences[KEY_BIOMETRIC_ENCRYPTED_PIN] = encryptedBase64
+                preferences[KEY_BIOMETRIC_IV] = ivBase64
+            }
+        } catch (_: Exception) { }
+    }
+
+    suspend fun getBiometricIv(): ByteArray? {
+        val preferences = context.dataStore.data.first()
+        val ivBase64 = preferences[KEY_BIOMETRIC_IV] ?: return null
+        return try {
+            Base64.decode(ivBase64, Base64.NO_WRAP)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    suspend fun decryptPinWithBiometric(cipher: Cipher): String? {
+        val preferences = context.dataStore.data.first()
+        val encryptedBase64 = preferences[KEY_BIOMETRIC_ENCRYPTED_PIN] ?: return null
+        return try {
+            val encryptedBytes = Base64.decode(encryptedBase64, Base64.NO_WRAP)
+            val decryptedBytes = cipher.doFinal(encryptedBytes)
+            String(decryptedBytes, Charsets.UTF_8)
+        } catch (_: Exception) {
+            null
         }
     }
 

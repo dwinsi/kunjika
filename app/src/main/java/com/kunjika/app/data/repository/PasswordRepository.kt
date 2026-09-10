@@ -2,6 +2,7 @@ package com.kunjika.app.data.repository
 
 import com.kunjika.app.core.blockchain.BlockchainManager
 import com.kunjika.app.core.security.KeystoreManager
+import com.kunjika.app.core.util.KLog
 import com.kunjika.app.data.local.PasswordDao
 import com.kunjika.app.data.local.PasswordEntity
 import com.kunjika.app.data.local.blockchain.BlockDao
@@ -177,14 +178,22 @@ class PasswordRepository(
             else if (totpSecret.contains("]")) KeystoreManager.decrypt(totpSecret)
             else totpSecret // Fallback for old plaintext secrets
         } catch (e: Exception) {
-            totpSecret // Fallback for any decryption failure
+            KLog.w("Failed to decrypt TOTP secret for password ID $id: ${e.message}")
+            null // Return null on decryption failure to prevent exposing raw ciphertext
+        }
+
+        val decryptedPassword = try {
+            KeystoreManager.decrypt(encryptedPassword)
+        } catch (e: Exception) {
+            KLog.e("Failed to decrypt password for ID $id", e)
+            "[Decryption Error]"
         }
 
         return DecryptedPasswordItem(
             id = id,
             title = title,
             username = username,
-            plaintextPassword = KeystoreManager.decrypt(encryptedPassword),
+            plaintextPassword = decryptedPassword,
             websiteUrl = websiteUrl,
             category = category,
             notes = notes,

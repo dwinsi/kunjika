@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.crypto.Cipher
 
 sealed class AuthState {
     object Loading : AuthState()
@@ -79,28 +81,48 @@ class AuthViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             if (isValid) {
                 _errorMessage.value = null
                 _authState.value = AuthState.Authenticated
+                // If biometric is enabled but no biometric-encrypted PIN is saved yet, save it using an encryption cipher on next prompt
             } else {
                 _errorMessage.value = "Incorrect Master PIN"
             }
         }
     }
 
-    fun unlockWithBiometrics(result: BiometricPrompt.AuthenticationResult) {
-        // In a more advanced implementation, we would use the cipher from result.cryptoObject
-        // to decrypt the Master PIN or a session key.
-        // For now, the hardware-verified success is our trigger.
+    fun unlockWithBiometrics(result: BiometricPrompt.AuthenticationResult, currentPin: String? = null) {
         val cipher = result.cryptoObject?.cipher
-        if (cipher != null) {
-            _errorMessage.value = null
-            _authState.value = AuthState.Authenticated
-        } else {
+        if (cipher == null) {
             _errorMessage.value = "Biometric authentication failed to provide crypto object"
+            return
+        }
+
+        viewModelScope.launch {
+            val iv = userPreferences.getBiometricIv()
+            if (iv != null) {
+                val unwrappedPin = userPreferences.decryptPinWithBiometric(cipher)
+                if (unwrappedPin != null && userPreferences.verifyMasterPin(unwrappedPin)) {
+                    _errorMessage.value = null
+                    _authState.value = AuthState.Authenticated
+                } else {
+                    _errorMessage.value = "Biometric hardware key unwrapping failed"
+                }
+            } else {
+                if (currentPin != null && userPreferences.verifyMasterPin(currentPin)) {
+                    userPreferences.saveBiometricEncryptedPin(currentPin, cipher)
+                }
+                _errorMessage.value = null
+                _authState.value = AuthState.Authenticated
+            }
         }
     }
 
     fun getBiometricCryptoObject(): BiometricPrompt.CryptoObject? {
         return try {
-            val cipher = BiometricKeyManager.getEncryptionCipher()
+            val iv = runBlocking { userPreferences.getBiometricIv() }
+            val cipher = if (iv != null) {
+                BiometricKeyManager.getDecryptionCipher(iv)
+            } else {
+                BiometricKeyManager.getEncryptionCipher()
+            }
             BiometricPrompt.CryptoObject(cipher)
         } catch (_: Exception) {
             null

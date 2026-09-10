@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.core.security.SecurityManager
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.GlossyButton
 import com.kunjika.app.ui.components.GlossyCard
@@ -126,6 +128,33 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                val isRooted = remember { SecurityManager.isDeviceRooted() }
+                if (isRooted) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f))
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Root detected: System environment risk",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
                 Text(
                     text = "Kunjika",
