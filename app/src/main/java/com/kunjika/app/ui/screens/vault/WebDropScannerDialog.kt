@@ -65,8 +65,10 @@ import com.kunjika.app.core.webdrop.WebDropCrypto
 import com.kunjika.app.core.webdrop.WebDropQrPayload
 import com.kunjika.app.data.repository.DecryptedPasswordItem
 import com.kunjika.app.ui.components.qr.BarcodeScannerView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private enum class WebDropState {
     REQUESTING_PERMISSIONS,
@@ -90,6 +92,7 @@ fun WebDropScannerDialog(
     var errorMessage by remember { mutableStateOf("") }
     var totpVerificationCode by remember { mutableStateOf("") }
     var sharedSecret by remember { mutableStateOf<ByteArray?>(null) }
+    var phonePublicKeyBytes by remember { mutableStateOf<ByteArray?>(null) }
     var blePeripheral by remember { mutableStateOf<KunjikaBlePeripheral?>(null) }
     var isBleConnected by remember { mutableStateOf(false) }
 
@@ -165,6 +168,7 @@ fun WebDropScannerDialog(
             val phoneKeyPair = WebDropCrypto.generateEphemeralKeyPair()
             val secret = WebDropCrypto.deriveSharedSecret(phoneKeyPair.private, webPublicKey)
             sharedSecret = secret
+            phonePublicKeyBytes = WebDropCrypto.exportUncompressedPublicKeyBytes(phoneKeyPair.public)
 
             // 4. Compute 6-digit TOTP confirmation code
             val code = WebDropCrypto.computeTotpCode(secret, payload.t)
@@ -210,40 +214,16 @@ fun WebDropScannerDialog(
         }
 
         val activity = context as? FragmentActivity
-        if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
-            BiometricAuthManager.promptBiometric(
-                activity = activity,
-                title = "Authorize Password Export",
-                subtitle = "Send '${item.title}' to paired laptop",
-                negativeButtonText = "Cancel",
-                onSuccess = {
-                    state = WebDropState.TRANSFERRING
-                    scope.launch {
-                        val payloadMap = mapOf(
-                            "title" to item.title,
-                            "username" to item.username,
-                            "password" to item.plaintextPassword,
-                            "websiteUrl" to item.websiteUrl,
-                            "notes" to item.notes,
-                            "totpSecret" to item.totpSecret
-                        )
-                        val json = Gson().toJson(payloadMap)
-                        val encryptedBytes = WebDropCrypto.encryptPayload(json, secret)
-                        val sent = peripheral.sendEncryptedPayload(encryptedBytes)
-                        if (!sent) {
-                            errorMessage = "Transfer failed. Ensure laptop is connected via Bluetooth."
-                            state = WebDropState.ERROR
-                        }
-                    }
-                },
-                onError = { err ->
-                    Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
-                }
-            )
-        } else {
-            // Fallback if no biometrics setup
+        val performSend = {
             state = WebDropState.TRANSFERRING
-            scope.launch {
+            scope.launch(Dispatchers.IO) {
+                // Wait up to 5 seconds if laptop BLE connection is pending
+                var attempts = 0
+                while (!isBleConnected && attempts < 50) {
+                    delay(100)
+                    attempts++
+                }
+
                 val payloadMap = mapOf(
                     "title" to item.title,
                     "username" to item.username,
@@ -254,8 +234,35 @@ fun WebDropScannerDialog(
                 )
                 val json = Gson().toJson(payloadMap)
                 val encryptedBytes = WebDropCrypto.encryptPayload(json, secret)
-                peripheral.sendEncryptedPayload(encryptedBytes)
+                
+                // Prepend Phone's 65-byte uncompressed public key for Web Companion ECDH derivation
+                val pubKeyBytes = phonePublicKeyBytes ?: ByteArray(0)
+                val fullPacket = ByteArray(pubKeyBytes.size + encryptedBytes.size)
+                System.arraycopy(pubKeyBytes, 0, fullPacket, 0, pubKeyBytes.size)
+                System.arraycopy(encryptedBytes, 0, fullPacket, pubKeyBytes.size, encryptedBytes.size)
+
+                val sent = peripheral.sendEncryptedPayload(fullPacket)
+                withContext(Dispatchers.Main) {
+                    if (!sent) {
+                        errorMessage = "Transfer failed. Ensure laptop is connected via Bluetooth."
+                        state = WebDropState.ERROR
+                    }
+                }
             }
+        }
+
+        if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
+            BiometricAuthManager.promptBiometric(
+                activity = activity,
+                title = "Authorize Password Export",
+                subtitle = "Send '${item.title}' to paired laptop", negativeButtonText = "Cancel",
+                onSuccess = { performSend() },
+                onError = { err ->
+                    Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+                }
+            )
+        } else {
+            performSend()
         }
     }
 
@@ -343,6 +350,37 @@ fun WebDropScannerDialog(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
+                            // BLE Connection status indicator
+                            val badgeBg = if (isBleConnected) Color(0xFF00E676).copy(alpha = 0.15f) else Color(0xFFFFAB00).copy(alpha = 0.15f)
+                            val badgeTextColor = if (isBleConnected) Color(0xFF00E676) else Color(0xFFFFAB00)
+                            val badgeText = if (isBleConnected) "Laptop Connected ✓" else "Awaiting Laptop Pairing..."
+
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(badgeBg)
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (!isBleConnected) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(12.dp),
+                                            color = badgeTextColor,
+                                            strokeWidth = 2.dp
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    Text(
+                                        text = badgeText,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = badgeTextColor,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
                             Text(
                                 text = "PAIRING CODE",
                                 style = MaterialTheme.typography.labelSmall,
@@ -361,7 +399,11 @@ fun WebDropScannerDialog(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Confirm this exact 6-digit code matches the one on your laptop screen.",
+                                text = if (isBleConnected) {
+                                    "Code verified. Tap below to authorize transfer."
+                                } else {
+                                    "On your laptop screen, click 'Pair Bluetooth (BLE)' to connect."
+                                },
                                 style = MaterialTheme.typography.bodySmall,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant

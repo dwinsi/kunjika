@@ -15,6 +15,7 @@ import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
+import android.os.Build
 import android.os.ParcelUuid
 import android.util.Log
 import java.util.UUID
@@ -72,6 +73,7 @@ class KunjikaBlePeripheral(
             }
         }
 
+        @SuppressLint("MissingPermission")
         override fun onCharacteristicWriteRequest(
             device: BluetoothDevice,
             requestId: Int,
@@ -82,7 +84,11 @@ class KunjikaBlePeripheral(
             value: ByteArray?
         ) {
             if (responseNeeded) {
-                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                try {
+                    gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                } catch (e: Exception) {
+                    Log.w(TAG, "sendResponse failed: ${e.message}")
+                }
             }
 
             if (characteristic.uuid == CHAR_ACK_UUID) {
@@ -92,6 +98,7 @@ class KunjikaBlePeripheral(
             }
         }
 
+        @SuppressLint("MissingPermission")
         override fun onDescriptorWriteRequest(
             device: BluetoothDevice,
             requestId: Int,
@@ -102,7 +109,11 @@ class KunjikaBlePeripheral(
             value: ByteArray?
         ) {
             if (responseNeeded) {
-                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                try {
+                    gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                } catch (e: Exception) {
+                    Log.w(TAG, "sendResponse failed: ${e.message}")
+                }
             }
         }
     }
@@ -191,7 +202,8 @@ class KunjikaBlePeripheral(
             return false
         }
 
-        val chunkSize = 180 // Safe MTU chunk size
+        // Universal MTU-safe chunk payload size (4 header bytes + 16 payload bytes = 20 bytes total <= 23 default ATT MTU)
+        val chunkSize = 16
         val totalChunks = ((payload.size + chunkSize - 1) / chunkSize)
         val totalLength = payload.size
 
@@ -208,8 +220,14 @@ class KunjikaBlePeripheral(
             packet[3] = totalChunks.toByte()
             System.arraycopy(chunkBytes, 0, packet, 4, chunkBytes.size)
 
-            char.value = packet
-            gattServer?.notifyCharacteristicChanged(device, char, false)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                gattServer?.notifyCharacteristicChanged(device, char, false, packet)
+            } else {
+                @Suppress("DEPRECATION")
+                char.value = packet
+                @Suppress("DEPRECATION")
+                gattServer?.notifyCharacteristicChanged(device, char, false)
+            }
             Thread.sleep(15) // Brief inter-packet delay for BLE buffer flush
         }
         return true

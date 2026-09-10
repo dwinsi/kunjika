@@ -98,6 +98,13 @@ object WebDropCrypto {
      * Exports a P-256 public key as an uncompressed 65-byte hex string (04 + X + Y).
      */
     fun exportUncompressedPublicKey(publicKey: PublicKey): String {
+        return bytesToHex(exportUncompressedPublicKeyBytes(publicKey))
+    }
+
+    /**
+     * Exports a P-256 public key as an uncompressed 65-byte array (04 + X + Y).
+     */
+    fun exportUncompressedPublicKeyBytes(publicKey: PublicKey): ByteArray {
         val ecKey = publicKey as ECPublicKey
         val w = ecKey.w
         val xBytes = padOrTrimTo32(w.affineX.toByteArray())
@@ -107,7 +114,7 @@ object WebDropCrypto {
         out[0] = 0x04
         System.arraycopy(xBytes, 0, out, 1, 32)
         System.arraycopy(yBytes, 0, out, 33, 32)
-        return bytesToHex(out)
+        return out
     }
 
     /**

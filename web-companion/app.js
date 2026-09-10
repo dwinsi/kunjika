@@ -172,14 +172,23 @@ class WebCompanionApp {
         }
     }
 
-    async processReceivedPayload(encryptedBytes) {
+    async processReceivedPayload(fullPayload) {
         try {
-            // Decrypt using derived shared key
-            const credential = await window.webDropCrypto.decryptPayload(encryptedBytes);
-            this.currentPassword = credential.password;
-            this.currentPayload = credential;
+            if (fullPayload.length < 65 + 12 + 16) {
+                throw new Error("Payload too short or invalid format");
+            }
 
-            // Compute TOTP SAS verification code
+            // 1. Extract Phone's uncompressed P-256 public key (first 65 bytes)
+            const phonePubKeyBytes = fullPayload.slice(0, 65);
+            const phonePubKeyHex = window.webDropCrypto.buf2hex(phonePubKeyBytes);
+
+            // 2. Extract Encrypted Payload (remaining bytes: IV 12B + CipherText)
+            const encryptedBytes = fullPayload.slice(65);
+
+            // 3. Derive Shared Secret via ECDH
+            await window.webDropCrypto.deriveSharedSecret(phonePubKeyHex);
+
+            // 4. Compute TOTP SAS verification code
             try {
                 const totpCode = await window.webDropCrypto.computeTotpVerificationCode();
                 this.totpCodeEl.textContent = `${totpCode.slice(0, 3)} ${totpCode.slice(3)}`;
@@ -187,6 +196,11 @@ class WebCompanionApp {
             } catch (e) {
                 console.warn("TOTP SAS computation note:", e);
             }
+
+            // 5. Decrypt using derived shared key
+            const credential = await window.webDropCrypto.decryptPayload(encryptedBytes);
+            this.currentPassword = credential.password;
+            this.currentPayload = credential;
 
             // Populate UI
             this.itemTitle.textContent = credential.title || "Untitled Credential";
