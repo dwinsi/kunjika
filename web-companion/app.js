@@ -74,6 +74,10 @@ class WebCompanionApp {
         window.kunjikaBle.onStatusChange = (msg, type) => {
             this.bleStatus.textContent = msg;
             this.bleStatus.className = `ble-status ${type}`;
+            if (type === "success" || type === "busy") {
+                // Pause session renewal countdown so ephemeral keys are locked during transfer
+                clearInterval(this.sessionTimer);
+            }
         };
 
         // Setup BLE incoming payload listener

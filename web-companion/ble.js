@@ -15,8 +15,9 @@ class KunjikaBleClient {
         this.transferChar = null;
         this.ackChar = null;
         this.handshakeChar = null;
-        this.receivedChunks = [];
+        this.receivedChunks = new Map();
         this.expectedTotalLength = 0;
+        this.expectedTotalChunks = 0;
         this.onTransferComplete = null;
         this.onStatusChange = null;
     }
@@ -99,25 +100,30 @@ class KunjikaBleClient {
         const totalChunks = data[3];
         const chunkData = data.slice(4);
 
-        if (chunkIndex === 0) {
-            this.receivedChunks = [];
+        if (!this.expectedTotalLength || chunkIndex === 0) {
             this.expectedTotalLength = totalLength;
+            this.expectedTotalChunks = totalChunks;
         }
 
-        this.receivedChunks.push({ index: chunkIndex, data: chunkData });
-        this.updateStatus(`Receiving encrypted payload: chunk ${chunkIndex + 1}/${totalChunks}...`, "busy");
+        // Deduplicate and store by chunk index
+        this.receivedChunks.set(chunkIndex, chunkData);
+        this.updateStatus(`Receiving encrypted payload: chunk ${this.receivedChunks.size}/${totalChunks}...`, "busy");
 
-        if (this.receivedChunks.length === totalChunks) {
-            // Reassemble
+        if (this.receivedChunks.size === totalChunks) {
+            // Reassemble in exact chunk index order
             const fullPayload = new Uint8Array(this.expectedTotalLength);
             let offset = 0;
-            // Sort chunks by index
-            this.receivedChunks.sort((a, b) => a.index - b.index);
-            for (const chunk of this.receivedChunks) {
-                fullPayload.set(chunk.data, offset);
-                offset += chunk.data.length;
+            for (let i = 0; i < totalChunks; i++) {
+                const chunk = this.receivedChunks.get(i);
+                if (!chunk) {
+                    console.error(`Missing chunk ${i}`);
+                    return;
+                }
+                fullPayload.set(chunk, offset);
+                offset += chunk.length;
             }
 
+            this.receivedChunks.clear();
             this.updateStatus("Payload received! Verifying and decrypting...", "busy");
             if (this.onTransferComplete) {
                 this.onTransferComplete(fullPayload);
@@ -146,7 +152,7 @@ class KunjikaBleClient {
         this.device = null;
         this.server = null;
         this.transferChar = null;
-        this.receivedChunks = [];
+        this.receivedChunks.clear();
     }
 }
 

@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothGattServerCallback
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothStatusCodes
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
@@ -220,15 +221,25 @@ class KunjikaBlePeripheral(
             packet[3] = totalChunks.toByte()
             System.arraycopy(chunkBytes, 0, packet, 4, chunkBytes.size)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                gattServer?.notifyCharacteristicChanged(device, char, false, packet)
-            } else {
-                @Suppress("DEPRECATION")
-                char.value = packet
-                @Suppress("DEPRECATION")
-                gattServer?.notifyCharacteristicChanged(device, char, false)
+            // Send notification with retry if Android BLE buffer queue is temporarily busy
+            var notified = false
+            var retries = 0
+            while (!notified && retries < 5) {
+                notified = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val res = gattServer?.notifyCharacteristicChanged(device, char, false, packet)
+                    res == BluetoothStatusCodes.SUCCESS
+                } else {
+                    @Suppress("DEPRECATION")
+                    char.value = packet
+                    @Suppress("DEPRECATION")
+                    gattServer?.notifyCharacteristicChanged(device, char, false) ?: false
+                }
+                if (!notified) {
+                    retries++
+                    Thread.sleep(15)
+                }
             }
-            Thread.sleep(15) // Brief inter-packet delay for BLE buffer flush
+            Thread.sleep(15) // Inter-packet delay for BLE buffer flush
         }
         return true
     }
