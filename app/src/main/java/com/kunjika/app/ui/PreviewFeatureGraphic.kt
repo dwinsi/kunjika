@@ -25,7 +25,7 @@ import com.kunjika.app.R
 @Composable
 fun FeatureGraphic1024x500() {
     val backgroundBrush = Brush.radialGradient(
-        colors = listOf(Color(0xFF131B2A), Color(0xFF0B0F17)),
+        colors = listOf(Color(0xFF0F141C), Color(0xFF07090E)),
     )
 
     Box(
@@ -67,7 +67,7 @@ fun FeatureGraphic1024x500() {
             // Tagline
             Text(
                 text = "MILITARY-GRADE • OFFLINE-FIRST • VAULT",
-                color = Color(0xFF10B981), // Emerald 500
+                color = Color(0xFFF59E0B), // Sovereign Gold 500
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp

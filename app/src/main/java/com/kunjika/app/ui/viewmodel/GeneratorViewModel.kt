@@ -16,12 +16,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.security.SecureRandom
 
 enum class GeneratorMode {
     PASSWORD,
     PASSPHRASE,
     PIN,
-    HISTORY
+    TOTP
 }
 
 data class GeneratorUiState(
@@ -42,6 +43,8 @@ data class GeneratorUiState(
     val includeNumberInPassphrase: Boolean = true,
     // PIN config
     val pinLength: Int = 6,
+    // TOTP config (Standard Google Auth 160-bit Base32 secret)
+    val totpSecret: String = "",
     // Validation
     val isConfigValid: Boolean = true
 )
@@ -54,11 +57,36 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
     val history: StateFlow<List<DecryptedHistoryItem>> = historyRepository.recentHistory
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    fun generateTotpSecret(): String {
+        val base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+        val random = SecureRandom()
+        val secret = StringBuilder(32)
+        for (i in 0 until 32) {
+            secret.append(base32Chars[random.nextInt(base32Chars.length)])
+        }
+        return secret.toString()
+    }
+
     fun setMode(mode: GeneratorMode) {
+        val currentSecret = if (mode == GeneratorMode.TOTP && _uiState.value.totpSecret.isEmpty()) {
+            generateTotpSecret()
+        } else {
+            _uiState.value.totpSecret
+        }
+
         _uiState.value = _uiState.value.copy(
             mode = mode,
-            generatedPassword = "",
+            totpSecret = currentSecret,
+            generatedPassword = if (mode == GeneratorMode.TOTP) currentSecret else "",
             strengthResult = PasswordStrengthEvaluator.evaluate("")
+        )
+    }
+
+    fun setCustomTotpSecret(secret: String) {
+        val filtered = secret.uppercase().filter { it in "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567" }
+        _uiState.value = _uiState.value.copy(
+            totpSecret = filtered,
+            generatedPassword = filtered
         )
     }
 
@@ -130,7 +158,6 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
 
     fun generate() {
         val state = _uiState.value
-        if (state.mode == GeneratorMode.HISTORY) return
 
         if (!state.isConfigValid && state.mode == GeneratorMode.PASSWORD) {
             return
@@ -162,18 +189,21 @@ class GeneratorViewModel(private val historyRepository: HistoryRepository) : Vie
             GeneratorMode.PIN -> {
                 PasswordGenerator.generatePin(state.pinLength)
             }
-            GeneratorMode.HISTORY -> "" // Should not reach here
+            GeneratorMode.TOTP -> {
+                generateTotpSecret()
+            }
         }
 
         val strength = PasswordStrengthEvaluator.evaluate(newPassword)
 
-        if (newPassword.isNotEmpty()) {
+        if (newPassword.isNotEmpty() && state.mode != GeneratorMode.TOTP) {
             viewModelScope.launch {
                 historyRepository.addHistory(newPassword, state.mode.name)
             }
         }
 
         _uiState.value = state.copy(
+            totpSecret = if (state.mode == GeneratorMode.TOTP) newPassword else state.totpSecret,
             generatedPassword = newPassword,
             strengthResult = strength,
             isConfigValid = true

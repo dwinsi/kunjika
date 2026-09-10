@@ -16,9 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kunjika.app.data.local.blockchain.BlockEntity
+import com.kunjika.app.ui.components.GlossyCard
+import com.kunjika.app.ui.components.glossyBorder
+import com.kunjika.app.ui.components.glossyTopShine
 import com.kunjika.app.ui.viewmodel.VaultViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,7 +37,7 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Blockchain Audit Ledger") },
+                title = { Text("Blockchain Audit Ledger", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -54,14 +58,11 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             // Integrity Status Banner
-            Card(
+            GlossyCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isChainValid) Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
-                ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
@@ -70,7 +71,7 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
                     Icon(
                         imageVector = if (isChainValid) Icons.Default.VerifiedUser else Icons.Default.GppBad,
                         contentDescription = null,
-                        tint = if (isChainValid) Color(0xFF2E7D32) else Color(0xFFC62828),
+                        tint = if (isChainValid) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
@@ -78,13 +79,13 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
                         Text(
                             text = if (isChainValid) "Chain Integrity Verified" else "Tampering Detected!",
                             fontWeight = FontWeight.Bold,
-                            color = if (isChainValid) Color(0xFF2E7D32) else Color(0xFFC62828)
+                            color = if (isChainValid) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
                         )
                         Text(
                             text = if (isChainValid) "All blocks are cryptographically linked and signed by this device." 
                                    else "The ledger has been modified externally or a block signature is invalid.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isChainValid) Color(0xFF2E7D32) else Color(0xFFC62828)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -94,7 +95,8 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
                 text = "Ledger Height: ${ledger.size} Blocks",
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
             )
 
             LazyColumn(
@@ -112,11 +114,9 @@ fun AuditLogScreen(vaultViewModel: VaultViewModel, onBack: () -> Unit) {
 
 @Composable
 fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
-    Card(
+    GlossyCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(14.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -127,16 +127,17 @@ fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(34.dp)
                             .background(
                                 color = when (block.action) {
-                                    "CREATE" -> Color(0xFFE3F2FD)
-                                    "UPDATE" -> Color(0xFFFFF3E0)
-                                    "DELETE" -> Color(0xFFFFEBEE)
+                                    "CREATE" -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                                    "UPDATE" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    "DELETE" -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
                                     else -> MaterialTheme.colorScheme.surfaceVariant
                                 },
                                 shape = RoundedCornerShape(8.dp)
-                            ),
+                            )
+                            .glossyBorder(shape = RoundedCornerShape(8.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -147,11 +148,11 @@ fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
                                 else -> Icons.Default.QuestionMark
                             },
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(18.dp),
                             tint = when (block.action) {
-                                "CREATE" -> Color(0xFF1976D2)
-                                "UPDATE" -> Color(0xFFF57C00)
-                                "DELETE" -> Color(0xFFD32F2F)
+                                "CREATE" -> MaterialTheme.colorScheme.tertiary
+                                "UPDATE" -> MaterialTheme.colorScheme.primary
+                                "DELETE" -> MaterialTheme.colorScheme.error
                                 else -> MaterialTheme.colorScheme.onSurfaceVariant
                             }
                         )
@@ -195,7 +196,7 @@ fun DetailRow(label: String, value: String) {
             style = MaterialTheme.typography.bodySmall,
             fontFamily = FontFamily.Monospace,
             maxLines = 1,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

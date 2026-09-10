@@ -18,7 +18,7 @@ import com.kunjika.app.R
 fun AppIcon512() {
     // Recreating the background radial gradient from ic_launcher_background.xml
     val backgroundBrush = Brush.radialGradient(
-        colors = listOf(Color(0xFF131B2A), Color(0xFF0B0F17)),
+        colors = listOf(Color(0xFF0F141C), Color(0xFF07090E)),
     )
 
     Box(

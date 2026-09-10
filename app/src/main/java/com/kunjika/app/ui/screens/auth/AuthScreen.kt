@@ -2,6 +2,8 @@ package com.kunjika.app.ui.screens.auth
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,14 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +50,11 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.security.BiometricAuthManager
 import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.components.GlossyButton
+import com.kunjika.app.ui.components.GlossyCard
+import com.kunjika.app.ui.components.GlossyIconBox
+import com.kunjika.app.ui.components.glossyBorder
+import com.kunjika.app.ui.components.glossyTopShine
 import com.kunjika.app.ui.viewmodel.AuthState
 import com.kunjika.app.ui.viewmodel.AuthViewModel
 
@@ -90,15 +94,21 @@ fun AuthScreen(authViewModel: AuthViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF3A280B), // Ambient Gold Glow
+                        Color(0xFF0F141C),
+                        Color(0xFF07090E)  // Pitch Black Edge
+                    )
+                )
+            )
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        GlossyCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            shape = RoundedCornerShape(24.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -107,20 +117,13 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isSetup) Icons.Default.Shield else Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+                GlossyIconBox(
+                    icon = if (isSetup) Icons.Default.Shield else Icons.Default.Lock,
+                    size = 72.dp,
+                    iconSize = 36.dp,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    iconColor = MaterialTheme.colorScheme.primary
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -185,7 +188,7 @@ fun AuthScreen(authViewModel: AuthViewModel) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button(
+                GlossyButton(
                     onClick = {
                         keyboardController?.hide()
                         if (isSetup) {
@@ -200,39 +203,55 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                             authViewModel.unlockWithPin(pin)
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = if (isSetup) {
                             if (!isConfirmStep) "Next" else "Set Master PIN"
                         } else "Unlock Vault",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = Color(0xFF0F172A)
                     )
                 }
 
                 if (!isSetup && isBiometricEnabled && context is FragmentActivity && BiometricAuthManager.canAuthenticate(context)) {
                     Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedButton(
-                        onClick = { triggerBiometric() },
+                    
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
-                        shape = RoundedCornerShape(12.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.20f),
+                                        Color(0xFF1E293B),
+                                        Color(0xFF0F172A)
+                                    )
+                                )
+                            )
+                            .glossyBorder(shape = RoundedCornerShape(14.dp), highlightColor = Color.White.copy(alpha = 0.5f))
+                            .glossyTopShine(alpha = 0.3f)
+                            .clickable { triggerBiometric() }
+                            .padding(vertical = 14.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Fingerprint,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Text(
-                            text = "  Unlock with Biometrics",
-                            fontWeight = FontWeight.Medium
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Fingerprint,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Unlock with Biometrics",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 15.sp
+                            )
+                        }
                     }
                 }
             }

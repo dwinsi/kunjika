@@ -288,13 +288,13 @@ fun WebDropScannerDialog(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF00E676).copy(alpha = 0.15f)),
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Bluetooth,
                                 contentDescription = null,
-                                tint = Color(0xFF00E676),
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -330,7 +330,7 @@ fun WebDropScannerDialog(
                             modifier = Modifier
                                 .size(240.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .border(2.dp, Color(0xFF00E676), RoundedCornerShape(16.dp))
+                                .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
                         ) {
                             BarcodeScannerView(onBarcodeDetected = { raw ->
                                 handleQrDetected(raw)
@@ -351,8 +351,8 @@ fun WebDropScannerDialog(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             // BLE Connection status indicator
-                            val badgeBg = if (isBleConnected) Color(0xFF00E676).copy(alpha = 0.15f) else Color(0xFFFFAB00).copy(alpha = 0.15f)
-                            val badgeTextColor = if (isBleConnected) Color(0xFF00E676) else Color(0xFFFFAB00)
+                            val badgeBg = if (isBleConnected) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f) else Color(0xFFFFAB00).copy(alpha = 0.15f)
+                            val badgeTextColor = if (isBleConnected) MaterialTheme.colorScheme.tertiary else Color(0xFFFFAB00)
                             val badgeText = if (isBleConnected) "Laptop Connected ✓" else "Awaiting Laptop Pairing..."
 
                             Box(
@@ -413,23 +413,26 @@ fun WebDropScannerDialog(
 
                             Button(
                                 onClick = { triggerBiometricAndSend() },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E676)),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Fingerprint,
                                     contentDescription = null,
-                                    tint = Color(0xFF05100A),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Authorize & Send", color = Color(0xFF05100A), fontWeight = FontWeight.Bold)
+                                Text("Authorize & Send", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
 
                     WebDropState.TRANSFERRING -> {
-                        CircularProgressIndicator(color = Color(0xFF00E676), modifier = Modifier.padding(24.dp))
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(24.dp))
                         Text(
                             text = "Encrypting & Streaming to PC...",
                             style = MaterialTheme.typography.bodyMedium,
@@ -441,7 +444,7 @@ fun WebDropScannerDialog(
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = Color(0xFF00E676),
+                            tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(56.dp)
                         )
                         Spacer(modifier = Modifier.height(12.dp))

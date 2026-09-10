@@ -23,7 +23,9 @@ data class SecurityAuditSummary(
     val weakPasswords: List<DecryptedPasswordItem> = emptyList(),
     val reusedPasswords: List<DecryptedPasswordItem> = emptyList(),
     val oldPasswords: List<DecryptedPasswordItem> = emptyList(),
-    val expiredPasswords: List<DecryptedPasswordItem> = emptyList()
+    val expiredPasswords: List<DecryptedPasswordItem> = emptyList(),
+    val totpCount: Int = 0,
+    val noTotpPasswords: List<DecryptedPasswordItem> = emptyList()
 )
 
 class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
@@ -35,6 +37,17 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _isVaultUnlocked = MutableStateFlow(false)
+    val isVaultUnlocked: StateFlow<Boolean> = _isVaultUnlocked.asStateFlow()
+
+    fun unlockVault() {
+        _isVaultUnlocked.value = true
+    }
+
+    fun lockVault() {
+        _isVaultUnlocked.value = false
+    }
 
     val allPasswords: StateFlow<List<DecryptedPasswordItem>> = repository.getAllPasswords()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -179,6 +192,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         }
 
         val reused = list.filter { (passwordCountMap[it.plaintextPassword] ?: 0) > 1 }
+        val totpProtected = list.filter { !it.totpSecret.isNullOrEmpty() }
+        val noTotp = list.filter { it.totpSecret.isNullOrEmpty() }
 
         var score = 100
         score -= (weak.size * 15)
@@ -193,7 +208,9 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
             weakPasswords = weak,
             reusedPasswords = reused,
             oldPasswords = old,
-            expiredPasswords = expired
+            expiredPasswords = expired,
+            totpCount = totpProtected.size,
+            noTotpPasswords = noTotp
         )
     }
 

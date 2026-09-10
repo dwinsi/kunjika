@@ -1,5 +1,6 @@
 package com.kunjika.app.ui.screens.health
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +17,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -29,9 +35,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontFamily
+import com.kunjika.app.ui.components.GlossyCard
+import com.kunjika.app.ui.components.glossyTopShine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,6 +64,7 @@ import com.kunjika.app.ui.theme.StrengthFair
 import com.kunjika.app.ui.theme.StrengthStrong
 import com.kunjika.app.ui.theme.StrengthVeryStrong
 import com.kunjika.app.ui.theme.StrengthVeryWeak
+import com.kunjika.app.ui.components.glossyBorder
 import com.kunjika.app.ui.theme.StrengthWeak
 import com.kunjika.app.ui.viewmodel.VaultViewModel
 
@@ -60,9 +72,11 @@ import com.kunjika.app.ui.viewmodel.VaultViewModel
 fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Unit) {
     val auditSummary by vaultViewModel.auditSummary.collectAsState()
     val isChainValid by vaultViewModel.isChainValid.collectAsState()
+
     val scrollState = rememberScrollState()
 
     var selectedItemForEdit by remember { mutableStateOf<DecryptedPasswordItem?>(null) }
+    var selectedAuditFilter by remember { mutableStateOf<String?>(null) }
 
     val scoreColor = when {
         auditSummary.securityScore >= 80 -> StrengthVeryStrong
@@ -79,11 +93,9 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Overall Security Score Card
-        Card(
+        GlossyCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+            shape = RoundedCornerShape(20.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -154,13 +166,9 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         Spacer(modifier = Modifier.height(16.dp))
 
         // Blockchain Integrity Card
-        Card(
+        GlossyCard(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isChainValid) Color(0xFFE8F5E9).copy(alpha = 0.5f) else Color(0xFFFFEBEE).copy(alpha = 0.5f)
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             onClick = onViewAuditLog
         ) {
             Row(
@@ -203,7 +211,72 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Metrics Grid
+        // 2FA Protection Coverage Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(modifier = Modifier.padding(18.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Shield,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = "2FA Protection Coverage",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "${auditSummary.totpCount} of ${auditSummary.totalPasswords} accounts protected with 2FA",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val totpCoverageRatio = if (auditSummary.totalPasswords > 0)
+                    auditSummary.totpCount / auditSummary.totalPasswords.toFloat()
+                else 0f
+
+                LinearProgressIndicator(
+                    progress = { totpCoverageRatio },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Metrics Grid (Interactive Filters)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -213,6 +286,10 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
                 count = auditSummary.weakPasswords.size,
                 icon = Icons.Default.LockOpen,
                 tint = StrengthVeryWeak,
+                isSelected = selectedAuditFilter == "WEAK",
+                onClick = {
+                    selectedAuditFilter = if (selectedAuditFilter == "WEAK") null else "WEAK"
+                },
                 modifier = Modifier.weight(1f)
             )
             AuditMetricCard(
@@ -220,6 +297,10 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
                 count = auditSummary.reusedPasswords.size,
                 icon = Icons.Default.Repeat,
                 tint = StrengthWeak,
+                isSelected = selectedAuditFilter == "REUSED",
+                onClick = {
+                    selectedAuditFilter = if (selectedAuditFilter == "REUSED") null else "REUSED"
+                },
                 modifier = Modifier.weight(1f)
             )
             AuditMetricCard(
@@ -227,28 +308,37 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
                 count = auditSummary.oldPasswords.size,
                 icon = Icons.Default.History,
                 tint = StrengthFair,
+                isSelected = selectedAuditFilter == "OLD",
+                onClick = {
+                    selectedAuditFilter = if (selectedAuditFilter == "OLD") null else "OLD"
+                },
                 modifier = Modifier.weight(1f)
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Expired Metric
+        // Expired Metric Bar (if any expired)
         if (auditSummary.expiredPasswords.isNotEmpty()) {
             AuditMetricCard(
-                title = "Expired Passwords",
+                title = "Expired Rotation Period",
                 count = auditSummary.expiredPasswords.size,
                 icon = Icons.Default.Warning,
                 tint = MaterialTheme.colorScheme.error,
+                isSelected = selectedAuditFilter == "EXPIRED",
+                onClick = {
+                    selectedAuditFilter = if (selectedAuditFilter == "EXPIRED") null else "EXPIRED"
+                },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(20.dp))
-        } else {
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
+        // Filtered or Full Audit Section Lists
+        val showAll = selectedAuditFilter == null
+
         // Expired Passwords List
-        if (auditSummary.expiredPasswords.isNotEmpty()) {
+        if ((showAll || selectedAuditFilter == "EXPIRED") && auditSummary.expiredPasswords.isNotEmpty()) {
             AuditSectionList(
                 title = "Expired Passwords (${auditSummary.expiredPasswords.size})",
                 subtitle = "These passwords have exceeded their set rotation period",
@@ -261,7 +351,7 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         }
 
         // Weak Passwords List
-        if (auditSummary.weakPasswords.isNotEmpty()) {
+        if ((showAll || selectedAuditFilter == "WEAK") && auditSummary.weakPasswords.isNotEmpty()) {
             AuditSectionList(
                 title = "Weak Passwords (${auditSummary.weakPasswords.size})",
                 subtitle = "These passwords have low entropy and can be easily cracked",
@@ -274,7 +364,7 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         }
 
         // Reused Passwords List
-        if (auditSummary.reusedPasswords.isNotEmpty()) {
+        if ((showAll || selectedAuditFilter == "REUSED") && auditSummary.reusedPasswords.isNotEmpty()) {
             AuditSectionList(
                 title = "Reused Passwords (${auditSummary.reusedPasswords.size})",
                 subtitle = "Reusing passwords across services creates a critical security risk",
@@ -287,7 +377,7 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         }
 
         // Old Passwords List
-        if (auditSummary.oldPasswords.isNotEmpty()) {
+        if ((showAll || selectedAuditFilter == "OLD") && auditSummary.oldPasswords.isNotEmpty()) {
             AuditSectionList(
                 title = "Old Passwords (${auditSummary.oldPasswords.size})",
                 subtitle = "Consider rotating passwords that haven't been updated in over 90 days",
@@ -316,12 +406,19 @@ private fun AuditMetricCard(
     count: Int,
     icon: ImageVector,
     tint: Color,
+    isSelected: Boolean = false,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (onClick != null) Modifier.clickable { onClick() } else Modifier
+        ),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) tint.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surface
+        ),
+        border = if (isSelected) BorderStroke(1.5.dp, tint) else null,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(

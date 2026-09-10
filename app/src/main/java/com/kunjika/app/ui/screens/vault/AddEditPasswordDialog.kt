@@ -48,6 +48,7 @@ import com.kunjika.app.core.generator.PasswordGenerator
 import com.kunjika.app.core.generator.PasswordGeneratorConfig
 import com.kunjika.app.core.generator.PasswordStrengthEvaluator
 import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.components.CategoryChip
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.StrengthIndicator
 import com.kunjika.app.ui.viewmodel.VaultViewModel
@@ -56,6 +57,7 @@ import com.kunjika.app.ui.viewmodel.VaultViewModel
 @Composable
 fun AddEditPasswordDialog(
     initialPassword: String = "",
+    initialTotpSecret: String = "",
     existingItem: DecryptedPasswordItem? = null,
     vaultViewModel: VaultViewModel,
     onDismiss: () -> Unit
@@ -67,7 +69,7 @@ fun AddEditPasswordDialog(
     var category by remember { mutableStateOf(existingItem?.category ?: "Personal") }
     var notes by remember { mutableStateOf(existingItem?.notes ?: "") }
     var expiryDays by remember { mutableStateOf(existingItem?.expiryDays ?: 0) }
-    var totpSecret by remember { mutableStateOf(existingItem?.totpSecret ?: "") }
+    var totpSecret by remember { mutableStateOf(existingItem?.totpSecret ?: initialTotpSecret) }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val strengthResult = remember(password) { PasswordStrengthEvaluator.evaluate(password) }
@@ -184,10 +186,10 @@ fun AddEditPasswordDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     availableCategories.forEach { cat ->
-                        FilterChip(
-                            selected = category == cat,
-                            onClick = { category = cat },
-                            label = { Text(cat) }
+                        CategoryChip(
+                            label = cat,
+                            isSelected = category == cat,
+                            onClick = { category = cat }
                         )
                     }
                 }
@@ -217,10 +219,10 @@ fun AddEditPasswordDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf(0 to "None", 30 to "30d", 90 to "90d", 180 to "180d").forEach { (days, label) ->
-                        FilterChip(
-                            selected = expiryDays == days,
-                            onClick = { expiryDays = days },
-                            label = { Text(label) }
+                        CategoryChip(
+                            label = label,
+                            isSelected = expiryDays == days,
+                            onClick = { expiryDays = days }
                         )
                     }
                 }

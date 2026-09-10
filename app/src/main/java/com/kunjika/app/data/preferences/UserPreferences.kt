@@ -29,6 +29,7 @@ class UserPreferences(private val context: Context) {
         private val KEY_DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
         private val KEY_DARK_THEME = booleanPreferencesKey("dark_theme")
         private val KEY_LOCK_ON_EXIT = booleanPreferencesKey("lock_on_exit")
+        private val KEY_LOCK_VAULT_ON_TAB_SELECT = booleanPreferencesKey("lock_vault_on_tab_select")
         private val KEY_LAST_BACKGROUND_TIME = stringPreferencesKey("last_background_time")
         private val KEY_PIN_HINT = stringPreferencesKey("pin_hint")
         private val KEY_IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
@@ -48,6 +49,10 @@ class UserPreferences(private val context: Context) {
 
     val lockOnExit: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[KEY_LOCK_ON_EXIT] ?: false
+    }
+
+    val lockVaultOnTabSelect: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_LOCK_VAULT_ON_TAB_SELECT] ?: true
     }
 
     val autoLockTimeoutSec: Flow<Int> = context.dataStore.data.map { preferences ->
@@ -121,6 +126,12 @@ class UserPreferences(private val context: Context) {
     suspend fun setLockOnExit(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[KEY_LOCK_ON_EXIT] = enabled
+        }
+    }
+
+    suspend fun setLockVaultOnTabSelect(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_LOCK_VAULT_ON_TAB_SELECT] = enabled
         }
     }
 

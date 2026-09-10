@@ -1,6 +1,7 @@
 package com.kunjika.app.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -22,12 +23,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.kunjika.app.ui.screens.auth.AuthScreen
-import com.kunjika.app.ui.screens.onboarding.OnboardingScreen
 import com.kunjika.app.ui.screens.generator.GeneratorScreen
 import com.kunjika.app.ui.screens.health.AuditLogScreen
 import com.kunjika.app.ui.screens.health.SecurityAuditScreen
+import com.kunjika.app.ui.screens.onboarding.OnboardingScreen
 import com.kunjika.app.ui.screens.settings.SettingsScreen
 import com.kunjika.app.ui.screens.vault.VaultScreen
 import com.kunjika.app.ui.viewmodel.AuthState
@@ -70,18 +76,36 @@ fun MainNavigation(
                 bottomBar = {
                     NavigationBar(
                         containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.primary
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.border(
+                            width = 1.dp,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.15f),
+                                    Color.Transparent
+                                )
+                            ),
+                            shape = RectangleShape
+                        )
                     ) {
                         NavigationTab.entries.forEach { tab ->
+                            val isSelected = selectedTab == tab
                             NavigationBarItem(
-                                selected = selectedTab == tab,
+                                selected = isSelected,
                                 onClick = { selectedTab = tab },
                                 icon = { Icon(tab.icon, contentDescription = tab.title) },
-                                label = { Text(tab.title) },
+                                label = {
+                                    Text(
+                                        text = tab.title,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                },
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = MaterialTheme.colorScheme.primary,
                                     selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
                                 )
                             )
                         }
@@ -100,7 +124,10 @@ fun MainNavigation(
                             generatorViewModel = generatorViewModel,
                             vaultViewModel = vaultViewModel
                         )
-                        NavigationTab.VAULT -> VaultScreen(vaultViewModel = vaultViewModel)
+                        NavigationTab.VAULT -> VaultScreen(
+                            vaultViewModel = vaultViewModel,
+                            settingsViewModel = settingsViewModel
+                        )
                         NavigationTab.AUDIT -> {
                             if (showAuditLog) {
                                 AuditLogScreen(

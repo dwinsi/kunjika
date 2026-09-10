@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +32,12 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -42,9 +46,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,34 +59,144 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.generator.PasswordStrengthEvaluator
 import com.kunjika.app.core.qr.QrSyncPayload
+import com.kunjika.app.core.security.BiometricAuthManager
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
 import com.kunjika.app.data.repository.DecryptedPasswordItem
 import com.kunjika.app.ui.components.CategoryChip
 import com.kunjika.app.ui.components.CustomTextField
+import com.kunjika.app.ui.components.glossyBorder
+import com.kunjika.app.ui.components.glossyTopShine
 import com.kunjika.app.ui.components.qr.BarcodeScannerView
 import com.kunjika.app.ui.theme.StrengthFair
 import com.kunjika.app.ui.theme.StrengthStrong
 import com.kunjika.app.ui.theme.StrengthVeryStrong
 import com.kunjika.app.ui.theme.StrengthVeryWeak
 import com.kunjika.app.ui.theme.StrengthWeak
+import com.kunjika.app.ui.viewmodel.SettingsViewModel
 import com.kunjika.app.ui.viewmodel.VaultViewModel
 
 @Composable
-fun VaultScreen(vaultViewModel: VaultViewModel) {
+fun VaultScreen(
+    vaultViewModel: VaultViewModel,
+    settingsViewModel: SettingsViewModel? = null
+) {
+    val lockVaultOnTabSelect by (settingsViewModel?.lockVaultOnTabSelect?.collectAsState() ?: remember { mutableStateOf(true) })
+    val isVaultUnlocked by vaultViewModel.isVaultUnlocked.collectAsState()
+
     val filteredPasswords by vaultViewModel.filteredPasswords.collectAsState()
     val selectedCategory by vaultViewModel.selectedCategory.collectAsState()
     val searchQuery by vaultViewModel.searchQuery.collectAsState()
 
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if (lockVaultOnTabSelect) {
+                vaultViewModel.lockVault()
+            }
+        }
+    }
+
+    if (lockVaultOnTabSelect && !isVaultUnlocked) {
+        val activity = context as? FragmentActivity
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(28.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Vault Locked",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Authenticate to access your encrypted credentials",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = {
+                            if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
+                                BiometricAuthManager.promptBiometric(
+                                    activity = activity,
+                                    title = "Unlock Vault",
+                                    subtitle = "Authenticate to access your passwords",
+                                    onSuccess = { vaultViewModel.unlockVault() },
+                                    onError = { err ->
+                                        Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            } else {
+                                vaultViewModel.unlockVault()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Fingerprint,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Unlock Vault", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+        return
+    }
     var showAddDialog by remember { mutableStateOf(value = false) }
     var showScanScreen by remember { mutableStateOf(false) }
 
@@ -402,6 +516,8 @@ private fun PasswordCardItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .glossyBorder(shape = RoundedCornerShape(16.dp))
+            .glossyTopShine(alpha = 0.28f, shineRatio = 0.4f)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -422,7 +538,25 @@ private fun PasswordCardItem(
                         modifier = Modifier
                             .size(44.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.25f),
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    )
+                                )
+                            )
+                            .border(
+                                width = 1.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.4f),
+                                        Color.Transparent
+                                    )
+                                ),
+                                shape = CircleShape
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

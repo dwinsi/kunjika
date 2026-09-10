@@ -38,6 +38,9 @@ class SettingsViewModel(
     val lockOnExit: StateFlow<Boolean> = userPreferences.lockOnExit
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val lockVaultOnTabSelect: StateFlow<Boolean> = userPreferences.lockVaultOnTabSelect
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
     val autoLockTimeoutSec: StateFlow<Int> = userPreferences.autoLockTimeoutSec
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 30)
 
@@ -70,6 +73,12 @@ class SettingsViewModel(
     fun setLockOnExit(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setLockOnExit(enabled)
+        }
+    }
+
+    fun setLockVaultOnTabSelect(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferences.setLockVaultOnTabSelect(enabled)
         }
     }
 

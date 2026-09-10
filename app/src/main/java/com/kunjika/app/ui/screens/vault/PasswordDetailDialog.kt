@@ -156,14 +156,6 @@ fun PasswordDetailDialog(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-
-                    IconButton(onClick = { showWebDropDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Bluetooth,
-                            contentDescription = "Send to PC (Web Drop Air-Gapped)",
-                            tint = Color(0xFF00E676)
-                        )
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -244,16 +236,16 @@ fun PasswordDetailDialog(
                         onClick = { showWebDropDialog = true },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E676).copy(alpha = 0.15f))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.Bluetooth,
                             contentDescription = null,
-                            tint = Color(0xFF00E676),
+                            tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Send to PC (Air-Gapped)", color = Color(0xFF00E676), fontWeight = FontWeight.Bold)
+                        Text("Send to PC (Air-Gapped)", color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
                     }
                 }
 
