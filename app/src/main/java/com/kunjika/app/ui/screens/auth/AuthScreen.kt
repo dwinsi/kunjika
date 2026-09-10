@@ -178,7 +178,7 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                 CustomTextField(
                     value = if (isSetup && isConfirmStep) confirmPin else pin,
                     onValueChange = { input ->
-                        if (input.length <= 8 && input.all { it.isDigit() }) {
+                        if (input.all { it.isDigit() }) {
                             if (isSetup && isConfirmStep) confirmPin = input else pin = input
                             authViewModel.clearError()
                         }

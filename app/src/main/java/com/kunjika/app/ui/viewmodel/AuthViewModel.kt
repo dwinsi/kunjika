@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kunjika.app.core.security.BiometricKeyManager
 import com.kunjika.app.data.preferences.UserPreferences
+import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,10 @@ sealed class AuthState {
     object Authenticated : AuthState()
 }
 
-class AuthViewModel(private val userPreferences: UserPreferences) : ViewModel() {
+class AuthViewModel(
+    private val userPreferences: UserPreferences,
+    private val passwordRepository: PasswordRepository? = null
+) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -70,6 +74,7 @@ class AuthViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         }
         viewModelScope.launch {
             userPreferences.setMasterPin(pin)
+            passwordRepository?.recordPinCreateBlock()
             _errorMessage.value = null
             _authState.value = AuthState.Authenticated
         }

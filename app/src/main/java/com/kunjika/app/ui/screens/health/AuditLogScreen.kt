@@ -133,6 +133,13 @@ fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
                                     "CREATE" -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
                                     "UPDATE" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                     "DELETE" -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                    "PIN_CREATE" -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                                    "PIN_CHANGE" -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                                    "VAULT_IMPORT" -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                                    "VAULT_EXPORT" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    "BIOMETRIC_TOGGLE" -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                                    "RECOVERY_KIT_GENERATE" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    "EXPORT_BLE" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                     else -> MaterialTheme.colorScheme.surfaceVariant
                                 },
                                 shape = RoundedCornerShape(8.dp)
@@ -145,7 +152,14 @@ fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
                                 "CREATE" -> Icons.Default.Add
                                 "UPDATE" -> Icons.Default.Edit
                                 "DELETE" -> Icons.Default.Delete
-                                else -> Icons.Default.QuestionMark
+                                "PIN_CREATE" -> Icons.Default.VpnKey
+                                "PIN_CHANGE" -> Icons.Default.Key
+                                "VAULT_IMPORT" -> Icons.Default.Download
+                                "VAULT_EXPORT" -> Icons.Default.Upload
+                                "BIOMETRIC_TOGGLE" -> Icons.Default.Fingerprint
+                                "RECOVERY_KIT_GENERATE" -> Icons.Default.Description
+                                "EXPORT_BLE" -> Icons.Default.Share
+                                else -> Icons.Default.Shield
                             },
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
@@ -153,6 +167,13 @@ fun BlockItem(block: BlockEntity, dateFormat: SimpleDateFormat) {
                                 "CREATE" -> MaterialTheme.colorScheme.tertiary
                                 "UPDATE" -> MaterialTheme.colorScheme.primary
                                 "DELETE" -> MaterialTheme.colorScheme.error
+                                "PIN_CREATE" -> MaterialTheme.colorScheme.tertiary
+                                "PIN_CHANGE" -> MaterialTheme.colorScheme.secondary
+                                "VAULT_IMPORT" -> MaterialTheme.colorScheme.tertiary
+                                "VAULT_EXPORT" -> MaterialTheme.colorScheme.primary
+                                "BIOMETRIC_TOGGLE" -> MaterialTheme.colorScheme.secondary
+                                "RECOVERY_KIT_GENERATE" -> MaterialTheme.colorScheme.primary
+                                "EXPORT_BLE" -> MaterialTheme.colorScheme.primary
                                 else -> MaterialTheme.colorScheme.onSurfaceVariant
                             }
                         )

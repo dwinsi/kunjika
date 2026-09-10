@@ -81,6 +81,132 @@ class PasswordRepository(
         blockDao.insertBlock(block)
     }
 
+    suspend fun recordPinChangeBlock() = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "PIN_CHANGE"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
+    suspend fun recordImportBlock(source: String, itemCount: Int) = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "VAULT_IMPORT"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|SOURCE:$source|ITEMS:$itemCount|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
+    suspend fun recordExportBackupBlock(format: String, itemCount: Int) = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "VAULT_EXPORT"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|FORMAT:$format|ITEMS:$itemCount|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
+    suspend fun recordBiometricToggleBlock(enabled: Boolean) = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "BIOMETRIC_TOGGLE"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|ENABLED:$enabled|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
+    suspend fun recordRecoveryKitBlock() = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "RECOVERY_KIT_GENERATE"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
+    suspend fun recordPinCreateBlock() = withContext(Dispatchers.IO) {
+        val lastBlock = blockDao.getLatestBlock()
+        val previousHash = lastBlock?.let {
+            BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
+        } ?: "0"
+
+        val action = "PIN_CREATE"
+        val timestamp = System.currentTimeMillis()
+        val contentHash = BlockchainManager.computeHash("ACTION:$action|GENESIS_SETUP|TIMESTAMP:$timestamp")
+        val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
+
+        val block = BlockEntity(
+            previousHash = previousHash,
+            contentHash = contentHash,
+            action = action,
+            timestamp = timestamp,
+            signature = signature
+        )
+        blockDao.insertBlock(block)
+    }
+
     fun getAllPasswords(): Flow<List<DecryptedPasswordItem>> {
         return passwordDao.getAllPasswords().map { list ->
             list.map { entity -> entity.toDecrypted() }

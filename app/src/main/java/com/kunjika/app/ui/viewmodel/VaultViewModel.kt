@@ -151,6 +151,7 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
                         notes = payload.notes,
                         totpSecret = payload.totpSecret
                     )
+                    repository.recordImportBlock("QR_SYNC", 1)
                     onResult(true)
                     return@launch
                 }

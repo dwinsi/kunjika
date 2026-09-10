@@ -1,5 +1,6 @@
 package com.kunjika.app
 
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
@@ -36,6 +37,10 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+
         // HARDEN SCREEN SECURITY: Prevent screenshots, screen recording, and hide app preview in recents
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -56,7 +61,7 @@ class MainActivity : FragmentActivity() {
         authViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AuthViewModel(userPreferences) as T
+                return AuthViewModel(userPreferences, repository) as T
             }
         })[AuthViewModel::class.java]
 

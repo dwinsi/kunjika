@@ -820,16 +820,16 @@ fun SettingsScreen(
                 Column {
                     CustomTextField(
                         value = newPin,
-                        onValueChange = { if (it.length <= 8 && it.all { c -> c.isDigit() }) newPin = it },
-                        label = "New PIN (min 4 digits)",
+                        onValueChange = { if (it.all { c -> c.isDigit() }) newPin = it },
+                        label = "New Master PIN",
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomTextField(
                         value = confirmPin,
-                        onValueChange = { if (it.length <= 8 && it.all { c -> c.isDigit() }) confirmPin = it },
-                        label = "Confirm New PIN",
+                        onValueChange = { if (it.all { c -> c.isDigit() }) confirmPin = it },
+                        label = "Confirm New Master PIN",
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
                     )

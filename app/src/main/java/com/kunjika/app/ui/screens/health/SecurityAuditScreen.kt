@@ -48,7 +48,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+import com.kunjika.app.core.security.PlayIntegrityManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -298,6 +302,113 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Play Integrity API Card
+        val context = LocalContext.current
+        val coroutineScope = rememberCoroutineScope()
+        val playIntegrityManager = remember(context) { PlayIntegrityManager(context) }
+
+        var isIntegrityLoading by remember { mutableStateOf(false) }
+        var integrityTokenInfo by remember { mutableStateOf<String?>(null) }
+        var integrityErrorMsg by remember { mutableStateOf<String?>(null) }
+
+        GlossyCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.VerifiedUser,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = "Play Integrity Attestation",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "Verify app & device authenticity via Google",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                if (integrityTokenInfo != null) {
+                    Text(
+                        text = integrityTokenInfo!!,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Monospace,
+                        color = Color(0xFF2E7D32)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                if (integrityErrorMsg != null) {
+                    Text(
+                        text = integrityErrorMsg!!,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                Button(
+                    onClick = {
+                        isIntegrityLoading = true
+                        integrityTokenInfo = null
+                        integrityErrorMsg = null
+                        coroutineScope.launch {
+                            val result = playIntegrityManager.requestIntegrityToken()
+                            isIntegrityLoading = false
+                            if (result.isSuccess) {
+                                val res = result.getOrThrow()
+                                integrityTokenInfo = "Token Generated (${res.token.length} chars)\nSnippet: ${res.token.take(30)}..."
+                            } else {
+                                val exc = result.exceptionOrNull()
+                                integrityErrorMsg = exc?.let { playIntegrityManager.getReadableErrorMessage(it) } ?: "Integrity request failed"
+                            }
+                        }
+                    },
+                    enabled = !isIntegrityLoading,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    if (isIntegrityLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Attesting Device...")
+                    } else {
+                        Text("Test Play Integrity Attestation")
+                    }
                 }
             }
         }

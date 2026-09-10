@@ -67,6 +67,7 @@ class SettingsViewModel(
     fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setBiometricEnabled(enabled)
+            passwordRepository.recordBiometricToggleBlock(enabled)
         }
     }
 
@@ -119,8 +120,8 @@ class SettingsViewModel(
                 recoveryKey = recoveryKey,
                 onComplete = { file ->
                     onComplete(file)
-                    // Schedule cleanup after 5 minutes to ensure user has time to share/print
                     viewModelScope.launch {
+                        passwordRepository.recordRecoveryKitBlock()
                         kotlinx.coroutines.delay(5 * 60 * 1000L)
                         clearRecoveryKit(context)
                     }
@@ -141,6 +142,7 @@ class SettingsViewModel(
     fun changeMasterPin(newPin: String) {
         viewModelScope.launch {
             userPreferences.setMasterPin(newPin)
+            passwordRepository.recordPinChangeBlock()
             _backupStatus.value = "Master PIN updated successfully"
         }
     }
@@ -150,6 +152,7 @@ class SettingsViewModel(
             try {
                 val entities = passwordRepository.getRawEntities()
                 val exportJson = BackupManager.exportEncryptedBackup(entities, passphrase)
+                passwordRepository.recordExportBackupBlock("JSON_STRING", entities.size)
                 _backupStatus.value = "Backup generated successfully (${entities.size} items)"
                 onComplete(exportJson)
             } catch (e: Exception) {
@@ -163,6 +166,7 @@ class SettingsViewModel(
             try {
                 val entities = BackupManager.importEncryptedBackup(backupJson, passphrase)
                 passwordRepository.importRawEntities(entities)
+                passwordRepository.recordImportBlock("JSON_STRING", entities.size)
                 _backupStatus.value = "Imported ${entities.size} passwords successfully"
             } catch (e: Exception) {
                 _backupStatus.value = "Import failed. Invalid passphrase or corrupted file."
@@ -181,6 +185,7 @@ class SettingsViewModel(
                         outputStream.write(exportJson.toByteArray())
                     }
                 }
+                passwordRepository.recordExportBackupBlock("JSON_FILE", entities.size)
                 _backupStatus.value = "Backup saved to file: ${entities.size} items"
             } catch (e: Exception) {
                 _backupStatus.value = "Export to file failed: ${e.localizedMessage}"
@@ -199,6 +204,7 @@ class SettingsViewModel(
 
                 val entities = BackupManager.importEncryptedBackup(importJson, passphrase)
                 passwordRepository.importRawEntities(entities)
+                passwordRepository.recordImportBlock("JSON_FILE", entities.size)
                 _backupStatus.value = "Imported ${entities.size} passwords from file"
             } catch (e: Exception) {
                 _backupStatus.value = "Import from file failed. Check passphrase."

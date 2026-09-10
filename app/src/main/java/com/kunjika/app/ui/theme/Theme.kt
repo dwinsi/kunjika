@@ -101,7 +101,7 @@ fun KunjikaTheme(
 
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
+            val window = (view.context as? Activity)?.window ?: return@SideEffect
             val insetsController = WindowCompat.getInsetsController(window, view)
 
             insetsController.isAppearanceLightStatusBars = !darkTheme

@@ -4,8 +4,8 @@ kotlin = "2.2.10"
 ksp = "2.3.6"
 
 # App Versioning
-appVersionCode = "5"
-appVersionName = "1.0.3"
+appVersionCode = "7"
+appVersionName = "1.1.1"
 
 coreKtx = "1.15.0"
 lifecycleRuntimeKtx = "2.8.7"
@@ -17,6 +17,7 @@ room = "2.8.4"
 sqlcipher = "4.6.1"
 biometric = "1.2.0-alpha05"
 securityCrypto = "1.1.0-alpha06"
+playIntegrity = "1.6.0"
 datastorePreferences = "1.1.2"
 coroutines = "1.10.1"
 materialIconsExtended = "1.7.8"
@@ -54,6 +55,7 @@ sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version = "2.4.0"
 # Security & Biometrics
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
