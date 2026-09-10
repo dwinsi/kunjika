@@ -345,21 +345,23 @@
             z-index: 2;
         }
 
-        /* Glossy Status Badges */
+        /* ==========================================================
+           Glossy Status Badges (High-Contrast & Elevated Visibility)
+           ========================================================== */
         .status-badge {
             position: relative;
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            font-size: 0.82rem;
+            gap: 8px;
+            font-size: 0.83rem;
             font-weight: 700;
-            letter-spacing: 0.2px;
-            padding: 6px 14px;
+            letter-spacing: 0.3px;
+            padding: 7px 16px;
             border-radius: 999px;
-            border: 1.2px solid transparent;
-            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.45);
+            border: 1.5px solid transparent;
             overflow: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
         }
 
         .status-badge::before {
@@ -368,30 +370,79 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 45%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            height: 48%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 100%);
             pointer-events: none;
         }
 
+        /* Dark Mode: "Ready to Scan (Air-Gapped)" - Vibrant Cyber Mint on Deep Emerald Vault Pill */
         .status-badge.ready {
             background: 
-                linear-gradient(180deg, var(--tertiary-container) 0%, rgba(16, 185, 129, 0.05) 100%) padding-box,
-                linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, var(--tertiary-border) 100%) border-box;
-            color: var(--tertiary);
+                linear-gradient(180deg, #064E3B 0%, #033226 50%, #02241B 100%) padding-box,
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, #34D399 45%, #059669 100%) border-box;
+            color: #A7F3D0;
+            box-shadow: 
+                inset 0 1.2px 0 0 rgba(255, 255, 255, 0.75),
+                0 4px 18px rgba(16, 185, 129, 0.40);
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.55);
         }
 
+        /* Dark Mode: Busy / Initializing - Cryptographic Indigo Elevated Pill */
         .status-badge.busy {
             background: 
-                linear-gradient(180deg, var(--secondary-container) 0%, rgba(99, 102, 241, 0.05) 100%) padding-box,
-                linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, var(--secondary-border) 100%) border-box;
-            color: var(--secondary);
+                linear-gradient(180deg, #1E1B4B 0%, #151238 50%, #0D0B24 100%) padding-box,
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, #818CF8 45%, #4F46E5 100%) border-box;
+            color: #E0E7FF;
+            box-shadow: 
+                inset 0 1.2px 0 0 rgba(255, 255, 255, 0.75),
+                0 4px 18px rgba(99, 102, 241, 0.40);
+            text-shadow: 0 0 12px rgba(129, 140, 248, 0.55);
         }
 
+        /* Dark Mode: Error Pill */
         .status-badge.error {
             background: 
-                linear-gradient(180deg, var(--error-container) 0%, rgba(239, 68, 68, 0.05) 100%) padding-box,
-                linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, var(--error-border) 100%) border-box;
-            color: var(--error);
+                linear-gradient(180deg, #7F1D1D 0%, #571010 50%, #3B0808 100%) padding-box,
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, #F87171 45%, #DC2626 100%) border-box;
+            color: #FEE2E2;
+            box-shadow: 
+                inset 0 1.2px 0 0 rgba(255, 255, 255, 0.75),
+                0 4px 18px rgba(239, 68, 68, 0.40);
+            text-shadow: 0 0 12px rgba(248, 113, 113, 0.55);
+        }
+
+        /* Light Mode Status Badges */
+        [data-theme="light"] .status-badge.ready {
+            background: 
+                linear-gradient(180deg, #FFFFFF 0%, #ECFDF5 50%, #D1FAE5 100%) padding-box,
+                linear-gradient(135deg, #FFFFFF 0%, #6EE7B7 50%, #059669 100%) border-box;
+            color: #065F46;
+            box-shadow: 
+                inset 0 1.2px 0 0 #FFFFFF,
+                0 3px 12px rgba(5, 150, 105, 0.20);
+            text-shadow: none;
+        }
+
+        [data-theme="light"] .status-badge.busy {
+            background: 
+                linear-gradient(180deg, #FFFFFF 0%, #EEF2FF 50%, #E0E7FF 100%) padding-box,
+                linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 50%, #4F46E5 100%) border-box;
+            color: #312E81;
+            box-shadow: 
+                inset 0 1.2px 0 0 #FFFFFF,
+                0 3px 12px rgba(79, 70, 229, 0.20);
+            text-shadow: none;
+        }
+
+        [data-theme="light"] .status-badge.error {
+            background: 
+                linear-gradient(180deg, #FFFFFF 0%, #FEF2F2 50%, #FEE2E2 100%) padding-box,
+                linear-gradient(135deg, #FFFFFF 0%, #FCA5A5 50%, #DC2626 100%) border-box;
+            color: #7F1D1D;
+            box-shadow: 
+                inset 0 1.2px 0 0 #FFFFFF,
+                0 3px 12px rgba(220, 38, 38, 0.20);
+            text-shadow: none;
         }
 
         /* Circular Session Timer */
