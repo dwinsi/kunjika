@@ -1,6 +1,6 @@
 /**
  * Kunjika Web Companion - Main Application Controller
- * Handles Session LifeCycle, UI States, Clipboard Management, and Event Flow.
+ * Handles Session LifeCycle, UI States, Clipboard Management, Theme Modes, and Event Flow.
  */
 
 class WebCompanionApp {
@@ -11,8 +11,10 @@ class WebCompanionApp {
         this.clipboardTimeRemaining = 30;
         this.currentPassword = null;
         this.currentPayload = null;
+        this.lastQrPayloadStr = null;
 
         this.initElements();
+        this.initTheme();
         this.initEvents();
         this.startNewSession();
     }
@@ -20,7 +22,6 @@ class WebCompanionApp {
     initElements() {
         this.qrCanvas = document.getElementById("qr-canvas");
         this.statusBadge = document.getElementById("status-badge");
-        this.statusText = document.getElementById("status-text");
         this.timerCircle = document.getElementById("timer-circle");
         this.timerSeconds = document.getElementById("timer-seconds");
         this.bleButton = document.getElementById("ble-connect-btn");
@@ -28,7 +29,6 @@ class WebCompanionApp {
         this.totpCard = document.getElementById("totp-card");
         this.totpCodeEl = document.getElementById("totp-code");
         this.credentialCard = document.getElementById("credential-card");
-        this.vaultSection = document.getElementById("vault-section");
         this.qrSection = document.getElementById("qr-section");
 
         // Credential card elements
@@ -41,6 +41,56 @@ class WebCompanionApp {
         this.itemNotes = document.getElementById("item-notes");
         this.clipboardProgress = document.getElementById("clipboard-progress");
         this.clipboardNotice = document.getElementById("clipboard-notice");
+
+        // Theme elements
+        this.themeToggleBtn = document.getElementById("theme-toggle");
+        this.sunIcon = document.getElementById("theme-icon-sun");
+        this.moonIcon = document.getElementById("theme-icon-moon");
+    }
+
+    initTheme() {
+        const savedTheme = localStorage.getItem("kunjika_theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+
+        this.setTheme(initialTheme, false);
+
+        if (this.themeToggleBtn) {
+            this.themeToggleBtn.addEventListener("click", () => {
+                const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+                const nextTheme = currentTheme === "dark" ? "light" : "dark";
+                this.setTheme(nextTheme, true);
+            });
+        }
+
+        // Listen for OS system theme changes if user has not explicitly chosen
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+            if (!localStorage.getItem("kunjika_theme")) {
+                this.setTheme(e.matches ? "dark" : "light", false);
+            }
+        });
+    }
+
+    setTheme(theme, savePreference = false) {
+        document.documentElement.setAttribute("data-theme", theme);
+        if (savePreference) {
+            localStorage.setItem("kunjika_theme", theme);
+        }
+
+        if (this.sunIcon && this.moonIcon) {
+            if (theme === "light") {
+                this.sunIcon.style.display = "none";
+                this.moonIcon.style.display = "block";
+            } else {
+                this.sunIcon.style.display = "block";
+                this.moonIcon.style.display = "none";
+            }
+        }
+
+        // Re-render QR code in theme colors if active
+        if (this.lastQrPayloadStr && this.qrSection && this.qrSection.style.display !== "none") {
+            this.drawQrCode(this.lastQrPayloadStr);
+        }
     }
 
     initEvents() {
@@ -86,6 +136,49 @@ class WebCompanionApp {
         };
     }
 
+    drawQrCode(payloadStr) {
+        if (!this.qrCanvas || !payloadStr) return;
+
+        try {
+            const qr = qrcode(0, 'M');
+            qr.addData(payloadStr);
+            qr.make();
+
+            const moduleCount = qr.getModuleCount();
+            const size = 240;
+            const margin = 10;
+            const cellSize = (size - margin * 2) / moduleCount;
+            const ctx = this.qrCanvas.getContext('2d');
+            this.qrCanvas.width = size;
+            this.qrCanvas.height = size;
+
+            const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+            // In Dark Mode: Deep Obsidian Surface + Sovereign Amber Gold modules
+            // In Light Mode: Clean Platinum Surface + Deep Obsidian High-Contrast modules
+            const bgColor = isDark ? "#0F141C" : "#FFFFFF";
+            const dotColor = isDark ? "#FBBF24" : "#0F172A";
+
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            ctx.fillStyle = dotColor;
+            for (let r = 0; r < moduleCount; r++) {
+                for (let c = 0; c < moduleCount; c++) {
+                    if (qr.isDark(r, c)) {
+                        ctx.fillRect(
+                            Math.round(margin + c * cellSize),
+                            Math.round(margin + r * cellSize),
+                            Math.ceil(cellSize),
+                            Math.ceil(cellSize)
+                        );
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("QR Code drawing error:", e);
+        }
+    }
+
     async startNewSession() {
         clearInterval(this.sessionTimer);
         this.sessionTimeRemaining = 60;
@@ -102,8 +195,6 @@ class WebCompanionApp {
             const pow = await window.webDropCrypto.solveProofOfWork(4);
 
             // 3. Construct QR payload
-            // Format: JSON string containing:
-            // { v: 1, sid: "...", pk: "...", nonce: "...", t: 1234567890 }
             const payloadObj = {
                 v: 1,
                 sid: session.sessionId,
@@ -112,34 +203,10 @@ class WebCompanionApp {
                 t: session.timestamp
             };
             const payloadStr = JSON.stringify(payloadObj);
+            this.lastQrPayloadStr = payloadStr;
 
-            // 4. Draw to Canvas using qrcode-generator (auto-selects version 1-40)
-            const qr = qrcode(0, 'M');
-            qr.addData(payloadStr);
-            qr.make();
-
-            const moduleCount = qr.getModuleCount();
-            const size = 240;
-            const margin = 8;
-            const cellSize = (size - margin * 2) / moduleCount;
-            const ctx = this.qrCanvas.getContext('2d');
-            this.qrCanvas.width = size;
-            this.qrCanvas.height = size;
-            ctx.fillStyle = "#11161d";
-            ctx.fillRect(0, 0, size, size);
-            ctx.fillStyle = "#00e676";
-            for (let r = 0; r < moduleCount; r++) {
-                for (let c = 0; c < moduleCount; c++) {
-                    if (qr.isDark(r, c)) {
-                        ctx.fillRect(
-                            Math.round(margin + c * cellSize),
-                            Math.round(margin + r * cellSize),
-                            Math.ceil(cellSize),
-                            Math.ceil(cellSize)
-                        );
-                    }
-                }
-            }
+            // 4. Render to Canvas with theme awareness
+            this.drawQrCode(payloadStr);
 
             this.statusBadge.textContent = "Ready to Scan (Air-Gapped)";
             this.statusBadge.className = "status-badge ready";

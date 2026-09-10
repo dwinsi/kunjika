@@ -6,3 +6,12 @@ google_analytics:
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
+exclude:
+  - app
+  - gradle
+  - gradlew
+  - gradlew.bat
+  - build.gradle.kts
+  - settings.gradle.kts
+  - play_store_assets
+  - .artifacts
