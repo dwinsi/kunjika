@@ -41,8 +41,9 @@ jobs:
 
       - name: Ensure Web Companion Assets
         run: |
+          sudo chown -R $USER:$USER ./_site
           mkdir -p ./_site/web-companion
-          cp -r web-companion/* ./_site/web-companion/
+          cp -rf web-companion/* ./_site/web-companion/
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
