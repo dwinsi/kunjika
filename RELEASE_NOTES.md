@@ -1,5 +1,11 @@
 # Kunjika Release Notes
 
+## v1.1.1 (Google Play Integrity & App Attestation) - March 2026
+
+- **Play Integrity Integration**: Integrated Google Play Integrity API and Automatic Integrity Protection to safeguard against APK tampering and repackaging.
+- **Security Health Attestation**: Added a interactive Play Integrity attestation tester in the Security Audit screen for real-time device health verification.
+- **Stability & Performance**: General performance optimizations and underlying dependency updates.
+
 ## v1.1.0 (Hardware Cryptographic Hardening & Air-Gapped Sync) - March 2026
 
 ### 🛡️ Core Security & Cryptographic Hardening

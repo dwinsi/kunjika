@@ -119,14 +119,18 @@ class KunjikaBlePeripheral(
         }
     }
 
+    fun isBluetoothEnabled(): Boolean {
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
+    }
+
     @SuppressLint("MissingPermission")
     fun start(): Boolean {
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+        if (!isBluetoothEnabled()) {
             onError("Bluetooth is disabled. Please enable Bluetooth.")
             return false
         }
 
-        advertiser = bluetoothAdapter.bluetoothLeAdvertiser
+        advertiser = bluetoothAdapter?.bluetoothLeAdvertiser
         if (advertiser == null) {
             onError("Bluetooth LE Advertising not supported on this device.")
             return false
@@ -176,11 +180,15 @@ class KunjikaBlePeripheral(
                 .build()
 
             val data = AdvertiseData.Builder()
-                .setIncludeDeviceName(false)
+                .setIncludeDeviceName(true)
                 .addServiceUuid(ParcelUuid(SERVICE_UUID))
                 .build()
 
-            advertiser?.startAdvertising(settings, data, advertiseCallback)
+            val scanResponse = AdvertiseData.Builder()
+                .setIncludeDeviceName(true)
+                .build()
+
+            advertiser?.startAdvertising(settings, data, scanResponse, advertiseCallback)
             return true
         } catch (e: SecurityException) {
             onError("Bluetooth permissions required: ${e.message}")

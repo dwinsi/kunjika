@@ -46,6 +46,16 @@ class WebCompanionApp {
         this.themeToggleBtn = document.getElementById("theme-toggle");
         this.sunIcon = document.getElementById("theme-icon-sun");
         this.moonIcon = document.getElementById("theme-icon-moon");
+
+        // Check browser Web Bluetooth compatibility (e.g. Safari)
+        if (window.kunjikaBle && !window.kunjikaBle.isSupported()) {
+            const warningBanner = document.getElementById("browser-warning-banner");
+            if (warningBanner) warningBanner.style.display = "block";
+            if (this.bleStatus) {
+                this.bleStatus.textContent = "Web Bluetooth not supported in Safari. Please use Chrome or Edge.";
+                this.bleStatus.className = "ble-status error";
+            }
+        }
     }
 
     initTheme() {
@@ -127,6 +137,11 @@ class WebCompanionApp {
             if (type === "success" || type === "busy") {
                 // Pause session renewal countdown so ephemeral keys are locked during transfer
                 clearInterval(this.sessionTimer);
+            }
+            if (type === "success") {
+                this.statusBadge.textContent = "⚡ Bluetooth Connected";
+                this.statusBadge.className = "status-badge ready";
+                this.showToast("⚡ Connected to Kunjika Vault via Bluetooth!");
             }
         };
 
@@ -236,10 +251,22 @@ class WebCompanionApp {
     }
 
     async handleBleConnect() {
+        if (!window.kunjikaBle.isSupported()) {
+            this.showToast("⚠️ Web Bluetooth is disabled or not supported in this browser. Use Chrome, Edge, or enable Web Bluetooth in Brave.");
+            this.bleStatus.textContent = "Web Bluetooth disabled/unsupported in browser";
+            this.bleStatus.className = "ble-status error";
+            return;
+        }
+
         try {
             await window.kunjikaBle.connect(window.webDropCrypto.sessionId);
         } catch (err) {
-            console.warn("User cancelled or BLE error:", err);
+            console.warn("BLE connect outcome:", err);
+            if (err.name !== "NotFoundError") {
+                this.showToast(`BLE Error: ${err.message || err}`);
+            } else {
+                this.showToast("Bluetooth device picker closed.");
+            }
         }
     }
 

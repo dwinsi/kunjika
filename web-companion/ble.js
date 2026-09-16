@@ -38,18 +38,33 @@ class KunjikaBleClient {
      */
     async connect(expectedSessionPrefix) {
         if (!this.isSupported()) {
-            throw new Error("Web Bluetooth is not supported in this browser. Please use Chrome, Edge, or Brave.");
+            const errorMsg = "Web Bluetooth is disabled or not supported in this browser. Please use Chrome, Edge, or enable Web Bluetooth in Brave settings.";
+            this.updateStatus(errorMsg, "error");
+            throw new Error(errorMsg);
         }
 
-        this.updateStatus("Scanning for Kunjika Phone via Bluetooth...", "busy");
+        this.updateStatus("Scanning for Kunjika via Bluetooth...", "busy");
 
         try {
-            this.device = await navigator.bluetooth.requestDevice({
-                filters: [
-                    { services: [KUNJIKA_SERVICE_UUID] }
-                ],
-                optionalServices: [KUNJIKA_SERVICE_UUID]
-            });
+            // First attempt: Request device with Kunjika BLE Service UUID filter
+            try {
+                this.device = await navigator.bluetooth.requestDevice({
+                    filters: [
+                        { services: [KUNJIKA_SERVICE_UUID] }
+                    ],
+                    optionalServices: [KUNJIKA_SERVICE_UUID]
+                });
+            } catch (filterErr) {
+                // If filter didn't find device or threw non-cancel error, try acceptAllDevices fallback
+                if (filterErr.name !== "NotFoundError") {
+                    this.device = await navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: [KUNJIKA_SERVICE_UUID]
+                    });
+                } else {
+                    throw filterErr;
+                }
+            }
 
             this.device.addEventListener("gattserverdisconnected", () => {
                 this.updateStatus("Bluetooth device disconnected", "info");
@@ -69,10 +84,14 @@ class KunjikaBleClient {
             await this.transferChar.startNotifications();
             this.transferChar.addEventListener("characteristicvaluechanged", (e) => this.handleIncomingChunk(e));
 
-            this.updateStatus("BLE Channel Securely Established", "success");
+            this.updateStatus("⚡ Bluetooth Connected to Kunjika Vault!", "success");
             return true;
         } catch (error) {
-            this.updateStatus(`BLE Connection Failed: ${error.message}`, "error");
+            if (error.name === "NotFoundError") {
+                this.updateStatus("Bluetooth selection cancelled by user", "info");
+            } else {
+                this.updateStatus(`BLE Connection Failed: ${error.message || error}`, "error");
+            }
             throw error;
         }
     }

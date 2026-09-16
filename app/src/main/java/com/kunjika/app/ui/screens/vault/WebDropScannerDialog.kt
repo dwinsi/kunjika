@@ -1,7 +1,15 @@
 package com.kunjika.app.ui.screens.vault
 
 import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,7 +20,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -96,10 +103,33 @@ fun WebDropScannerDialog(
     var blePeripheral by remember { mutableStateOf<KunjikaBlePeripheral?>(null) }
     var isBleConnected by remember { mutableStateOf(false) }
 
+    val enableBluetoothLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+        val btAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
+        if (btAdapter?.isEnabled == true) {
+            Toast.makeText(context, "Bluetooth enabled successfully!", Toast.LENGTH_SHORT).show()
+            if (state == WebDropState.ERROR && errorMessage.contains("Bluetooth", ignoreCase = true)) {
+                state = WebDropState.SCANNING
+            }
+        } else {
+            Toast.makeText(context, "Bluetooth is required to pair with laptop.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun promptEnableBluetooth() {
+        try {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            enableBluetoothLauncher.launch(enableBtIntent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Please enable Bluetooth in settings.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     // Required permissions
     val permissionsToRequest = remember {
         val list = mutableListOf(Manifest.permission.CAMERA)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             list.add(Manifest.permission.BLUETOOTH_ADVERTISE)
             list.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
@@ -163,6 +193,13 @@ fun WebDropScannerDialog(
         }
 
         try {
+            // Check if Bluetooth is turned on, if not prompt enable popup
+            val btManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val btAdapter = btManager?.adapter
+            if (btAdapter == null || !btAdapter.isEnabled) {
+                promptEnableBluetooth()
+            }
+
             // 3. Derive Shared Secret (ECDH)
             val webPublicKey = WebDropCrypto.parseUncompressedP256PublicKey(payload.pk)
             val phoneKeyPair = WebDropCrypto.generateEphemeralKeyPair()
@@ -179,6 +216,23 @@ fun WebDropScannerDialog(
                 context = context,
                 onConnected = {
                     isBleConnected = true
+                    scope.launch(Dispatchers.Main) {
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                                vibratorManager?.defaultVibrator?.vibrate(
+                                    VibrationEffect.createOneShot(120, VibrationEffect.DEFAULT_AMPLITUDE)
+                                )
+                            } else {
+                                @Suppress("DEPRECATION")
+                                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                                vibrator?.vibrate(120)
+                            }
+                        } catch (_: Exception) {
+                            // Vibration optional
+                        }
+                        Toast.makeText(context, "⚡ Connected to Laptop via Bluetooth!", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 onTransferSuccess = {
                     state = WebDropState.SUCCESS
@@ -482,8 +536,30 @@ fun WebDropScannerDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        TextButton(onClick = { state = WebDropState.SCANNING }) {
-                            Text("Try Again")
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (errorMessage.contains("Bluetooth", ignoreCase = true)) {
+                                Button(
+                                    onClick = { promptEnableBluetooth() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Bluetooth,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Turn On Bluetooth")
+                                }
+                            }
+                            TextButton(onClick = { state = WebDropState.SCANNING }) {
+                                Text("Try Again")
+                            }
                         }
                     }
                 }

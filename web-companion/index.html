@@ -998,6 +998,9 @@
 
             <!-- QR Scanner Section -->
             <div id="qr-section" class="qr-wrapper">
+                <div id="browser-warning-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1.2px solid rgba(248, 113, 113, 0.4); border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; color: var(--text-primary); text-align: center;">
+                    ⚠️ <strong>Safari / WebKit Notice:</strong> Apple Safari does not support Web Bluetooth. Please open this page in <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong> on your desktop to pair over Bluetooth.
+                </div>
                 <div class="qr-box">
                     <canvas id="qr-canvas"></canvas>
                 </div>
@@ -1008,9 +1011,9 @@
 
                 <button id="ble-connect-btn" class="ble-btn" type="button">
                     <svg viewBox="0 0 24 24"><path d="M14.24 12.01l2.32-2.32c.28-.28.28-.73 0-1.01l-4.24-4.24c-.39-.39-1.02-.39-1.41 0-.19.19-.29.44-.29.71v6.14L7.87 8.54c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l3.54 3.54-3.54 3.54c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.75-2.75v6.14c0 .55.45 1 1 1 .28 0 .53-.11.71-.29l4.24-4.24c.28-.28.28-.73 0-1.01l-2.32-2.32zm-1.55-5.32l1.93 1.93-1.93 1.93V6.69zm0 10.62l1.93-1.93-1.93-1.93v3.86z"/></svg>
-                    Pair Bluetooth (BLE Air-Gapped)
+                    Pair Bluetooth
                 </button>
-                <div id="ble-status" class="ble-status">Awaiting Phone Connection</div>
+                <div id="ble-status" class="ble-status">Awaiting Device Connection</div>
             </div>
 
             <!-- Visual Verification Code (TOTP SAS) Card -->
