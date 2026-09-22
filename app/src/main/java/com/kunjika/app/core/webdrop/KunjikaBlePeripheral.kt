@@ -120,7 +120,14 @@ class KunjikaBlePeripheral(
     }
 
     fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
+        return try {
+            bluetoothAdapter != null && bluetoothAdapter.isEnabled
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Bluetooth connect permission not granted yet: ${e.message}")
+            false
+        } catch (_: Exception) {
+            false
+        }
     }
 
     @SuppressLint("MissingPermission")

@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.SecurityManager
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.GlossyButton
@@ -76,10 +77,11 @@ fun AuthScreen(authViewModel: AuthViewModel) {
     val isSetup = authState == AuthState.SetupRequired
 
     fun triggerBiometric() {
-        if (!isSetup && isBiometricEnabled && context is FragmentActivity && BiometricAuthManager.canAuthenticate(context)) {
+        val activity = context.findActivity()
+        if (!isSetup && isBiometricEnabled && activity != null && BiometricAuthManager.canAuthenticate(context)) {
             val cryptoObject = authViewModel.getBiometricCryptoObject()
             BiometricAuthManager.promptBiometric(
-                activity = context,
+                activity = activity,
                 cryptoObject = cryptoObject,
                 onSuccess = { result -> authViewModel.unlockWithBiometrics(result) },
                 onError = { /* fallback to PIN */ }
@@ -244,7 +246,8 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                     )
                 }
 
-                if (!isSetup && isBiometricEnabled && context is FragmentActivity && BiometricAuthManager.canAuthenticate(context)) {
+                val activity = context.findActivity()
+                if (!isSetup && isBiometricEnabled && activity != null && BiometricAuthManager.canAuthenticate(context)) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Box(

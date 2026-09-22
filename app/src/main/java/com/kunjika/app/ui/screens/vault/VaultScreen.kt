@@ -72,6 +72,7 @@ import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.generator.PasswordStrengthEvaluator
 import com.kunjika.app.core.qr.QrSyncPayload
 import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
 import com.kunjika.app.data.repository.DecryptedPasswordItem
@@ -111,7 +112,7 @@ fun VaultScreen(
     }
 
     if (lockVaultOnTabSelect && !isVaultUnlocked) {
-        val activity = context as? FragmentActivity
+        val activity = context.findActivity()
         Box(
             modifier = Modifier
                 .fillMaxSize()

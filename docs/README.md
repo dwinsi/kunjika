@@ -1,27 +1,35 @@
 # 📚 Kunjika Documentation Index
 
-Welcome to the technical documentation for **Kunjika**. This guide provides a deep dive into the security architecture and features of the application.
+Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentation provides a comprehensive guide to Kunjika's security architecture, cryptographic protocols, user interface systems, and feature sets.
+
+---
 
 ## 📖 Table of Contents
 
-1.  **[🏗️ Architecture & Data Flow](architecture.md)**
-    *   System design, MVVM implementation, Core Security layer, Web Bluetooth peripheral, and modern Android stack.
-2.  **[🛡️ Security & Hardening](security.md)**
-    *   Details on Double Encryption, Hardware-Backed KeyStore, PBKDF2, Local Blockchain Audit Log, and the Web Drop Cryptographic Protocol (Proof of Work + Ephemeral ECDH + SAS).
-3.  **[✨ Feature Guide](features.md)**
-    *   Deep dive into the Smart Generator, Encrypted Vault, TOTP support, Phone-to-Phone QR Sync, and Air-Gapped Web Drop (PC Sync).
-4.  **[🌐 Web Companion](https://dwinsi.github.io/kunjika/web-companion/)**
-    *   Zero-install, client-side web companion for receiving credentials over Web Bluetooth with automatic memory wipe.
+1. **[🏗️ Architecture & Data Flow](architecture.md)**
+   - System design, MVVM architecture, Security Core layer, Biometric PIN unwrap pipeline, Web Bluetooth GATT peripheral, and modern Android 15+ dependency stack.
+2. **[🛡️ Security & Hardening Deep-Dive](security.md)**
+   - Double-Lock encryption (Android KeyStore TEE + SQLCipher), Biometric-backed PIN storage via `BiometricPrompt.CryptoObject`, Local Blockchain Audit Log, Environmental Tamper Defenses (Root/Emulator detection, Play Integrity API), and the Air-Gapped Web Drop Cryptographic Protocol.
+3. **[✨ Feature Guide](features.md)**
+   - Complete breakdown of the 4-in-1 Smart Generator (Passwords, Diceware, PINs, TOTP Secrets) with history, Encrypted Sovereign Vault, Phone-to-Phone QR Sync, Air-Gapped Web Drop, and Obsidian Gold & Platinum visual theming.
+4. **[📋 Release Notes](../RELEASE_NOTES.md)**
+   - Detailed version-by-version change log from v1.0.0 up to the current v1.1.2 release.
+5. **[🌐 Web Companion](https://dwinsi.github.io/kunjika/web-companion/)**
+   - Zero-install, client-side web companion for receiving credentials over Web Bluetooth with automatic memory and clipboard wipe.
+6. **[🔒 Privacy Policy](../PRIVACY_POLICY.md)**
+   - Sovereign zero-network privacy policy and offline data rights.
+7. **[📊 Play Store Data Safety](../PLAY_STORE_DATA_SAFETY.md)**
+   - Official Google Play data safety disclosures and permission specifications.
 
 ---
 
 ## 📊 Visualizing the Logic
-All diagrams in this documentation are written in **Mermaid.js** format. 
+All architecture and protocol diagrams throughout this documentation are rendered in standard **Mermaid.js** format for clarity and version-controlled review.
 
 > [!TIP]
-> If you are viewing this in Android Studio, ensure the **Mermaid** plugin is installed to see the interactive diagrams.
+> When viewing documentation in Android Studio or GitHub, interactive Mermaid diagram previews are supported natively.
 
 ---
 
-## 🔒 Security Promise
-Kunjika is designed to be **100% offline**. We guarantee that no sensitive data ever leaves your device's secure hardware.
+## 🔒 The Sovereign Security Promise
+Kunjika is designed to be **100% offline**. We mathematically guarantee that no passwords, master keys, or personal metadata ever touch the network or leave your device's secure hardware.

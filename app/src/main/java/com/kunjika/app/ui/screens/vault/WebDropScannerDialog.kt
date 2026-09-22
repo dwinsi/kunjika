@@ -67,6 +67,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.gson.Gson
 import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.webdrop.KunjikaBlePeripheral
 import com.kunjika.app.core.webdrop.WebDropCrypto
 import com.kunjika.app.core.webdrop.WebDropQrPayload
@@ -106,22 +107,33 @@ fun WebDropScannerDialog(
     val enableBluetoothLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { _ ->
-        val btAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
-        if (btAdapter?.isEnabled == true) {
-            Toast.makeText(context, "Bluetooth enabled successfully!", Toast.LENGTH_SHORT).show()
-            if (state == WebDropState.ERROR && errorMessage.contains("Bluetooth", ignoreCase = true)) {
-                state = WebDropState.SCANNING
+        try {
+            val btAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
+            val isEnabled = try { btAdapter?.isEnabled == true } catch (_: SecurityException) { false }
+            if (isEnabled) {
+                Toast.makeText(context, "Bluetooth enabled successfully!", Toast.LENGTH_SHORT).show()
+                if (state == WebDropState.ERROR && errorMessage.contains("Bluetooth", ignoreCase = true)) {
+                    state = WebDropState.SCANNING
+                }
+            } else {
+                Toast.makeText(context, "Bluetooth is required to pair with laptop.", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(context, "Bluetooth is required to pair with laptop.", Toast.LENGTH_SHORT).show()
+        } catch (_: Exception) {
+            // Guard against launcher callback failure
         }
     }
 
     fun promptEnableBluetooth() {
         try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Do not launch intent if BLUETOOTH_CONNECT permission is not granted yet
+                return
+            }
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             enableBluetoothLauncher.launch(enableBtIntent)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Toast.makeText(context, "Please enable Bluetooth in settings.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -162,7 +174,10 @@ fun WebDropScannerDialog(
     // Clean up BLE on dismiss
     DisposableEffect(Unit) {
         onDispose {
-            blePeripheral?.stop()
+            try {
+                blePeripheral?.stop()
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -193,10 +208,11 @@ fun WebDropScannerDialog(
         }
 
         try {
-            // Check if Bluetooth is turned on, if not prompt enable popup
+            // Check if Bluetooth is turned on safely
             val btManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
             val btAdapter = btManager?.adapter
-            if (btAdapter == null || !btAdapter.isEnabled) {
+            val isBtEnabled = try { btAdapter?.isEnabled == true } catch (_: SecurityException) { false }
+            if (!isBtEnabled) {
                 promptEnableBluetooth()
             }
 
@@ -267,7 +283,7 @@ fun WebDropScannerDialog(
             return
         }
 
-        val activity = context as? FragmentActivity
+        val activity = context.findActivity()
         val performSend = {
             state = WebDropState.TRANSFERRING
             scope.launch(Dispatchers.IO) {
