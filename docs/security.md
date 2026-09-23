@@ -1,5 +1,11 @@
 # 🛡️ Security Deep-Dive
 
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
+[![Encryption](https://img.shields.io/badge/encryption-Double--Lock%20AES--256--GCM-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](security.md)
+[![Network](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Audit](https://img.shields.io/badge/tamper%20defense-Blockchain%20Ledger-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](security.md)
+
 Kunjika is engineered to exceed military-grade standards for local data protection. Operating on a **Zero-Network, Zero-Trust** model, it guarantees that credentials never touch the internet and are protected by hardware-backed cryptographic primitives.
 
 ---
@@ -9,6 +15,21 @@ Kunjika is engineered to exceed military-grade standards for local data protecti
 Kunjika does not simply encrypt the database file; it encrypts every sensitive field *before* it is written to an encrypted database.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'mainBkg': '#0F141C',
+    'primaryColor': '#131A26',
+    'primaryTextColor': '#F8FAFC',
+    'primaryBorderColor': '#F59E0B',
+    'lineColor': '#818CF8',
+    'clusterBkg': '#0F141C',
+    'clusterBorder': '#2B374A',
+    'edgeLabelBackground': '#18202E'
+  }
+}}%%
 graph LR
     P[Plaintext Data] --> E1[AES-256-GCM]
     subgraph KS ["Android KeyStore (Hardware TEE/StrongBox)"]
@@ -24,9 +45,18 @@ graph LR
     K2 --> E2
     E2 --> D[(Encrypted SQLite File on Disk)]
 
-    style KS fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
-    style RP fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style D fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef gold fill:#131A26,stroke:#F59E0B,stroke-width:1.5px,color:#FDE68A;
+    classDef indigo fill:#1E1B4B,stroke:#818CF8,stroke-width:1.5px,color:#E0E7FF;
+    classDef emerald fill:#064E3B,stroke:#34D399,stroke-width:1.5px,color:#A7F3D0;
+    classDef storage fill:#18202E,stroke:#FBBF24,stroke-width:2px,color:#FDE68A;
+
+    class P,C,E1,E2 gold;
+    class K1 emerald;
+    class PIN,PBKDF2,K2 indigo;
+    class D storage;
+
+    style KS fill:#052e25,stroke:#34D399,stroke-width:2px,color:#A7F3D0
+    style RP fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
 ```
 
 > [!NOTE]
@@ -60,6 +90,21 @@ To provide frictionless biometric unlock without weakening the Master PIN or per
 To prevent offline modification attacks—where an attacker with physical or root access alters entries directly in the SQLite database file—Kunjika maintains a cryptographically signed blockchain ledger.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'mainBkg': '#0F141C',
+    'primaryColor': '#131A26',
+    'primaryTextColor': '#F8FAFC',
+    'primaryBorderColor': '#F59E0B',
+    'lineColor': '#818CF8',
+    'clusterBkg': '#0F141C',
+    'clusterBorder': '#2B374A',
+    'edgeLabelBackground': '#18202E'
+  }
+}}%%
 graph RL
     B1[Block 0: Genesis]
     B2[Block 1: Created Entry]
@@ -77,7 +122,13 @@ graph RL
         P[Previous Block Hash]
     end
     
-    style Block fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef goldBlock fill:#131A26,stroke:#F59E0B,stroke-width:1.5px,color:#FDE68A;
+    classDef blockDetail fill:#1E1B4B,stroke:#818CF8,stroke-width:1.5px,color:#E0E7FF;
+    
+    class B1,B2,B3,B4 goldBlock;
+    class H,S,T,P blockDetail;
+    
+    style Block fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
 ```
 
 - **Content Hash**: `SHA-256` of the serialized transaction data.
@@ -114,6 +165,21 @@ Heuristic scanning flags emulated environments to prevent dynamic analysis in au
 Web Drop enables wireless credential transfer to desktop/laptop browsers without internet access, third-party relays, or accounts.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'mainBkg': '#0F141C',
+    'primaryColor': '#131A26',
+    'primaryTextColor': '#F8FAFC',
+    'primaryBorderColor': '#F59E0B',
+    'lineColor': '#818CF8',
+    'clusterBkg': '#0F141C',
+    'clusterBorder': '#2B374A',
+    'edgeLabelBackground': '#18202E'
+  }
+}}%%
 graph TD
     subgraph Browser ["💻 Web Companion (RAM Only)"]
         POW[Compute SHA-256 PoW] --> B_KP[Generate Ephemeral P-256 Keypair]
@@ -139,8 +205,16 @@ graph TD
     BLE_TX ==>|Web Bluetooth GATT Chunks| B_DEC
     B_DEC --> WIPE
 
-    style Browser fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style Phone fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef browserNode fill:#1E1B4B,stroke:#818CF8,stroke-width:1.5px,color:#E0E7FF;
+    classDef phoneNode fill:#131A26,stroke:#F59E0B,stroke-width:1.5px,color:#FDE68A;
+    classDef greenNode fill:#064E3B,stroke:#34D399,stroke-width:1.5px,color:#A7F3D0;
+
+    class POW,B_KP,QR,B_SAS,B_DEC,WIPE browserNode;
+    class CAM,P_POW,P_KP,ECDH,P_SAS,BIO,P_ENC,BLE_TX,LEDGER phoneNode;
+    class BIO greenNode;
+
+    style Browser fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
+    style Phone fill:#0F141C,stroke:#F59E0B,stroke-width:2px,color:#FDE68A
 ```
 
 ### Cryptographic Guarantees:

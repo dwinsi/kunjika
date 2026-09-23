@@ -1,0 +1,230 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* ==========================================================
+   Kunjika Signature Theme: Obsidian Gold & Midnight Indigo
+   Applied across all rendered markdown documentation and pages
+   ========================================================== */
+
+:root {
+  --gold-primary: #F59E0B;
+  --gold-light: #FDE68A;
+  --gold-glow: rgba(245, 158, 11, 0.4);
+  --indigo-primary: #818CF8;
+  --indigo-dark: #1E1B4B;
+  --obsidian-bg: #07090E;
+  --obsidian-surface: #0F141C;
+  --obsidian-card: #131A26;
+  --border-metallic: #2B374A;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+}
+
+body {
+  background-color: var(--obsidian-bg) !important;
+  color: var(--text-main) !important;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Page Header with Midnight Indigo & Obsidian Gradient */
+.page-header {
+  background: linear-gradient(135deg, #07090E 0%, #0F141C 45%, #1E1B4B 100%) !important;
+  border-bottom: 2px solid var(--gold-primary) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.15) !important;
+  padding: 3rem 4rem !important;
+}
+
+.project-name {
+  color: var(--gold-light) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+  background: linear-gradient(135deg, #FFFFFF 20%, #FDE68A 60%, #F59E0B 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.project-tagline {
+  color: var(--text-muted) !important;
+  font-weight: 400 !important;
+}
+
+/* Glossy Sovereign Gold Action Buttons */
+.btn {
+  background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 52%, #B45309 100%) !important;
+  color: #1a0f00 !important;
+  border: 1.5px solid transparent !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 4px 16px rgba(245, 158, 11, 0.35) !important;
+  transition: all 0.22s ease !important;
+  text-decoration: none !important;
+  padding: 0.65rem 1.25rem !important;
+  margin: 0.3rem !important;
+}
+
+.btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 8px 24px rgba(245, 158, 11, 0.5) !important;
+  filter: brightness(1.05) !important;
+  color: #000000 !important;
+}
+
+/* Elevated Obsidian Vault Surface for Markdown Content */
+.main-content {
+  background: var(--obsidian-surface) !important;
+  color: var(--text-main) !important;
+  border: 1.5px solid var(--border-metallic) !important;
+  border-radius: 20px !important;
+  padding: 3rem !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 158, 11, 0.05) !important;
+  margin-top: -2.5rem !important;
+  position: relative !important;
+}
+
+.main-content h1, .main-content h2, .main-content h3, .main-content h4 {
+  color: var(--gold-light) !important;
+  font-weight: 700 !important;
+  border-bottom-color: var(--border-metallic) !important;
+}
+
+.main-content h1 {
+  background: linear-gradient(135deg, #FFFFFF 20%, #FDE68A 65%, #F59E0B 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.main-content h2 {
+  color: var(--gold-light) !important;
+  margin-top: 2rem !important;
+}
+
+.main-content a {
+  color: var(--gold-primary) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+.main-content a:hover {
+  color: var(--gold-light) !important;
+  text-decoration: underline !important;
+}
+
+.main-content code {
+  background: #18202E !important;
+  color: var(--gold-light) !important;
+  border: 1px solid var(--border-metallic) !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+}
+
+.main-content pre {
+  background: #131A26 !important;
+  border: 1.5px solid var(--border-metallic) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+.main-content table {
+  background: #131A26 !important;
+  border-collapse: collapse !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 1.5px solid var(--border-metallic) !important;
+  margin: 1.5rem 0 !important;
+}
+
+.main-content table th {
+  background: #1E1B4B !important;
+  color: var(--gold-light) !important;
+  border: 1px solid var(--border-metallic) !important;
+  padding: 10px 14px !important;
+}
+
+.main-content table td {
+  border: 1px solid var(--border-metallic) !important;
+  color: var(--text-main) !important;
+  padding: 10px 14px !important;
+}
+
+.main-content blockquote {
+  border-left: 4px solid var(--gold-primary) !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+  color: var(--text-main) !important;
+  padding: 14px 20px !important;
+  border-radius: 0 10px 10px 0 !important;
+  margin: 1.5rem 0 !important;
+}
+
+/* Markdown Alerts (GitHub Style Callouts) */
+.markdown-alert {
+  padding: 14px 18px !important;
+  margin: 1.5rem 0 !important;
+  border-radius: 12px !important;
+  border-left: 4px solid !important;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: #818CF8 !important;
+  background: rgba(129, 140, 248, 0.08) !important;
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.08) !important;
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: #F59E0B !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: #F97316 !important;
+  background: rgba(249, 115, 22, 0.08) !important;
+}
+
+/* Shield Badges Layout */
+.main-content p img,
+.main-content a img {
+  vertical-align: middle;
+  margin: 2px 2px;
+  border-radius: 4px;
+}
+
+/* Selection */
+::selection {
+  background: #F59E0B !important;
+  color: #07090E !important;
+}
+
+/* Custom Obsidian Gold Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07090E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2B374A;
+  border-radius: 4px;
+  border: 1px solid #1E1B4B;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F59E0B;
+}
+
+.main-content hr {
+  border-top: 1px solid var(--border-metallic) !important;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border-metallic) !important;
+  color: var(--text-muted) !important;
+  padding: 2rem 0 !important;
+}

@@ -1,6 +1,11 @@
 # ✨ Kunjika Features
 
-Kunjika combines military-grade offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35).
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
+[![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
+[![Sync](https://img.shields.io/badge/sync-Air--Gapped%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
+
+Kunjika combines military-grade offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35) styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
 
 ---
 
@@ -39,6 +44,29 @@ Kunjika features an intelligent, multi-mode cryptographic generator designed for
 Securely transfer credentials between two mobile devices without Bluetooth, Wi-Fi, cell service, or cloud intermediaries.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'actorBkg': '#0F141C',
+    'actorBorder': '#F59E0B',
+    'actorTextColor': '#FDE68A',
+    'actorLineColor': '#818CF8',
+    'signalColor': '#F59E0B',
+    'signalTextColor': '#F8FAFC',
+    'labelBoxBkgColor': '#0F141C',
+    'labelBoxBorderColor': '#818CF8',
+    'labelTextColor': '#F8FAFC',
+    'loopTextColor': '#FDE68A',
+    'noteBkgColor': '#1E1B4B',
+    'noteBorderColor': '#818CF8',
+    'noteTextColor': '#E0E7FF',
+    'activationBorderColor': '#F59E0B',
+    'activationBkgColor': '#131A26',
+    'sequenceNumberColor': '#07090E'
+  }
+}}%%
 sequenceDiagram
     participant S as Sender Device
     participant R as Receiver Device
@@ -70,6 +98,29 @@ Eliminates manual typing of 32+ character high-entropy passwords on desktop and 
 - **Tamper-Evident Audit Trail**: Every Web Drop operation automatically appends an `EXPORT_BLE` block to the local hardware-signed blockchain ledger.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'actorBkg': '#0F141C',
+    'actorBorder': '#F59E0B',
+    'actorTextColor': '#FDE68A',
+    'actorLineColor': '#818CF8',
+    'signalColor': '#F59E0B',
+    'signalTextColor': '#F8FAFC',
+    'labelBoxBkgColor': '#0F141C',
+    'labelBoxBorderColor': '#818CF8',
+    'labelTextColor': '#F8FAFC',
+    'loopTextColor': '#FDE68A',
+    'noteBkgColor': '#1E1B4B',
+    'noteBorderColor': '#818CF8',
+    'noteTextColor': '#E0E7FF',
+    'activationBorderColor': '#F59E0B',
+    'activationBkgColor': '#131A26',
+    'sequenceNumberColor': '#07090E'
+  }
+}}%%
 sequenceDiagram
     autonumber
     participant Browser as 💻 Web Companion (Browser)

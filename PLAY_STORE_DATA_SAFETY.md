@@ -1,4 +1,9 @@
-# Google Play Data Safety Information
+# 📊 Google Play Data Safety Information
+
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
+[![Data Safety](https://img.shields.io/badge/data%20safety-Verified%20Safe-34D399?style=flat-square&labelColor=064E3B&color=34D399)](PLAY_STORE_DATA_SAFETY.md)
+[![Collection](https://img.shields.io/badge/collection-0%20Data%20Collected-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](PLAY_STORE_DATA_SAFETY.md)
 
 When publishing Kunjika (v1.1.2), use the following information for the Google Play Data Safety form:
 

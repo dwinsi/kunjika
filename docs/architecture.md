@@ -1,5 +1,10 @@
 # 🏗️ Kunjika Architecture
 
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
+[![Design](https://img.shields.io/badge/pattern-Clean%20MVVM%20%2B%20Compose-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
+[![Security Core](https://img.shields.io/badge/security%20core-TEE%20%2B%20SQLCipher-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+
 Kunjika is built on a **Security-First Clean Architecture**, combining the latest Android Jetpack components with hardware-backed cryptographic primitives and zero-network privacy.
 
 ---
@@ -9,6 +14,21 @@ Kunjika is built on a **Security-First Clean Architecture**, combining the lates
 The architecture ensures that sensitive credentials are **always encrypted at rest and in transit** and **physically prohibited from touching the network**.
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'mainBkg': '#0F141C',
+    'primaryColor': '#131A26',
+    'primaryTextColor': '#F8FAFC',
+    'primaryBorderColor': '#F59E0B',
+    'lineColor': '#818CF8',
+    'clusterBkg': '#0F141C',
+    'clusterBorder': '#2B374A',
+    'edgeLabelBackground': '#18202E'
+  }
+}}%%
 graph TB
     %% Definitions
     subgraph UI ["🎨 UI Layer (Jetpack Compose & Material 3)"]
@@ -68,16 +88,21 @@ graph TB
     AVM --> BK & SEC & PIM
     Audit --> SEC & PIM
 
-    %% Styling
-    classDef ui fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b;
-    classDef vm fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#4a148c;
-    classDef core fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#1b5e20;
-    classDef data fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#e65100;
+    %% Styling with Obsidian Gold & Midnight Indigo
+    classDef ui fill:#131A26,stroke:#F59E0B,stroke-width:1.5px,color:#FDE68A;
+    classDef vm fill:#1E1B4B,stroke:#818CF8,stroke-width:1.5px,color:#E0E7FF;
+    classDef core fill:#064E3B,stroke:#34D399,stroke-width:1.5px,color:#A7F3D0;
+    classDef data fill:#18202E,stroke:#FBBF24,stroke-width:1.5px,color:#FDE68A;
 
     class UI,Nav,Auth,Gen,Vault,Audit,Settings,WebDrop,Glossy ui;
     class VM,AVM,GVM,VVM,SVM vm;
     class Domain,BC,KE,QR,BK,TOTP,WDC,BLE,SEC,PIM core;
     class Data,Repo,Room,DS data;
+
+    style UI fill:#0F141C,stroke:#F59E0B,stroke-width:2px,color:#FDE68A
+    style VM fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
+    style Domain fill:#052e25,stroke:#34D399,stroke-width:2px,color:#A7F3D0
+    style Data fill:#18202E,stroke:#FBBF24,stroke-width:2px,color:#FDE68A
 ```
 
 > [!NOTE]
@@ -95,6 +120,29 @@ Kunjika implements a two-stage encryption pipeline:
 ### 2. Hardware-Bound Biometric PIN Storage Flow
 To achieve instant biometric unlock without compromising PIN entropy or persisting plaintext:
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#07090E',
+    'actorBkg': '#0F141C',
+    'actorBorder': '#F59E0B',
+    'actorTextColor': '#FDE68A',
+    'actorLineColor': '#818CF8',
+    'signalColor': '#F59E0B',
+    'signalTextColor': '#F8FAFC',
+    'labelBoxBkgColor': '#0F141C',
+    'labelBoxBorderColor': '#818CF8',
+    'labelTextColor': '#F8FAFC',
+    'loopTextColor': '#FDE68A',
+    'noteBkgColor': '#1E1B4B',
+    'noteBorderColor': '#818CF8',
+    'noteTextColor': '#E0E7FF',
+    'activationBorderColor': '#F59E0B',
+    'activationBkgColor': '#131A26',
+    'sequenceNumberColor': '#07090E'
+  }
+}}%%
 sequenceDiagram
     autonumber
     participant User as 👤 User

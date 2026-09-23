@@ -1,4 +1,9 @@
-# Privacy Policy for Kunjika
+# 🔒 Privacy Policy for Kunjika
+
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
+[![Privacy](https://img.shields.io/badge/privacy-Zero--Network%20%2F%20Zero--Trust-34D399?style=flat-square&labelColor=064E3B&color=34D399)](PRIVACY_POLICY.md)
+[![Telemetry](https://img.shields.io/badge/telemetry-0%25%20Trackers-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](PRIVACY_POLICY.md)
 
 **Effective Date: August 26, 2026**  
 **Last Updated: September 17, 2026 (v1.1.2)**

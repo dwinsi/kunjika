@@ -1,4 +1,9 @@
-# Kunjika Release Notes
+# 📋 Kunjika Release Notes
+
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
+[![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
+[![Build](https://img.shields.io/badge/build-Passing%20(Kotlin%202.2.10)-34D399?style=flat-square&labelColor=064E3B&color=34D399)](RELEASE_NOTES.md)
 
 ## v1.1.2 (Luxury UI Polish, TOTP Generator & Environmental Defense) - September 2026
 

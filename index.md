@@ -6,17 +6,17 @@ layout: default
 
 ### *Military-Grade, Offline-First Sovereign Password Vault & Generator for Android*
 
-[![Version](https://img.shields.io/badge/version-1.1.2-gold.svg)](./RELEASE_NOTES.html)
-[![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-indigo.svg)](https://developer.android.com)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-brightgreen.svg)](./docs/security.html)
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](./RELEASE_NOTES.html)
+[![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
+[![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](./docs/security.html)
+[![License](https://img.shields.io/badge/license-MIT-FBBF24?style=flat-square&labelColor=07090E&color=FBBF24)](./LICENSE)
 
 Kunjika is a zero-network, ultra-secure sovereign credential manager built for **Android 15+ (API 35)**. Engineered with a mathematical "Sovereign" security model, Kunjika ensures you retain 100% ownership of your data with cryptographic proofs of integrity and zero cloud dependencies.
 
-<p align="center" style="margin: 24px 0;">
-  <a href="./web-companion/" style="background: #E5A93C; color: #07090E; font-weight: 700; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-right: 10px; box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);">⚡ Launch Web Drop</a>
-  <a href="./docs/" style="background: rgba(255,255,255,0.08); color: #ffffff; padding: 10px 18px; border-radius: 8px; text-decoration: none; margin-right: 10px; border: 1px solid rgba(255,255,255,0.15);">📖 Documentation</a>
-  <a href="./PRIVACY_POLICY.html" style="background: rgba(255,255,255,0.08); color: #ffffff; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(255,255,255,0.15);">🔒 Privacy Policy</a>
+<p align="center" style="margin: 28px 0;">
+  <a href="./web-companion/" style="background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 52%, #B45309 100%); color: #1a0f00; font-weight: 700; padding: 12px 22px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 6px 20px rgba(245, 158, 11, 0.4); border: 1.5px solid transparent; display: inline-block;">⚡ Launch Web Drop</a>
+  <a href="./docs/" style="background: linear-gradient(180deg, #1E1B4B 0%, #131138 100%); color: #E0E7FF; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #818CF8; display: inline-block;">📖 Documentation</a>
+  <a href="./PRIVACY_POLICY.html" style="background: linear-gradient(180deg, #18202E 0%, #0F141C 100%); color: #F8FAFC; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #2B374A; display: inline-block;">🔒 Privacy Policy</a>
 </p>
 
 ---
@@ -110,5 +110,6 @@ The greatest pain point with offline mobile password managers is manually typing
 
 ## 👨‍💻 Author & License
 
-Developed with ❤️ by **Ashwin Singh**.  
+Developed with ❤️ by **Ashwin Singh**. 
+Reviewer - **Sachin Kumar**; **Vikash Kumar Pandey**
 Licensed under the **MIT License**. See [LICENSE](./LICENSE) for details.

@@ -1,6 +1,11 @@
 # 📚 Kunjika Documentation Index
 
-Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentation provides a comprehensive guide to Kunjika's security architecture, cryptographic protocols, user interface systems, and feature sets.
+[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
+[![Architecture](https://img.shields.io/badge/architecture-Security--First%20Clean-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
+[![Security](https://img.shields.io/badge/security-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+
+Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentation provides a comprehensive guide to Kunjika's security architecture, cryptographic protocols, user interface systems, and feature sets styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
 
 ---
 
