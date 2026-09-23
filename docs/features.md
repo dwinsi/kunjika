@@ -5,7 +5,7 @@
 [![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
 [![Sync](https://img.shields.io/badge/sync-Air--Gapped%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
 
-Kunjika combines military-grade offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35) styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
+Kunjika combines zero-network, cryptographically hardened offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35) styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
 
 ---
 

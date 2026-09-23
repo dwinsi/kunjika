@@ -189,7 +189,7 @@ Enables secure transmission of passwords to desktop browsers without network acc
 - **ECDH P-256 Key Exchange**: Phone scans the browser's 65-byte uncompressed public key and computes a 256-bit shared secret using HKDF-SHA256 (`"kunjika-web-drop-v1"`).
 - **Visual SAS Code**: Both devices independently compute and display a 6-digit TOTP confirmation code for visual comparison.
 - **Biometric Gate**: User authorizes the transfer via `BiometricPrompt` (`BIOMETRIC_STRONG`).
-- **BLE GATT Chunking & Retries**: The phone acts as a peripheral GATT server advertising Service `e9a30001-c852-4e08-9bfa-87bb0f592658`, streaming chunked AES-256-GCM ciphertext with sequence numbering and notification retries to guarantee flawless transmission.
+- **BLE GATT Chunking & Retries**: The phone acts as a peripheral GATT server advertising Service `e9a30001-c852-4e08-9bfa-87bb0f592658`, streaming chunked AES-256-GCM ciphertext with sequence numbering and notification retries to ensure reliable transmission without packet loss.
 - **Audit Log**: An `EXPORT_BLE` block is appended to the local blockchain ledger.
 
 ---

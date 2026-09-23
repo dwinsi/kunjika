@@ -4,14 +4,14 @@ layout: default
 
 # 🏰 Kunjika
 
-### *Military-Grade, Offline-First Sovereign Password Vault & Generator for Android*
+### *Zero-Network, Cryptographically Hardened Sovereign Password Vault & Generator for Android*
 
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](./RELEASE_NOTES.html)
 [![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](./docs/security.html)
 [![License](https://img.shields.io/badge/license-MIT-FBBF24?style=flat-square&labelColor=07090E&color=FBBF24)](./LICENSE)
 
-Kunjika is a zero-network, ultra-secure sovereign credential manager built for **Android 15+ (API 35)**. Engineered with a mathematical "Sovereign" security model, Kunjika ensures you retain 100% ownership of your data with cryptographic proofs of integrity and zero cloud dependencies.
+Kunjika is an air-gapped, sovereign credential manager built for **Android 15+ (API 35)**. Engineered with a hardware-backed security architecture, Kunjika ensures you retain complete ownership of your data with cryptographic proofs of integrity and zero cloud dependencies.
 
 <p align="center" style="margin: 28px 0;">
   <a href="./web-companion/" style="background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 52%, #B45309 100%); color: #1a0f00; font-weight: 700; padding: 12px 22px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 6px 20px rgba(245, 158, 11, 0.4); border: 1.5px solid transparent; display: inline-block;">⚡ Launch Web Drop</a>

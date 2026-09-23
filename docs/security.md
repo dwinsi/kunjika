@@ -6,7 +6,7 @@
 [![Network](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 [![Audit](https://img.shields.io/badge/tamper%20defense-Blockchain%20Ledger-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](security.md)
 
-Kunjika is engineered to exceed military-grade standards for local data protection. Operating on a **Zero-Network, Zero-Trust** model, it guarantees that credentials never touch the internet and are protected by hardware-backed cryptographic primitives.
+Kunjika is engineered with zero-network, cryptographically hardened primitives for local data protection. Operating on a **Zero-Network, Zero-Trust** model, it guarantees that credentials never touch the internet and are protected by hardware-backed cryptographic primitives.
 
 ---
 

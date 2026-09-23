@@ -460,7 +460,7 @@ fun SettingsScreen(
                     // Emergency Recovery Section
                     SettingsSection(title = "Security & Recovery") {
                         Text(
-                            text = "Set a hint for your Master PIN and generate a physical recovery kit. This is your ultimate safety net if you lose access to your device.",
+                            text = "Set a hint for your Master PIN and generate a physical recovery kit. This is your emergency safeguard if you lose access to your device.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

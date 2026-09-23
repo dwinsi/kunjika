@@ -66,7 +66,7 @@ fun FeatureGraphic1024x500() {
 
             // Tagline
             Text(
-                text = "MILITARY-GRADE • OFFLINE-FIRST • VAULT",
+                text = "ZERO-NETWORK • OFFLINE-FIRST • VAULT",
                 color = Color(0xFFF59E0B), // Sovereign Gold 500
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,

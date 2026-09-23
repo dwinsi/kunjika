@@ -37,4 +37,4 @@ All architecture and protocol diagrams throughout this documentation are rendere
 ---
 
 ## 🔒 The Sovereign Security Promise
-Kunjika is designed to be **100% offline**. We mathematically guarantee that no passwords, master keys, or personal metadata ever touch the network or leave your device's secure hardware.
+Kunjika is designed to be **100% offline**. Because Kunjika does not declare the `android.permission.INTERNET` permission, passwords, master keys, and personal metadata physically cannot transmit over the network or leave your device's secure hardware.

@@ -1,6 +1,6 @@
 # 🏰 Kunjika
 
-### *A 100% Offline, Military-Grade Password Vault & Generator for Android*
+### *A 100% Offline, Cryptographically Hardened Password Vault & Generator for Android*
 
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
@@ -15,7 +15,7 @@
 
 Most password managers store your passwords on a company's cloud server. If that company is hacked, your digital life is exposed.
 
-**Kunjika is fundamentally different.** It acts like an unbreakable digital safe that lives **strictly on your phone**.
+**Kunjika is fundamentally different.** It acts like a hardware-secured digital vault that lives **strictly on your phone**.
 - **No Cloud. No Accounts. No Internet Permission.** The app cannot communicate over the internet because the operating system physically blocks it from doing so.
 - **Zero Knowledge & 100% Sovereign**: You are the only person who holds the key. Your data never leaves your device unless you physically transfer it yourself.
 
@@ -25,7 +25,7 @@ Most password managers store your passwords on a company's cloud server. If that
 
 | Feature | What It Does | Why It Matters to You |
 | :--- | :--- | :--- |
-| **🚫 100% Offline (Air-Gapped)** | The app has **zero internet permission** in its code. | It is mathematically impossible for your passwords to leak online or be hacked remotely. |
+| **🚫 100% Offline (Air-Gapped)** | The app has **zero internet permission** in its code. | With zero network permissions, credentials cannot be leaked online or intercepted remotely. |
 | **🔐 Double-Lock Protection** | Every item is encrypted twice: first by your phone's physical security chip, then inside an encrypted database. | Even if someone steals your phone and extracts the database file, it is unreadable gibberish without your Master PIN. |
 | **🎯 4-in-1 Smart Generator** | Generates strong passwords, multi-word passphrases (like `correct-horse-battery-staple`), numeric PINs, or 2FA secrets. | You never have to invent or reuse passwords again, and newly generated items are saved in an instant history list. |
 | **⏰ Built-In 2FA Authenticator** | Generates rotating 6-digit two-factor codes with animated countdown timers. | No need for a separate app like Google Authenticator; your logins and 2FA codes live securely in one place. |
@@ -34,7 +34,7 @@ Most password managers store your passwords on a company's cloud server. If that
 | **💎 Instant Biometric Unlock** | Unlock your vault instantly using your Fingerprint or Face. | Your Master PIN is securely unlocked by the phone's hardware chip without ever sitting unprotected in memory. |
 | **🛡️ Tamper-Proof Audit Ledger** | A private digital ledger signs and timestamps every vault change (create, edit, delete). | Alerts you immediately if anyone or any malicious app attempts to alter your database behind your back. |
 | **🔍 Phone Health & Vault Audit** | Scans your vault for weak or repeated passwords, and checks your phone for root or tampering. | Keeps your digital security hygiene at 100% and warns you if your operating system environment is unsafe. |
-| **🎨 Obsidian Gold & Platinum Themes** | Built with luxury dark and light aesthetics, 3D specular reflections, and frosted glass components. | An interface that feels like a luxury Swiss watch rather than an ordinary utility tool. |
+| **🎨 Obsidian Gold & Platinum Themes** | Built with high-contrast dark and light modes, 3D specular reflections, and frosted glass components. | A refined, ergonomic interface designed for clarity and aesthetic focus. |
 
 ---
 
@@ -346,7 +346,7 @@ graph TB
 | **3. Security Core** | **`WebDropCrypto` & `BLE`** | Enables direct, wireless password sharing to desktop browsers with zero cloud relays. | Web Bluetooth GATT server, Ephemeral ECDH P-256, Proof of Work. |
 | **3. Security Core** | **`QrEncryptionManager`** | Encrypts phone-to-phone data transfer packages into scannable QR codes bound to one-time PINs. | PBKDF2 (100,000 iterations), AES-256-GCM. |
 | **3. Security Core** | **`PlayIntegrity` & `Security`** | Continuously evaluates device environment to ensure the app is running safely. | Root detection heuristics, emulator checks, Google Play Integrity API. |
-| **4. Storage** | **SQLCipher Database** | Stores your encrypted credentials, URLs, and notes on flash memory with military-grade 256-bit encryption. | SQLCipher SQLite engine, AES-256-CBC with HMAC-SHA512. |
+| **4. Storage** | **SQLCipher Database** | Stores your encrypted credentials, URLs, and notes on flash memory with cryptographically hardened 256-bit encryption. | SQLCipher SQLite engine, AES-256-CBC with HMAC-SHA512. |
 | **4. Storage** | **Encrypted DataStore** | Stores application configuration, theme choices, and salt values securely. | AndroidX DataStore with hardware-encrypted preferences. |
 
 ---
