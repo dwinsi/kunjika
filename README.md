@@ -19,6 +19,8 @@ Most password managers store your passwords on a company's cloud server. If that
 - **No Cloud. No Accounts. No Internet Permission.** The app cannot communicate over the internet because the operating system physically blocks it from doing so.
 - **Zero Knowledge & 100% Sovereign**: You are the only person who holds the key. Your data never leaves your device unless you physically transfer it yourself.
 
+> 📖 **New to Kunjika? Check out our visual [User Guide & Step-by-Step Walkthrough](docs/user-guide.md)** with screenshots and everyday use cases!
+
 ---
 
 ## 🌟 Key Features (In Plain English)
@@ -379,6 +381,7 @@ graph TB
 
 ## 📚 Further Documentation
 
+- [📖 User Guide & Quickstart (Screenshots & Use Cases)](docs/user-guide.md)
 - [🏗️ Deep Architecture Overview](docs/architecture.md)
 - [🛡️ Cryptography & Threat Model](docs/security.md)
 - [✨ Complete Feature Guide](docs/features.md)

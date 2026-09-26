@@ -14,8 +14,9 @@ layout: default
 Kunjika is an air-gapped, sovereign credential manager built for **Android 15+ (API 35)**. Engineered with a hardware-backed security architecture, Kunjika ensures you retain complete ownership of your data with cryptographic proofs of integrity and zero cloud dependencies.
 
 <p align="center" style="margin: 28px 0;">
-  <a href="./web-companion/" style="background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 52%, #B45309 100%); color: #1a0f00; font-weight: 700; padding: 12px 22px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 6px 20px rgba(245, 158, 11, 0.4); border: 1.5px solid transparent; display: inline-block;">⚡ Launch Web Drop</a>
-  <a href="./docs/" style="background: linear-gradient(180deg, #1E1B4B 0%, #131138 100%); color: #E0E7FF; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #818CF8; display: inline-block;">📖 Documentation</a>
+  <a href="./docs/user-guide.html" style="background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 52%, #B45309 100%); color: #1a0f00; font-weight: 700; padding: 12px 22px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 6px 20px rgba(245, 158, 11, 0.4); border: 1.5px solid transparent; display: inline-block;">📖 User Guide</a>
+  <a href="./web-companion/" style="background: linear-gradient(180deg, #312E81 0%, #1E1B4B 100%); color: #E0E7FF; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #818CF8; display: inline-block;">⚡ Launch Web Drop</a>
+  <a href="./docs/" style="background: linear-gradient(180deg, #18202E 0%, #0F141C 100%); color: #F8FAFC; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; margin-right: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #2B374A; display: inline-block;">📚 Tech Docs</a>
   <a href="./PRIVACY_POLICY.html" style="background: linear-gradient(180deg, #18202E 0%, #0F141C 100%); color: #F8FAFC; font-weight: 600; padding: 12px 20px; border-radius: 10px; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(0, 0, 0, 0.4); border: 1.5px solid #2B374A; display: inline-block;">🔒 Privacy Policy</a>
 </p>
 
@@ -98,6 +99,7 @@ The greatest pain point with offline mobile password managers is manually typing
 
 ## 📚 Resources & Links
 
+- **[📖 User Guide & Quickstart](./docs/user-guide.html)** - Simple, step-by-step user guide with screenshots and use cases
 - **[Web Drop Companion](./web-companion/)** - Live air-gapped web companion
 - **[Architecture Deep-Dive](./docs/architecture.html)** - Technical and cryptographic architecture
 - **[Security Overview](./docs/security.html)** - Threat model and defense layers
