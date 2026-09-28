@@ -7,6 +7,10 @@
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 [![Companion](https://img.shields.io/badge/Web%20Drop-Air--Gapped%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
+[![Closed Testing](https://img.shields.io/badge/Play%20Store-14--Day%20Testing%20Portal-38BDF8?style=flat-square&labelColor=0C4A6E&color=38BDF8)](../testing.html)
+
+> 🧪 **Closed Beta Tester?** Open the interactive mobile-friendly checklist with progress tracking and quick copy templates:  
+> 👉 **[Launch the 14-Day Play Store Testing Portal](../testing.html)** *(Interactive day tracker, 1-minute daily missions & review guides)*
 
 Welcome to **Kunjika**! If you are new to the app, this guide will help you understand how it works, how to set it up, and how to use all of its features in your day-to-day life.
 
@@ -224,7 +228,95 @@ Tired of copying and pasting? Let Android fill your logins automatically:
 
 ---
 
+## 🧪 14-Day Google Play Closed Testing Guide
+
+> [!IMPORTANT]
+> **Why 14-Day Testing is Required for Google Play Store Production Approval:**
+> Under Google Play Console policies for personal developer accounts, **at least 20 testers must remain continuously opted-in for at least 14 consecutive days** with demonstrated real-world engagement before Google grants production access to publish Kunjika publicly.
+>
+> **The 3 Golden Rules for Closed Beta Testers:**
+> 1. 📲 **Do NOT uninstall the app** for at least 14 days after opting in. Keeping the app installed is required for the Play Console counter to advance.
+> 2. ⚡ **Open and interact with the app regularly** (daily or every 1–2 days). Google tracks active engagement signals; dormant or abandoned installs may cause Google's review system to reject production access.
+> 3. 💬 **Submit private feedback on Google Play** during or at the end of your 14-day test cycle.
+
+---
+
+### 📅 14-Day Testing Schedule & Feature Roadmap
+
+To ensure comprehensive test coverage across every feature of Kunjika, follow this recommended day-by-day testing progression:
+
+| Phase | Days | Focus Area | What to Test & Verify |
+| :--- | :---: | :--- | :--- |
+| **Phase 1** | **Days 1–2** | **Installation & Biometric Onboarding** | • Join via the Google Play Closed Test opt-in link.<br>• Install Kunjika from the Play Store on your Android device.<br>• Complete onboarding screens and verify zero-network guarantee.<br>• Set a 4–8 digit **Master PIN** and link **Biometrics (Fingerprint / Face)**.<br>• Test locking and unlocking the app 3–4 times using both PIN and Biometrics. |
+| **Phase 2** | **Days 3–5** | **Password Generation & Vault Operations** | • Explore all 4 generation styles in the **Generator** tab: Random Passwords, Diceware Passphrases, Numeric PINs, and TOTP Secrets.<br>• Observe the real-time **Entropy & Crack Time Indicator**.<br>• Verify that newly generated items appear in the **Generation History** card.<br>• Add 4–5 sample accounts to the **Vault** across different categories (*Personal*, *Work*, *Finance*, *Social*).<br>• Test the Vault search bar and category filter chips. |
+| **Phase 3** | **Days 6–8** | **2FA TOTP Authenticator & Android Autofill** | • Add a 2FA secret key to an account (or test key `JBSWY3DPEHPK3PXP`).<br>• Verify the rotating 6-digit code and the smooth 30-second countdown ring.<br>• Go to **⚙️ Settings > Autofill Service** and set Kunjika as your Android default.<br>• Open a browser (e.g. Chrome) or app login screen, tap a password field, and verify that Kunjika prompts biometric unlock and auto-fills your credentials. |
+| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Air-Gapped Sharing** | • On a desktop computer (Chrome, Edge, Brave, Opera), open [Web Drop](https://dwinsi.github.io/kunjika/web-companion/).<br>• On your phone, tap **Web Drop** on any vault item and scan the computer screen's QR code.<br>• Verify that the 6-digit pairing code matches, authenticate with fingerprint, and check that the credential copies to your computer clipboard.<br>• Verify the 30-second memory and clipboard auto-wipe on the PC.<br>• *(Optional)* Test Phone-to-Phone encrypted QR transfer if you have access to a second device. |
+| **Phase 5** | **Days 12–13** | **Security Audits, Themes & Emergency Backups** | • Open the **🛡️ Security** tab: verify weak/reused password checks, root detection status, and hardware key attestation.<br>• Go to **Settings** and toggle between **Obsidian Gold** and **Platinum Silver** themes.<br>• Test auto-lock timeout behavior by switching between apps or letting the screen turn off.<br>• Generate an **Emergency Recovery Kit** in Settings and inspect the exported offline document. |
+| **Phase 6** | **Day 14+** | **Google Play Store Feedback & Continuous Opt-In** | • Open Kunjika's listing in the **Google Play Store** app.<br>• Tap **Leave feedback for developer** to share your testing experience.<br>• **Keep Kunjika installed** until the developer announces official public launch! |
+
+---
+
+### 🧪 High-Priority Test Cases & Edge Cases to Try
+
+Try executing these specific scenarios to help uncover edge cases and stress-test the app:
+
+#### 1. ✈️ 100% Offline Airplane Mode Test
+* Turn on **Airplane Mode** (disable Wi-Fi and Mobile Data entirely).
+* Open Kunjika, generate credentials, edit vault items, and test biometrics.
+* **Expected Result**: Kunjika functions flawlessly with 0% network reliance and no network timeout errors.
+
+#### 2. 🛡️ Screen Privacy & Anti-Spyware Protection (`FLAG_SECURE`)
+* Attempt to take a screenshot inside the app (`Power + Volume Down`).
+* Open Android's Recent Apps / App Switcher view.
+* **Expected Result**: Android blocks screenshot capture (or displays a security warning) and blanks the preview card in the app switcher, preventing malware from capturing passwords.
+
+#### 3. ⏱️ Clipboard Auto-Wipe Verification
+* Copy a password or TOTP code from the Vault.
+* Paste it into a text note, then wait 30–45 seconds.
+* Try pasting again.
+* **Expected Result**: The clipboard should be automatically cleared to prevent background apps from reading your sensitive credentials.
+
+#### 4. 🔒 Rate Limiting & Master PIN Protection
+* Lock Kunjika and intentionally enter an incorrect PIN several times.
+* **Expected Result**: The app should enforce progressive delays/vibrations and lock out repeated brute-force attempts.
+
+#### 5. 🔄 App Lifecycle & Auto-Lock Test
+* Unlock Kunjika, navigate to your vault, and switch to another app (e.g., Settings or YouTube) for 2 minutes.
+* Return to Kunjika.
+* **Expected Result**: Kunjika should immediately require biometric or Master PIN re-authentication before displaying your vault items.
+
+---
+
+### 💬 How to Submit Helpful Feedback on Google Play
+
+Constructive tester feedback in the Play Store provides critical proof of active testing during Google's review process.
+
+#### Step-by-Step Instructions:
+1. Open the **Google Play Store** app on your testing phone.
+2. Tap your profile picture in the top-right corner -> **Manage apps & device**.
+3. Under the **Installed** tab, find **Kunjika (Beta / Early Access)** and tap it.
+4. Scroll down to the **Private feedback to developer** section.
+5. Tap the text box, write your feedback, and tap **Submit**.
+
+#### What to Mention in Your Feedback:
+* **Your Device & OS**: (e.g., *Google Pixel 8, Android 15* or *Samsung Galaxy S24, One UI 6.1*)
+* **What Worked Well**: (e.g., *Instant biometric unlock, smooth TOTP timer, fast Web Drop pairing*)
+* **Any Issues or Usability Quirks**: (e.g., *Autofill suggestion positioning, button touch targets, or contrast in bright sunlight*)
+* **Performance**: (e.g., *App launches instantly, zero lag, smooth 60/120fps animations*)
+
+> [!CAUTION]
+> **Please do NOT uninstall Kunjika on Day 14!**
+> Google Play reviews the production access application after the 14-day mark. If testers uninstall immediately on day 14 while the review is pending, the active tester count may fall below 20, causing Google to reset the testing cycle. Please keep Kunjika installed until the app is officially approved and live.
+
+---
+
 ## ❓ Frequently Asked Questions (FAQ)
+
+### Q: Why do I need to keep Kunjika installed for at least 14 continuous days?
+Google Play enforces this rule for all personal developer accounts to guarantee that new apps have been tested by real people on real hardware before being distributed to the public. If any tester uninstalls, the 20-tester minimum may be broken, which can reset Google's 14-day progress counter.
+
+### Q: Do I need to use Kunjika every single day of the test?
+While you don't need to spend hours in the app, opening it daily or every other day to perform quick tasks (generating a password, viewing an account, or testing autofill) generates active engagement metrics that Google's algorithm evaluates when approving production access.
 
 ### Q: Does Kunjika ever send my data to the internet?
 **No, never.** Kunjika does not even have the Android Internet permission (`android.permission.INTERNET`) declared in its manifest. Even if someone tried to add tracking code, the Android operating system would physically block any network request.
