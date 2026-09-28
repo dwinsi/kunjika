@@ -160,7 +160,7 @@ Heuristic scanning flags emulated environments to prevent dynamic analysis in au
 
 ---
 
-## 📂 Air-Gapped Web Drop Cryptographic Protocol
+## 📂 Direct Web Drop Cryptographic Protocol
 
 Web Drop enables wireless credential transfer to desktop/laptop browsers without internet access, third-party relays, or accounts.
 

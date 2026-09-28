@@ -371,7 +371,7 @@ fun WebDropScannerDialog(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Web Drop (Air-Gapped)",
+                                text = "Web Drop (Offline Direct)",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )

@@ -5,8 +5,8 @@
 </div>
 
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
-[![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
-[![Companion](https://img.shields.io/badge/Web%20Drop-Air--Gapped%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
+[![Security](https://img.shields.io/badge/network-100%25%20Offline-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Companion](https://img.shields.io/badge/Web%20Drop-Offline%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
 [![Closed Testing](https://img.shields.io/badge/Play%20Store-14--Day%20Testing%20Portal-38BDF8?style=flat-square&labelColor=0C4A6E&color=38BDF8)](../testing.html)
 
 > 🧪 **Closed Beta Tester?** Open the interactive mobile-friendly checklist with progress tracking and quick copy templates:  
@@ -21,7 +21,7 @@ Welcome to **Kunjika**! If you are new to the app, this guide will help you unde
 Most password managers (like Chrome, LastPass, or 1Password) save your passwords on their cloud servers over the internet. If their servers ever get breached, your logins could be leaked.
 
 **Kunjika is 100% offline.** 
-- It does **not** have internet permission. It is physically impossible for Kunjika to send your data over the web.
+- It does **not** have internet permission. The Android operating system ensures the app cannot connect to Wi-Fi, cellular networks, or cloud servers.
 - Your passwords are encrypted directly by your phone's physical security chip (Hardware TEE / StrongBox).
 - **You** own the keys. No accounts to create, no monthly subscriptions, and zero tracking.
 
@@ -175,7 +175,7 @@ sequenceDiagram
 
 ---
 
-### Use Case 5: Transferring Logins to Another Phone (Air-Gapped QR Transfer)
+### Use Case 5: Transferring Logins to Another Phone (Offline QR Transfer)
 
 Bought a new phone or want to share a Wi-Fi or family password with another device? You can transfer it peer-to-peer using an encrypted QR code without using the cloud or sending text messages.
 
@@ -250,7 +250,7 @@ To ensure comprehensive test coverage across every feature of Kunjika, follow th
 | **Phase 1** | **Days 1–2** | **Installation & Biometric Onboarding** | • Join via the Google Play Closed Test opt-in link.<br>• Install Kunjika from the Play Store on your Android device.<br>• Complete onboarding screens and verify zero-network guarantee.<br>• Set a 4–8 digit **Master PIN** and link **Biometrics (Fingerprint / Face)**.<br>• Test locking and unlocking the app 3–4 times using both PIN and Biometrics. |
 | **Phase 2** | **Days 3–5** | **Password Generation & Vault Operations** | • Explore all 4 generation styles in the **Generator** tab: Random Passwords, Diceware Passphrases, Numeric PINs, and TOTP Secrets.<br>• Observe the real-time **Entropy & Crack Time Indicator**.<br>• Verify that newly generated items appear in the **Generation History** card.<br>• Add 4–5 sample accounts to the **Vault** across different categories (*Personal*, *Work*, *Finance*, *Social*).<br>• Test the Vault search bar and category filter chips. |
 | **Phase 3** | **Days 6–8** | **2FA TOTP Authenticator & Android Autofill** | • Add a 2FA secret key to an account (or test key `JBSWY3DPEHPK3PXP`).<br>• Verify the rotating 6-digit code and the smooth 30-second countdown ring.<br>• Go to **⚙️ Settings > Autofill Service** and set Kunjika as your Android default.<br>• Open a browser (e.g. Chrome) or app login screen, tap a password field, and verify that Kunjika prompts biometric unlock and auto-fills your credentials. |
-| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Air-Gapped Sharing** | • On a desktop computer (Chrome, Edge, Brave, Opera), open [Web Drop](https://dwinsi.github.io/kunjika/web-companion/).<br>• On your phone, tap **Web Drop** on any vault item and scan the computer screen's QR code.<br>• Verify that the 6-digit pairing code matches, authenticate with fingerprint, and check that the credential copies to your computer clipboard.<br>• Verify the 30-second memory and clipboard auto-wipe on the PC.<br>• *(Optional)* Test Phone-to-Phone encrypted QR transfer if you have access to a second device. |
+| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Offline Sharing** | • On a desktop computer (Chrome, Edge, Brave, Opera), open [Web Drop](https://dwinsi.github.io/kunjika/web-companion/).<br>• On your phone, tap **Web Drop** on any vault item and scan the computer screen's QR code.<br>• Verify that the 6-digit pairing code matches, authenticate with fingerprint, and check that the credential copies to your computer clipboard.<br>• Verify the 30-second memory and clipboard auto-wipe on the PC.<br>• *(Optional)* Test Phone-to-Phone encrypted QR transfer if you have access to a second device. |
 | **Phase 5** | **Days 12–13** | **Security Audits, Themes & Emergency Backups** | • Open the **🛡️ Security** tab: verify weak/reused password checks, root detection status, and hardware key attestation.<br>• Go to **Settings** and toggle between **Obsidian Gold** and **Platinum Silver** themes.<br>• Test auto-lock timeout behavior by switching between apps or letting the screen turn off.<br>• Generate an **Emergency Recovery Kit** in Settings and inspect the exported offline document. |
 | **Phase 6** | **Day 14+** | **Google Play Store Feedback & Continuous Opt-In** | • Open Kunjika's listing in the **Google Play Store** app.<br>• Tap **Leave feedback for developer** to share your testing experience.<br>• **Keep Kunjika installed** until the developer announces official public launch! |
 

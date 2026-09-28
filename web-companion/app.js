@@ -223,7 +223,7 @@ class WebCompanionApp {
             // 4. Render to Canvas with theme awareness
             this.drawQrCode(payloadStr);
 
-            this.statusBadge.textContent = "Ready to Scan (Air-Gapped)";
+            this.statusBadge.textContent = "Ready to Scan (Offline Direct)";
             this.statusBadge.className = "status-badge ready";
 
             // Start 60s countdown

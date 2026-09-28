@@ -152,7 +152,7 @@ fun PasswordDetailDialog(
                     IconButton(onClick = { showQrDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.QrCode2,
-                            contentDescription = "Show encrypted QR code for air-gapped sync",
+                            contentDescription = "Show encrypted QR code for offline sync",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -245,7 +245,7 @@ fun PasswordDetailDialog(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Send to PC (Air-Gapped)", color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
+                        Text("Send to PC (Web Drop)", color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
                     }
                 }
 

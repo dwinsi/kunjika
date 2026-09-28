@@ -30,7 +30,7 @@ All permissions requested by Kunjika are used strictly for **App Functionality**
 | Permission | Category | Specific Purpose in Kunjika |
 | :--- | :--- | :--- |
 | `android.permission.USE_BIOMETRIC` | Authentication | Local hardware-backed vault unlocking and biometric wrapping of the Master PIN via KeyStore `CryptoObject`. |
-| `android.permission.CAMERA` | Hardware | Scanning dynamic pairing and transfer QR codes for Air-Gapped Sync and Web Drop. |
+| `android.permission.CAMERA` | Hardware | Scanning dynamic pairing and transfer QR codes for Offline Sync and Web Drop. |
 | `android.permission.BLUETOOTH_ADVERTISE` | Device Connection | Broadcasting local GATT peripheral advertisements exclusively during an active, user-initiated Web Drop transfer to a nearby desktop browser. Never used for beaconing, background telemetry, or location tracking. |
 | `android.permission.BLUETOOTH_CONNECT` | Device Connection | Streaming encrypted credential chunks to the paired browser during an active Web Drop session. |
 | `android.permission.VIBRATE` | System Utilities | Haptic confirmation for biometric authentication and PIN entry. |

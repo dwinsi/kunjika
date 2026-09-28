@@ -45,7 +45,7 @@
 
 ---
 
-## v1.1.0 (Hardware Cryptographic Hardening & Air-Gapped Sync) - March 2026
+## v1.1.0 (Hardware Cryptographic Hardening & Direct Offline Sync) - March 2026
 
 ### 🛡️ Core Security & Cryptographic Hardening
 - **Hardware-Bound Biometric Unwrapping**: Biometric unlock now requires cryptographic unwrapping of the Master PIN via Android TEE/StrongBox `BiometricPrompt.CryptoObject` ciphers.
@@ -55,7 +55,7 @@
 - **Environment & Root Security Health**: Added real-time root access detection, runtime sandbox checks, and KeyStore hardware TEE/StrongBox verification to the Security Health screen and Auth Screen.
 - **Ciphertext Leak Prevention**: Cryptographic fallbacks in repository layers now return `null` on decryption errors, preventing raw ciphertext from leaking into the UI.
 
-### 🚀 Air-Gapped Web Drop & Cross-Device Sync
+### 🚀 Direct Web Drop & Cross-Device Sync
 - **Zero-Network Desktop Transfer**: Send 32+ character high-entropy credentials directly from your phone to any modern PC/Mac desktop browser without internet access, accounts, or cloud relays.
 - **Web Bluetooth (BLE GATT)**: Phone operates as a BLE GATT peripheral server (`e9a30001-c852-4e08-9bfa-87bb0f592658`), streaming chunked AES-256-GCM ciphertext directly to the browser.
 - **Client-Side Proof of Work (PoW)**: Dynamic QR session challenge generated in browser RAM using SHA-256 (`< 0x0800...`), auto-refreshing every 60 seconds to eliminate replay attacks.

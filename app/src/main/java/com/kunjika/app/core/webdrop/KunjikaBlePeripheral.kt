@@ -22,7 +22,7 @@ import android.util.Log
 import java.util.UUID
 
 /**
- * 100% Air-Gapped Bluetooth Low Energy (BLE) Peripheral for Kunjika.
+ * 100% Offline Bluetooth Low Energy (BLE) Peripheral for Kunjika.
  * Transfers encrypted credential packets directly to laptop browser via GATT.
  */
 class KunjikaBlePeripheral(

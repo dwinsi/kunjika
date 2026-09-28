@@ -24,7 +24,7 @@ Kunjika **does not collect, transmit, log, or share** any personal information, 
 All information handled by Kunjika is shielded by multi-layered, hardware-backed encryption:
 - **At Rest (Double-Lock Architecture)**: Every credential field is encrypted with AES-256-GCM using keys generated inside your device's hardware Trusted Execution Environment (TEE) or StrongBox Keymaster. The resulting ciphertext is stored within a SQLCipher database encrypted with a key derived from your Master PIN via PBKDF2 (100,000 iterations).
 - **Biometric Protection**: Biometric unlock uses hardware-level cryptographic key wrapping via `BiometricPrompt.CryptoObject`. Your Master PIN is encrypted directly by the KeyStore; plaintext is never persisted in storage.
-- **In Transit (Air-Gapped Sync)**:
+- **In Transit (Offline Sync & Web Drop)**:
   - **Phone-to-Phone QR Sync**: Encrypted using AES-256-GCM with keys derived via PBKDF2 (100,000 iterations) from a one-time random 6-digit Transfer Code.
   - **Phone-to-PC Web Drop**: Encrypted using AES-256-GCM with keys derived from ephemeral ECDH P-256 key agreement over Web Bluetooth (BLE GATT), guarded by client-side Proof of Work, a visual 6-digit Short Authentication String (SAS), and biometric authorization.
 
@@ -34,7 +34,7 @@ All information handled by Kunjika is shielded by multi-layered, hardware-backed
 Kunjika requests only the minimal local permissions required for security and core functionality:
 
 - **Biometric (`USE_BIOMETRIC`)**: To authorize vault access and cryptographically unwrap the Master PIN using the device's secure hardware.
-- **Camera (`CAMERA`)**: Used exclusively for scanning local pairing and session QR codes during Air-Gapped QR Sync and Web Drop. Camera frames are processed in real-time in memory via CameraX and ML Kit; no photos or videos are ever saved to disk.
+- **Camera (`CAMERA`)**: Used exclusively for scanning local pairing and session QR codes during Offline QR Sync and Web Drop. Camera frames are processed in real-time in memory via CameraX and ML Kit; no photos or videos are ever saved to disk.
 - **Bluetooth (`BLUETOOTH_ADVERTISE`, `BLUETOOTH_CONNECT`)**: Used exclusively to broadcast a local BLE GATT peripheral service and stream encrypted credentials directly to your nearby laptop/desktop browser during an active Web Drop session. Bluetooth is deactivated immediately after transfer and is never used for beaconing, location tracking, or telemetry.
 - **Vibrate (`VIBRATE`)**: Provides tactile haptic confirmation during PIN input and biometric operations.
 

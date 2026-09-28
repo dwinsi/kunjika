@@ -104,7 +104,7 @@
 
         <h2>1. No Data Collection</h2>
         <ul>
-            <li><strong>Zero Network Permissions</strong>: The application does not request the <code>INTERNET</code> permission. It is physically impossible for the app to send data over the web.</li>
+            <li><strong>Zero Network Permissions</strong>: The application does not request the <code>INTERNET</code> permission. The Android operating system restricts network socket creation, ensuring no data is transmitted over the web.</li>
             <li><strong>No Analytics</strong>: We do not use any third-party analytics, tracking libraries, or crash reporting services that require internet access.</li>
             <li><strong>No Cloud Storage</strong>: We do not provide cloud synchronization. Your data remains in the encrypted local database on your device.</li>
         </ul>
@@ -119,7 +119,7 @@
         <h2>3. Permissions Used</h2>
         <ul>
             <li><strong>Biometric</strong>: To allow you to unlock your vault securely using your device's fingerprint or face recognition.</li>
-            <li><strong>Camera</strong>: Only used for scanning encrypted QR codes during the Air-Gapped Sync process. No images are saved or transmitted.</li>
+            <li><strong>Camera</strong>: Only used for scanning encrypted QR codes during the Offline Direct Sync process. No images are saved or transmitted.</li>
             <li><strong>Vibrate</strong>: To provide haptic feedback during authentication.</li>
         </ul>
 

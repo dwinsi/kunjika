@@ -5,8 +5,8 @@
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
-[![Security](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](docs/security.md)
-[![Web Companion](https://img.shields.io/badge/Web%20Drop-Air--Gapped%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
+[![Security](https://img.shields.io/badge/network-100%25%20Offline-34D399?style=flat-square&labelColor=064E3B&color=34D399)](docs/security.md)
+[![Web Companion](https://img.shields.io/badge/Web%20Drop-Offline%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
 [![License](https://img.shields.io/badge/license-MIT-FBBF24?style=flat-square&labelColor=07090E&color=FBBF24)](LICENSE)
 
 ---
@@ -28,7 +28,7 @@ Most password managers store your passwords on a company's cloud server. If that
 
 | Feature | What It Does | Why It Matters to You |
 | :--- | :--- | :--- |
-| **🚫 100% Offline (Air-Gapped)** | The app has **zero internet permission** in its code. | With zero network permissions, credentials cannot be leaked online or intercepted remotely. |
+| **🚫 100% Offline (Zero-Network)** | The app has **zero internet permission** in its code. | With zero network permissions, credentials cannot be leaked online or intercepted remotely. |
 | **🔐 Double-Lock Protection** | Every item is encrypted twice: first by your phone's physical security chip, then inside an encrypted database. | Even if someone steals your phone and extracts the database file, it is unreadable gibberish without your Master PIN. |
 | **🎯 4-in-1 Smart Generator** | Generates strong passwords, multi-word passphrases (like `correct-horse-battery-staple`), numeric PINs, or 2FA secrets. | You never have to invent or reuse passwords again, and newly generated items are saved in an instant history list. |
 | **⏰ Built-In 2FA Authenticator** | Generates rotating 6-digit two-factor codes with animated countdown timers. | No need for a separate app like Google Authenticator; your logins and 2FA codes live securely in one place. |
@@ -163,7 +163,7 @@ sequenceDiagram
 
 ---
 
-### Use Case 3: Transferring Passwords Between Two Phones (Air-Gapped QR Sync)
+### Use Case 3: Transferring Passwords Between Two Phones (Encrypted QR Sync)
 *How to migrate passwords to a new phone with complete privacy.*
 
 ```mermaid
@@ -360,7 +360,7 @@ graph TB
 | :--- | :---: | :---: |
 | **Network Exposure** | ⚠️ Connects to cloud servers over internet | 🛡️ **100% Offline (Zero Internet Permission)** |
 | **Data Storage Location** | ⚠️ Third-party cloud servers | 🛡️ **Only inside your device's secure hardware** |
-| **Phone-to-PC Sharing** | ⚠️ Syncs through remote cloud database | 🛡️ **Direct, air-gapped Bluetooth + Optical QR** |
+| **Phone-to-PC Sharing** | ⚠️ Syncs through remote cloud database | 🛡️ **Direct, offline Bluetooth + Optical QR** |
 | **Database Encryption** | Single-layer encryption | 🛡️ **Double-Lock (TEE Hardware Key + SQLCipher)** |
 | **Tamper Detection** | Basic server logs | 🛡️ **Hardware-signed local blockchain ledger** |
 | **Account Creation** | Requires Email, Password, Subscription | 🛡️ **Zero account, zero personal data collected** |

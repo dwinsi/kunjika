@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
-[![Sync](https://img.shields.io/badge/sync-Air--Gapped%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
+[![Sync](https://img.shields.io/badge/sync-Offline%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
 
 Kunjika combines zero-network, cryptographically hardened offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35) styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
 
@@ -40,7 +40,7 @@ Kunjika features an intelligent, multi-mode cryptographic generator designed for
 
 ---
 
-### 3. Air-Gapped QR Sync (Phone-to-Phone)
+### 3. Encrypted QR Sync (Phone-to-Phone)
 Securely transfer credentials between two mobile devices without Bluetooth, Wi-Fi, cell service, or cloud intermediaries.
 
 ```mermaid
@@ -81,14 +81,14 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> **Air-Gapped QR Sequence**: Sensitive credentials are never exposed in plaintext within the QR code. The payload is encrypted with AES-256-GCM using a PBKDF2-derived key (100,000 iterations) bound to a random 6-digit code.
+> **Encrypted QR Sequence**: Sensitive credentials are never exposed in plaintext within the QR code. The payload is encrypted with AES-256-GCM using a PBKDF2-derived key (100,000 iterations) bound to a random 6-digit code.
 
 ---
 
-### 4. Air-Gapped Web Drop (Phone-to-PC Wireless Sync)
+### 4. Direct Web Drop (Phone-to-PC Wireless Sync)
 Eliminates manual typing of 32+ character high-entropy passwords on desktop and laptop computers without cloud accounts or relays.
 
-- **Zero Internet Requirement**: Completely air-gapped. The [Web Companion](https://dwinsi.github.io/kunjika/web-companion/) executes locally inside browser RAM with zero server communication.
+- **Zero Internet Requirement**: Completely offline. The [Web Companion](https://dwinsi.github.io/kunjika/web-companion/) executes locally inside browser RAM with zero server communication.
 - **Client-Side Proof of Work (PoW)**: Browser solves an ephemeral SHA-256 PoW challenge (`< 0x0800...`), auto-refreshing every 60 seconds to prevent replay attacks.
 - **Ephemeral ECDH P-256 Key Exchange**: Browser generates an in-memory EC P-256 keypair; the phone scans the 65-byte uncompressed public key and computes a shared secret via HKDF-SHA256 (`"kunjika-web-drop-v1"`).
 - **Visual Short Authentication String (SAS)**: Both devices derive and display a matching 6-digit TOTP verification code. The user visually confirms parity before authorizing transmission.
@@ -183,7 +183,7 @@ The Security Audit suite provides proactive threat detection and integrity analy
 - [x] Persistent Generation History
 - [x] Local Blockchain Audit Ledger
 - [x] Encrypted QR Sync (Phone-to-Phone)
-- [x] Air-Gapped Web Drop (Web Bluetooth + Proof of Work Companion)
+- [x] Direct Web Drop (Web Bluetooth + Proof of Work Companion)
 - [x] PBKDF2 PIN Hashing (100,000 iterations)
 - [x] Biometric-Backed PIN Storage (TEE unwrap)
 - [x] Google Play Integrity API Integration

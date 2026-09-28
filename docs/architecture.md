@@ -183,7 +183,7 @@ Before granting access to sensitive cryptographic operations:
 - **Hardware KeyStore Validation**: Confirms via `KeyInfo.isInsideSecureHardware` whether the active master key is physically hosted in a TEE or StrongBox.
 - **Play Integrity API**: Verifies that the app binary is genuine and has not been repackaged or tampered with.
 
-### 5. Air-Gapped Web Drop Flow (BLE GATT with Reassembly)
+### 5. Direct Web Drop Flow (BLE GATT with Reassembly)
 Enables secure transmission of passwords to desktop browsers without network access:
 - **Proof of Work Verification**: Phone validates browser's dynamic SHA-256 PoW challenge (`< 0x0800...`).
 - **ECDH P-256 Key Exchange**: Phone scans the browser's 65-byte uncompressed public key and computes a 256-bit shared secret using HKDF-SHA256 (`"kunjika-web-drop-v1"`).
@@ -207,6 +207,6 @@ Enables secure transmission of passwords to desktop browsers without network acc
 | **Biometrics** | AndroidX Biometric | `1.2.0-alpha05` | Hardware biometric authentication & `CryptoObject` |
 | **Security Integrity** | Google Play Integrity | `1.6.0` | Application attestation and tamper protection |
 | **Preferences** | Jetpack DataStore | `1.1.2` | Encrypted key-value storage |
-| **Camera & Barcode** | CameraX + ML Kit Barcode | `1.4.1` / `17.3.0` | QR code scanning for air-gapped sync |
+| **Camera & Barcode** | CameraX + ML Kit Barcode | `1.4.1` / `17.3.0` | QR code scanning for offline sync |
 | **Bluetooth** | Android Bluetooth Low Energy | API 35 Native | BLE GATT Peripheral server for Web Drop |
 | **Desktop Companion**| HTML5 / Vanilla JS / WebCrypto | Native | Client-side RAM-only Web Drop receiver |

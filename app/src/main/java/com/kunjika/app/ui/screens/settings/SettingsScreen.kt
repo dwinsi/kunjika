@@ -181,7 +181,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Air-Gapped Security Banner
+            // Offline Security Banner
             GlossyCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
@@ -199,7 +199,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.width(14.dp))
                     Column {
                         Text(
-                            text = if (securityStatus.isRooted) "SECURITY WARNING: Device Rooted" else "100% Offline & Air-Gapped",
+                            text = if (securityStatus.isRooted) "SECURITY WARNING: Device Rooted" else "100% Offline & Private",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium,
                             color = if (securityStatus.isRooted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
@@ -591,8 +591,8 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Air-Gapped PC Sync (Web Drop) Section
-                    SettingsSection(title = "Air-Gapped PC Sync") {
+                    // Direct PC Sync (Web Drop) Section
+                    SettingsSection(title = "Direct PC Sync (Web Drop)") {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
