@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kunjika Beta | 14-Day Play Store Testing Guide</title>
-    <meta name="description" content="Simple, interactive 14-day testing checklist and guide for Kunjika Android Closed Beta testers to help publish to Google Play.">
+    <title>Kunjika Beta | 14-Day Play Store Testing Plan</title>
+    <meta name="description" content="14 simple daily tests (1-2 minutes each) for Kunjika Android Closed Beta testers to help launch on Google Play.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,24 +15,20 @@
 
     <style>
         :root {
-            /* Kunjika Signature Obsidian Gold & Midnight Indigo Palette */
+            /* Kunjika Signature Obsidian Gold Palette */
             --gold-300: #FDE68A;
             --gold-400: #FBBF24;
             --gold-500: #F59E0B;
-            --gold-600: #D97706;
-            --gold-glow: rgba(245, 158, 11, 0.28);
+            --gold-glow: rgba(245, 158, 11, 0.25);
 
             --indigo-300: #A5B4FC;
             --indigo-400: #818CF8;
-            --indigo-500: #6366F1;
             --indigo-950: #1E1B4B;
 
             --emerald-300: #6EE7B7;
             --emerald-400: #34D399;
             --emerald-500: #10B981;
-            --emerald-950: #064E3B;
 
-            /* Dark Surfaces */
             --bg-base: #07090E;
             --bg-surface: #0F141C;
             --bg-card: #131A26;
@@ -44,13 +40,12 @@
             
             --border-base: #232D3F;
             --border-accent: rgba(245, 158, 11, 0.35);
-            --border-indigo: rgba(129, 140, 248, 0.3);
 
             --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             
-            --radius-lg: 20px;
-            --radius-md: 14px;
+            --radius-lg: 18px;
+            --radius-md: 12px;
             --radius-sm: 8px;
         }
 
@@ -66,51 +61,44 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 10% 15%, rgba(245, 158, 11, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 10% 15%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
                 radial-gradient(circle at 90% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 45%);
             background-attachment: fixed;
         }
 
-        /* Ambient Glow & Top Banner */
+        /* Navigation */
         .top-nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 1040px;
+            max-width: 860px;
             margin: 0 auto;
-            padding: 24px 20px;
+            padding: 22px 20px 10px;
         }
 
         .logo-group {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             text-decoration: none;
             color: var(--text-primary);
         }
 
         .logo-img {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px var(--gold-glow);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px var(--gold-glow);
             border: 1px solid var(--border-accent);
         }
 
         .logo-title {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
-            letter-spacing: -0.5px;
             background: linear-gradient(135deg, #FFF 0%, var(--gold-300) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 12px;
         }
 
         .nav-btn {
@@ -118,211 +106,172 @@
             font-weight: 600;
             color: var(--text-secondary);
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: var(--radius-sm);
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-base);
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
         .nav-btn:hover {
             color: var(--gold-300);
             border-color: var(--border-accent);
-            background: rgba(245, 158, 11, 0.08);
         }
 
         /* Container */
         .container {
-            max-width: 960px;
+            max-width: 820px;
             margin: 0 auto;
-            padding: 0 20px 80px;
+            padding: 16px 20px 80px;
         }
 
-        /* Hero Section */
+        /* Hero */
         .hero {
             text-align: center;
-            padding: 30px 10px 40px;
+            padding: 20px 10px 30px;
         }
 
         .badge-pill {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 14px;
+            padding: 5px 14px;
             background: rgba(245, 158, 11, 0.12);
             border: 1px solid var(--border-accent);
             border-radius: 999px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             color: var(--gold-400);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .badge-pulse {
+        .badge-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background-color: var(--emerald-400);
-            box-shadow: 0 0 10px var(--emerald-400);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.4; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.4; transform: scale(0.9); }
+            box-shadow: 0 0 8px var(--emerald-400);
         }
 
         .hero h1 {
-            font-size: clamp(32px, 5vw, 46px);
+            font-size: clamp(28px, 4.5vw, 42px);
             font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
+            line-height: 1.25;
+            letter-spacing: -0.8px;
+            margin-bottom: 12px;
         }
 
         .hero h1 span {
-            background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, #D97706 100%);
+            background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 17px;
+            font-size: 16px;
             color: var(--text-secondary);
-            max-width: 640px;
-            margin: 0 auto 28px;
-            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.55;
         }
 
-        /* 3 Golden Rules Box */
+        /* 2 Rules Box */
         .rules-card {
-            background: linear-gradient(145deg, #131A26 0%, #0F141C 100%);
-            border: 1.5px solid var(--border-accent);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.07);
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rules-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
-        }
-
-        .rules-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--gold-300);
-            margin-bottom: 20px;
-        }
-
-        .rules-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+            margin-bottom: 30px;
         }
 
-        .rule-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .rule-box {
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            border: 1.5px solid var(--border-base);
             border-radius: var(--radius-md);
-            padding: 18px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            padding: 18px 20px;
+            position: relative;
         }
 
-        .rule-item:hover {
-            transform: translateY(-2px);
+        .rule-box.gold {
             border-color: var(--border-accent);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.06);
         }
 
-        .rule-number {
+        .rule-tag {
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 2px 7px;
+            border-radius: 4px;
             background: rgba(245, 158, 11, 0.15);
             color: var(--gold-400);
             display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .rule-item h3 {
-            font-size: 16px;
-            font-weight: 700;
             margin-bottom: 6px;
-            color: var(--text-primary);
+            text-transform: uppercase;
         }
 
-        .rule-item p {
+        .rule-box h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .rule-box p {
             font-size: 13.5px;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
-        /* Tracker Card */
-        .tracker-card {
+        /* Progress Card */
+        .progress-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-base);
             border-radius: var(--radius-lg);
-            padding: 28px;
-            margin-bottom: 40px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            padding: 22px;
+            margin-bottom: 36px;
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background: rgba(15, 20, 28, 0.92);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
         }
 
-        .tracker-header {
+        .progress-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
-        .tracker-title h2 {
-            font-size: 22px;
+        .progress-title {
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
-            letter-spacing: -0.5px;
-        }
-
-        .tracker-title p {
-            font-size: 14px;
-            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .progress-pill {
             font-family: var(--font-mono);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--gold-300);
-            background: rgba(245, 158, 11, 0.12);
-            padding: 6px 14px;
+            background: rgba(245, 158, 11, 0.14);
+            padding: 4px 12px;
             border-radius: 999px;
             border: 1px solid var(--border-accent);
         }
 
-        /* Progress Bar */
         .progress-bar-bg {
             width: 100%;
-            height: 12px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.06);
             border-radius: 999px;
             overflow: hidden;
-            margin-bottom: 24px;
             position: relative;
         }
 
@@ -331,76 +280,17 @@
             width: 0%;
             background: linear-gradient(90deg, var(--gold-500) 0%, var(--emerald-400) 100%);
             border-radius: 999px;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 16px var(--gold-glow);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 12px var(--gold-glow);
         }
 
-        /* 14 Day Grid Checkboxes */
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .day-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-sm);
-            padding: 12px 10px;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .day-box:hover {
-            border-color: var(--border-accent);
-            transform: translateY(-2px);
-        }
-
-        .day-box.active {
-            background: rgba(245, 158, 11, 0.14);
-            border-color: var(--gold-500);
-            box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.1);
-        }
-
-        .day-box.active .day-name {
-            color: var(--gold-300);
-            font-weight: 700;
-        }
-
-        .day-name {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .day-status {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .day-box.active .day-status {
-            color: var(--emerald-400);
-            font-weight: 600;
-        }
-
-        .tracker-footer {
+        .progress-hint {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 13px;
+            margin-top: 10px;
+            font-size: 12px;
             color: var(--text-muted);
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .reset-btn {
@@ -410,14 +300,153 @@
             cursor: pointer;
             font-size: 12px;
             text-decoration: underline;
-            transition: color 0.2s;
         }
 
         .reset-btn:hover {
             color: #F87171;
         }
 
-        /* Congratulations Banner */
+        /* 14 Tests List */
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+        }
+
+        .section-header p {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+        }
+
+        .tests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 40px;
+        }
+
+        .test-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .test-item:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card);
+        }
+
+        .test-item.completed {
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .test-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .test-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold-400);
+            border: 1px solid var(--border-accent);
+        }
+
+        .test-item.completed .day-badge {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--emerald-300);
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+
+        .test-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .check-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-base);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .check-btn:hover {
+            border-color: var(--gold-500);
+            color: var(--gold-300);
+        }
+
+        .test-item.completed .check-btn {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--emerald-400);
+            color: var(--emerald-300);
+        }
+
+        .test-steps {
+            list-style: none;
+            margin-left: 2px;
+            margin-bottom: 8px;
+        }
+
+        .test-steps li {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .test-steps li::before {
+            content: '•';
+            color: var(--gold-400);
+            font-weight: bold;
+        }
+
+        .test-expected {
+            font-size: 12.5px;
+            color: #A7F3D0;
+            background: rgba(6, 78, 59, 0.25);
+            border-left: 2px solid var(--emerald-400);
+            padding: 5px 10px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 8px;
+        }
+
+        /* Celebration Box */
         .celebration-box {
             display: none;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 78, 59, 0.25) 100%);
@@ -425,349 +454,92 @@
             border-radius: var(--radius-md);
             padding: 20px;
             text-align: center;
-            margin-top: 20px;
-            animation: fadeIn 0.4s ease-out;
+            margin-bottom: 30px;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .celebration-box h3 {
             color: var(--emerald-300);
             font-size: 18px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .celebration-box p {
             color: #D1FAE5;
             font-size: 14px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Section Headings */
-        .section-header {
-            margin-bottom: 24px;
-        }
-
-        .section-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
-        }
-
-        .section-header p {
-            font-size: 15px;
-            color: var(--text-secondary);
-        }
-
-        /* Missions List (Bite-sized cards) */
-        .mission-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            margin-bottom: 48px;
-        }
-
-        .mission-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-base);
+        /* Quick Feedback Card */
+        .feedback-box {
+            background: linear-gradient(145deg, #131A26 0%, #0F141C 100%);
+            border: 1px solid var(--border-accent);
             border-radius: var(--radius-md);
             padding: 22px;
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            transition: all 0.2s ease;
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .mission-card:hover {
-            border-color: var(--border-accent);
-            background: var(--bg-card-hover);
-        }
-
-        .mission-icon {
-            font-size: 28px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .mission-content {
-            flex-grow: 1;
-        }
-
-        .mission-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-
-        .mission-badge {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(129, 140, 248, 0.15);
-            color: var(--indigo-300);
-            border: 1px solid var(--border-indigo);
-            text-transform: uppercase;
-        }
-
-        .mission-title {
+        .feedback-box h3 {
             font-size: 17px;
             font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .mission-steps {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .mission-steps li {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .mission-steps li::before {
-            content: '✓';
-            color: var(--gold-400);
-            font-weight: 700;
-            font-family: var(--font-mono);
-            margin-top: 1px;
-        }
-
-        /* 3 Fun Stress Tests (Bento cards) */
-        .tests-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 18px;
-            margin-bottom: 48px;
-        }
-
-        .test-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-md);
-            padding: 22px;
-            position: relative;
-        }
-
-        .test-badge {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: rgba(245, 158, 11, 0.12);
-            color: var(--gold-400);
-            display: inline-block;
-            margin-bottom: 12px;
-        }
-
-        .test-card h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .test-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        .test-expected {
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 3px solid var(--emerald-400);
-            padding: 8px 12px;
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            font-size: 12.5px;
-            color: #A7F3D0;
-        }
-
-        /* Play Store Feedback Guide Card */
-        .feedback-card {
-            background: linear-gradient(145deg, #18202E 0%, #0F141C 100%);
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            margin-bottom: 48px;
-        }
-
-        .feedback-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin: 20px 0 26px;
-        }
-
-        .fb-step {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-        }
-
-        .fb-step-num {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--gold-400);
-            font-weight: 700;
+            color: var(--gold-300);
             margin-bottom: 6px;
         }
 
-        .fb-step h4 {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .fb-step p {
-            font-size: 13px;
+        .feedback-box p {
+            font-size: 13.5px;
             color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 14px;
         }
 
-        /* Feedback Template Box */
-        .template-box {
-            background: #090D13;
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            position: relative;
-        }
-
-        .template-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .template-header span {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .copy-btn {
+        .copy-pill {
             background: rgba(245, 158, 11, 0.15);
             border: 1px solid var(--border-accent);
             color: var(--gold-300);
             font-family: var(--font-main);
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 600;
-            padding: 6px 14px;
-            border-radius: 6px;
+            padding: 7px 18px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .copy-btn:hover {
+        .copy-pill:hover {
             background: var(--gold-500);
             color: #07090E;
-        }
-
-        .template-text {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: #E2E8F0;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            user-select: all;
-        }
-
-        /* FAQ Accordions */
-        .faq-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 60px;
-        }
-
-        .faq-item {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
-
-        .faq-item:hover {
-            border-color: var(--border-accent);
-        }
-
-        .faq-question {
-            padding: 18px 22px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            user-select: none;
-        }
-
-        .faq-icon {
-            font-size: 18px;
-            transition: transform 0.2s ease;
-            color: var(--gold-400);
-        }
-
-        .faq-answer {
-            padding: 0 22px 18px;
-            font-size: 14.5px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            display: none;
-        }
-
-        .faq-item.open .faq-answer {
-            display: block;
-        }
-
-        .faq-item.open .faq-icon {
-            transform: rotate(45deg);
         }
 
         /* Footer */
         footer {
             border-top: 1px solid var(--border-base);
-            padding: 32px 20px;
+            padding: 28px 20px;
             text-align: center;
-            font-size: 13.5px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
         footer a {
             color: var(--gold-400);
             text-decoration: none;
-            margin: 0 8px;
+            margin: 0 6px;
         }
 
         footer a:hover {
             text-decoration: underline;
         }
 
-        /* Toast notification */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -776,11 +548,11 @@
             background: #10B981;
             color: #07090E;
             font-weight: 700;
-            font-size: 14px;
-            padding: 10px 22px;
+            font-size: 13.5px;
+            padding: 9px 20px;
             border-radius: 999px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.25s ease;
             z-index: 1000;
         }
 
@@ -789,11 +561,10 @@
         }
 
         @media (max-width: 600px) {
-            .hero h1 { font-size: 28px; }
-            .rules-card { padding: 20px; }
-            .tracker-card { padding: 20px; }
-            .days-grid { grid-template-columns: repeat(4, 1fr); }
-            .mission-card { flex-direction: column; gap: 12px; }
+            .hero h1 { font-size: 26px; }
+            .test-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .check-btn { align-self: flex-start; }
+            .rules-card { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -803,301 +574,327 @@
     <header class="top-nav">
         <a href="index.html" class="logo-group">
             <img src="docs/images/app_icon_512.png" alt="Kunjika Icon" class="logo-img">
-            <span class="logo-title">Kunjika Beta Hub</span>
+            <span class="logo-title">Kunjika Beta Testing</span>
         </a>
-        <nav class="nav-links">
+        <nav>
             <a href="docs/user-guide.html" class="nav-btn">📖 Full Guide</a>
-            <a href="web-companion/" class="nav-btn">⚡ Web Drop</a>
         </nav>
     </header>
 
     <main class="container">
 
-        <!-- Hero Section -->
+        <!-- Hero -->
         <section class="hero">
             <div class="badge-pill">
-                <span class="badge-pulse"></span>
-                Play Store Closed Beta Testing Program
+                <span class="badge-dot"></span>
+                Google Play 14-Day Closed Testing
             </div>
-            <h1>Help Kunjika Go Live on <span>Google Play</span></h1>
-            <p>Under Google Play policies, personal developer accounts require <strong>20 testers to test the app for 14 continuous days</strong> before it can be published to the world. Here is everything you need to know in under 2 minutes!</p>
+            <h1>14 Days. <span>1 Minute Each.</span></h1>
+            <p>Google requires 20 testers to keep the app installed for 14 continuous days. Follow these 14 simple daily tests to help Kunjika go live on Google Play!</p>
         </section>
 
-        <!-- 3 Golden Rules -->
+        <!-- 2 Golden Rules -->
         <section class="rules-card">
-            <div class="rules-title">
-                <span>🛡️</span> The 3 Golden Rules for Every Tester
+            <div class="rule-box gold">
+                <span class="rule-tag">RULE #1</span>
+                <h2>Keep It Installed (14 Days)</h2>
+                <p>Please do not uninstall Kunjika for at least 14 days after opting in. If testers drop out, Google resets the 14-day counter for everyone.</p>
             </div>
-            <div class="rules-grid">
-                <div class="rule-item">
-                    <span class="rule-number">RULE #1</span>
-                    <h3>Keep It Installed (14 Days)</h3>
-                    <p>Do not uninstall the app for at least 14 days after opting in. Google's automated system tracks continuous opt-in days; if testers drop out, the 14-day counter resets!</p>
-                </div>
-                <div class="rule-item">
-                    <span class="rule-number">RULE #2</span>
-                    <h3>Open It Regularly (1–2 Min)</h3>
-                    <p>You don't need to spend hours! Simply launch Kunjika daily or every other day, generate a password, or tap an account. Google monitors active usage signals.</p>
-                </div>
-                <div class="rule-item">
-                    <span class="rule-number">RULE #3</span>
-                    <h3>Drop Play Store Feedback</h3>
-                    <p>Submit a short 2-sentence private feedback note on the Google Play Store app before or around Day 14. This provides direct proof of review for Google auditors.</p>
-                </div>
+            <div class="rule-box gold">
+                <span class="rule-tag">RULE #2</span>
+                <h2>Open It for 1–2 Minutes</h2>
+                <p>Spend just 60 seconds each day completing the simple daily test below to generate active engagement for Google Play reviewers.</p>
             </div>
         </section>
 
-        <!-- Interactive 14-Day Progress Tracker -->
-        <section class="tracker-card">
-            <div class="tracker-header">
-                <div class="tracker-title">
-                    <h2>📅 Your 14-Day Testing Tracker</h2>
-                    <p>Tap each day as you test to track your journey (saved automatically on your device)</p>
+        <!-- Live Sticky Progress Card -->
+        <section class="progress-card">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📅</span> Your 14-Day Testing Progress
                 </div>
                 <div class="progress-pill" id="progressPill">0 / 14 Days (0%)</div>
             </div>
-
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressBar"></div>
             </div>
-
-            <div class="days-grid" id="daysGrid">
-                <!-- Dynamically generated via JavaScript -->
-            </div>
-
-            <div class="tracker-footer">
-                <span>💡 Tip: Bookmark this page on your phone to tick off days as you go!</span>
-                <button class="reset-btn" id="resetProgressBtn">Reset Tracker</button>
-            </div>
-
-            <div class="celebration-box" id="celebrationBox">
-                <h3>🎉 Incredible Work! 14 Days Completed!</h3>
-                <p>You have fulfilled all closed beta testing milestones. Please submit your final private feedback on Google Play and keep Kunjika installed until official production rollout!</p>
-                <a href="#feedback-section" class="copy-btn" style="text-decoration:none; display:inline-block; padding: 8px 20px;">Submit Play Store Feedback →</a>
+            <div class="progress-hint">
+                <span>Tap "Mark Done" on each test as you complete it (saved automatically)</span>
+                <button class="reset-btn" id="resetBtn">Reset</button>
             </div>
         </section>
 
-        <!-- Bite-Sized Testing Missions -->
-        <div class="section-header">
-            <h2>🎯 Bite-Sized Testing Missions</h2>
-            <p>Follow these quick, easy tasks spread across your 14-day journey:</p>
+        <!-- 14-Day Celebration Banner -->
+        <div class="celebration-box" id="celebrationBox">
+            <h3>🎉 Outstanding! You Completed All 14 Days!</h3>
+            <p>You have fulfilled Google Play's full testing requirement. Please submit a quick review on Google Play and keep Kunjika installed until public launch.</p>
+            <button class="copy-pill" id="celebCopyBtn">📋 Copy Review Text</button>
         </div>
 
-        <section class="mission-grid">
-
-            <div class="mission-card">
-                <div class="mission-icon">🚀</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge">Days 1 – 2</span>
-                        <span class="mission-title">First Launch & Biometric Setup</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>Download Kunjika from the Google Play Closed Beta opt-in link.</li>
-                        <li>Swipe through onboarding and choose a memorable 4 to 8-digit <strong>Master PIN</strong>.</li>
-                        <li>Tap <strong>Link Biometrics</strong> to enable instant Fingerprint or Face unlock.</li>
-                        <li>Lock and unlock the app 2–3 times to verify fast unlocking.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-icon">🔄</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge">Days 3 – 5</span>
-                        <span class="mission-title">Password Generator & Vault Storage</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>Open the <strong>Generator</strong> tab and try generating: a Random Password, a multi-word Passphrase (like <em>correct-horse-battery-staple</em>), and a numeric PIN.</li>
-                        <li>Watch the real-time strength meter and estimated crack time change.</li>
-                        <li>Save 2–3 sample logins in the <strong>Vault</strong> under categories (Personal, Work, Finance).</li>
-                        <li>Search for a saved login using the top search bar.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-icon">⏰</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge">Days 6 – 8</span>
-                        <span class="mission-title">2FA Authenticator & Android Autofill</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>Add a 2FA secret key to one of your accounts and watch the rotating 6-digit code and 30s countdown timer (replaces Google Authenticator!).</li>
-                        <li>Go to <strong>Settings > Autofill Service</strong> and enable Kunjika as your Android default.</li>
-                        <li>Open any website login form in Chrome: tap the password box and let Kunjika autofill with one fingerprint tap.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-icon">⚡</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge">Days 9 – 11</span>
-                        <span class="mission-title">Beam Passwords to PC ("Web Drop")</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>On your laptop (Chrome, Edge, or Brave), open <strong>dwinsi.github.io/kunjika/web-companion/</strong>.</li>
-                        <li>On your phone, open any saved vault item and tap <strong>⚡ Web Drop</strong>.</li>
-                        <li>Scan the QR code on your computer screen and confirm the matching 6-digit pairing code.</li>
-                        <li>Touch your fingerprint: the password automatically copies to your laptop clipboard with zero cables, zero Wi-Fi, and zero cloud!</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-icon">🛡️</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge">Days 12 – 13</span>
-                        <span class="mission-title">Security Check & Theme Customization</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>Open the <strong>Security</strong> tab: check your password hygiene score (weak or reused passwords) and phone attestation.</li>
-                        <li>Go to <strong>Settings</strong> and toggle between the <strong>Obsidian Gold</strong> and <strong>Platinum Silver</strong> themes.</li>
-                        <li>Tap <strong>Emergency Recovery Kit</strong> to view your printable offline recovery sheet.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-icon">💬</div>
-                <div class="mission-content">
-                    <div class="mission-meta">
-                        <span class="mission-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald-300); border-color: rgba(52, 211, 153, 0.4);">Day 14+</span>
-                        <span class="mission-title">Submit Play Store Feedback & Stay Installed</span>
-                    </div>
-                    <ul class="mission-steps">
-                        <li>Open Kunjika in the Google Play Store and write a quick private review.</li>
-                        <li><strong>Keep Kunjika installed</strong> on your phone until the developer announces official public launch!</li>
-                    </ul>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- 3 Fun Stress Tests -->
+        <!-- 14 Tests List -->
         <div class="section-header">
-            <h2>🧪 3 Fun Mini-Challenges (Try These!)</h2>
-            <p>Test Kunjika's security superpowers on your Android device:</p>
+            <h2>🎯 The 14 Simple Daily Tests</h2>
+            <p>Pick today's test, follow the 3 quick steps, and tap "Mark Done":</p>
         </div>
 
-        <section class="tests-grid">
-            <div class="test-card">
-                <span class="test-badge">CHALLENGE 1</span>
-                <h3>✈️ The Airplane Mode Test</h3>
-                <p>Turn on <strong>Airplane Mode</strong> (turn off Wi-Fi and Cellular data). Now open Kunjika, generate a password, and unlock with your fingerprint.</p>
-                <div class="test-expected">
-                    <strong>Result:</strong> Functions 100% perfectly because Kunjika has ZERO internet code.
+        <section class="tests-list" id="testsList">
+
+            <!-- Day 1 -->
+            <div class="test-item" id="test-1" data-day="1">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 1</span>
+                        <span class="test-title">Onboarding & Master PIN Setup</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(1)">○ Mark Done</button>
                 </div>
+                <ul class="test-steps">
+                    <li>Install Kunjika from the Google Play Beta link and open it.</li>
+                    <li>Swipe through the onboarding screens explaining offline security.</li>
+                    <li>Set a memorable 4 to 8-digit <strong>Master PIN</strong> and confirm it.</li>
+                    <li>Link your <strong>Fingerprint or Face unlock</strong> when prompted.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Vault unlocks smoothly with your biometric or PIN.</div>
             </div>
 
-            <div class="test-card">
-                <span class="test-badge">CHALLENGE 2</span>
-                <h3>📸 The Spyware Screenshot Test</h3>
-                <p>While inside Kunjika, try taking a screenshot (Power + Volume Down) or open the Android Recent Apps / Task Switcher.</p>
-                <div class="test-expected">
-                    <strong>Result:</strong> Blocked! Android protects your screen from background spyware recordings.
+            <!-- Day 2 -->
+            <div class="test-item" id="test-2" data-day="2">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 2</span>
+                        <span class="test-title">Generate a Strong Random Password</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(2)">○ Mark Done</button>
                 </div>
+                <ul class="test-steps">
+                    <li>Tap the <strong>Generator</strong> tab at the bottom.</li>
+                    <li>Select <strong>Password</strong> mode and drag the length slider to 16–20 characters.</li>
+                    <li>Toggle symbols and numbers; notice the real-time strength meter and crack-time update.</li>
+                    <li>Tap <strong>Copy</strong> to verify copying works.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Generates high-entropy passwords with instant strength rating.</div>
             </div>
 
-            <div class="test-card">
-                <span class="test-badge">CHALLENGE 3</span>
-                <h3>⏱️ The 30s Clipboard Shredder</h3>
-                <p>Tap "Copy Password" on any vault item. Paste it into a text message or note. Now wait 30 seconds and try pasting again.</p>
-                <div class="test-expected">
-                    <strong>Result:</strong> Automatically wiped! The clipboard is cleared to keep your logins secure.
+            <!-- Day 3 -->
+            <div class="test-item" id="test-3" data-day="3">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 3</span>
+                        <span class="test-title">Try Word Passphrases & Numeric PINs</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(3)">○ Mark Done</button>
                 </div>
+                <ul class="test-steps">
+                    <li>In the Generator tab, tap <strong>Passphrase</strong> (word-based like <em>correct-horse-battery-staple</em>).</li>
+                    <li>Adjust the word count slider to 4 or 5 words.</li>
+                    <li>Switch to <strong>PIN</strong> mode and generate a 6-digit banking passcode.</li>
+                    <li>Scroll down to the <strong>Generation History</strong> card to view your past generated items.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Generates memorable word phrases and logs past passwords.</div>
             </div>
+
+            <!-- Day 4 -->
+            <div class="test-item" id="test-4" data-day="4">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 4</span>
+                        <span class="test-title">Save Your First Account to the Vault</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(4)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Tap the <strong>Vault</strong> tab and tap the floating <strong>`+` (Add)</strong> button.</li>
+                    <li>Enter Title (e.g. <code>My Email</code>) and your username.</li>
+                    <li>Tap the dice icon to auto-generate a secure password into the field.</li>
+                    <li>Select category <strong>Personal</strong> and tap <strong>Save</strong>.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Account is safely encrypted and displayed in your vault list.</div>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="test-item" id="test-5" data-day="5">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 5</span>
+                        <span class="test-title">Search & Category Filters</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(5)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Add 2 more sample accounts under different categories (e.g. <strong>Work</strong> and <strong>Finance</strong>).</li>
+                    <li>Tap the category filter chips at the top (<em>Work</em>, <em>Finance</em>) to view filtered lists.</li>
+                    <li>Use the search bar at the top to type an account name and test instant search.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Instant search and filtering without any lag.</div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="test-item" id="test-6" data-day="6">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 6</span>
+                        <span class="test-title">Built-In 2FA Authenticator (TOTP)</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(6)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Open any account in your Vault and tap the pencil icon to edit.</li>
+                    <li>In the <strong>TOTP Secret</strong> field, paste test secret <code>JBSWY3DPEHPK3PXP</code> and save.</li>
+                    <li>Tap the account card to view the rotating 6-digit code and 30s countdown ring.</li>
+                    <li>Tap the 6-digit code to copy it to your clipboard.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Live rotating 2FA codes without needing Google Authenticator.</div>
+            </div>
+
+            <!-- Day 7 -->
+            <div class="test-item" id="test-7" data-day="7">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 7</span>
+                        <span class="test-title">Enable Android Autofill</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(7)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Go to the <strong>⚙️ Settings</strong> tab and tap <strong>Autofill Service</strong>.</li>
+                    <li>Select <strong>Kunjika</strong> as your default autofill provider in Android Settings.</li>
+                    <li>Open Chrome or any browser login form, tap a password box.</li>
+                    <li>Tap Kunjika's prompt, unlock with fingerprint, and watch it fill your login.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: One-tap biometric autofill across apps and websites.</div>
+            </div>
+
+            <!-- Day 8 -->
+            <div class="test-item" id="test-8" data-day="8">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 8</span>
+                        <span class="test-title">Web Drop: Beam a Password to PC</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(8)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>On your computer (Chrome, Edge, Brave), open <code>https://dwinsi.github.io/kunjika/web-companion/</code>.</li>
+                    <li>On your phone, open any saved vault item and tap <strong>⚡ Web Drop</strong>.</li>
+                    <li>Scan the QR code on your computer screen with your phone camera.</li>
+                    <li>Confirm matching 6-digit code, approve with fingerprint, and press <code>Ctrl+V</code> on your laptop!</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Password beams to PC clipboard via Bluetooth with zero internet.</div>
+            </div>
+
+            <!-- Day 9 -->
+            <div class="test-item" id="test-9" data-day="9">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 9</span>
+                        <span class="test-title">The Airplane Mode (100% Offline) Test</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(9)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Turn on <strong>Airplane Mode</strong> on your phone (disable Wi-Fi and Mobile Data).</li>
+                    <li>Open Kunjika, unlock with your fingerprint, and generate a new password.</li>
+                    <li>Add or edit an account in your Vault.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Operates 100% normally without any network error or delay.</div>
+            </div>
+
+            <!-- Day 10 -->
+            <div class="test-item" id="test-10" data-day="10">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 10</span>
+                        <span class="test-title">Screen Privacy Protection (Anti-Spyware)</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(10)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Open Kunjika to your Vault.</li>
+                    <li>Try taking a screenshot using hardware keys (<code>Power + Volume Down</code>).</li>
+                    <li>Swipe up into Android's Recent Apps / Task Switcher.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Screenshot is blocked and recent apps preview is blanked.</div>
+            </div>
+
+            <!-- Day 11 -->
+            <div class="test-item" id="test-11" data-day="11">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 11</span>
+                        <span class="test-title">30-Second Clipboard Auto-Clear</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(11)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Open any saved account in your vault and tap <strong>Copy Password</strong>.</li>
+                    <li>Paste it into a text note to verify it copied.</li>
+                    <li>Wait 30–45 seconds without copying anything else.</li>
+                    <li>Try pasting again in the text note.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Clipboard is cleared automatically to prevent app snooping.</div>
+            </div>
+
+            <!-- Day 12 -->
+            <div class="test-item" id="test-12" data-day="12">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 12</span>
+                        <span class="test-title">Run a Security Health Audit</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(12)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Tap the <strong>🛡️ Security</strong> tab at the bottom.</li>
+                    <li>Review the <strong>Vault Hygiene</strong> card (weak, reused, or aging passwords).</li>
+                    <li>Review the <strong>Device Environment Audit</strong> (Root detection & hardware key attestation).</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Comprehensive security audit of passwords and phone integrity.</div>
+            </div>
+
+            <!-- Day 13 -->
+            <div class="test-item" id="test-13" data-day="13">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 13</span>
+                        <span class="test-title">Theme Switch & Emergency Recovery Kit</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(13)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Go to <strong>⚙️ Settings</strong> and toggle between <strong>Obsidian Gold</strong> and <strong>Platinum Silver</strong> themes.</li>
+                    <li>Tap <strong>Emergency Recovery Kit</strong> and authenticate with fingerprint.</li>
+                    <li>Inspect the generated offline recovery document.</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Instant theme toggle and printable offline backup generation.</div>
+            </div>
+
+            <!-- Day 14 -->
+            <div class="test-item" id="test-14" data-day="14">
+                <div class="test-top">
+                    <div class="test-meta">
+                        <span class="day-badge">DAY 14</span>
+                        <span class="test-title">Submit Feedback & Keep Installed</span>
+                    </div>
+                    <button class="check-btn" onclick="toggleTest(14)">○ Mark Done</button>
+                </div>
+                <ul class="test-steps">
+                    <li>Open Kunjika's page on the <strong>Google Play Store</strong> app.</li>
+                    <li>Scroll down to <strong>Private feedback to developer</strong>.</li>
+                    <li>Write a quick 1–2 line review of your test experience and tap <strong>Submit</strong>.</li>
+                    <li><strong>Keep Kunjika installed</strong> on your phone until official public launch!</li>
+                </ul>
+                <div class="test-expected">✓ Expected: Private feedback recorded for Google Play production review.</div>
+            </div>
+
         </section>
 
-        <!-- How to Submit Play Store Feedback -->
-        <section class="feedback-card" id="feedback-section">
-            <div class="section-header" style="margin-bottom: 10px;">
-                <h2>💬 How to Submit Your Play Store Feedback</h2>
-                <p>Takes less than 60 seconds and directly helps satisfy Google Play's approval requirements!</p>
-            </div>
-
-            <div class="feedback-steps">
-                <div class="fb-step">
-                    <div class="fb-step-num">STEP 1</div>
-                    <h4>Open Google Play Store</h4>
-                    <p>Open the Play Store app on your phone and tap your profile icon at top-right.</p>
-                </div>
-                <div class="fb-step">
-                    <div class="fb-step-num">STEP 2</div>
-                    <h4>Find Kunjika Beta</h4>
-                    <p>Tap <strong>Manage apps & device</strong> > <strong>Installed</strong> > tap <strong>Kunjika</strong>.</p>
-                </div>
-                <div class="fb-step">
-                    <div class="fb-step-num">STEP 3</div>
-                    <h4>Leave Private Feedback</h4>
-                    <p>Scroll down to <strong>Private feedback to developer</strong> and tap <strong>Write a review</strong>.</p>
-                </div>
-            </div>
-
-            <div class="template-box">
-                <div class="template-header">
-                    <span>Quick Copyable Review Template</span>
-                    <button class="copy-btn" id="copyTemplateBtn">📋 Copy Template</button>
-                </div>
-                <div class="template-text" id="templateText">Tested Kunjika on [My Phone Model] running Android [Version].
-- Performance: Launch and biometric unlock are instantaneous.
-- Favorite feature: Web Drop to PC clipboard and built-in 2FA authenticator.
-- Offline guarantee: Verified 100% offline in Airplane mode without any hiccups.
-- Smooth, clean design and very responsive.</div>
-            </div>
-        </section>
-
-        <!-- FAQ for Testers -->
-        <div class="section-header">
-            <h2>❓ Quick FAQ for Testers</h2>
-            <p>Everything you might wonder about the 14-day test program:</p>
-        </div>
-
-        <section class="faq-grid">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>How much time do I need to spend testing each day?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    Just 1 to 2 minutes every day or two! You don't have to spend hours in the app. Simply opening it, generating a random password, viewing an account, or testing autofill creates the active usage signals Google looks for.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Why can't I uninstall the app immediately on Day 14?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    After Day 14, the developer submits the application to Google Play for production approval. This review usually takes 2 to 5 business days. If testers uninstall while the review is pending, the active tester count drops below 20, which can pause or cancel the approval. Please keep Kunjika installed until public launch!
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Are my passwords safe while testing Kunjika?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    100% safe. Kunjika doesn't even have internet permission in its code—meaning it is physically impossible for the app to send your data anywhere. All credentials are encrypted inside your phone's physical hardware security chip (Android KeyStore TEE).
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>What should I do if I find a bug or glitch?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    Please mention it directly in your Google Play Store private feedback, or report it on our GitHub repository. Include your phone model and Android version so we can investigate right away!
-                </div>
-            </div>
+        <!-- Quick Feedback Box -->
+        <section class="feedback-box">
+            <h3>💬 Copy Quick Review Text for Google Play</h3>
+            <p>Ready to leave feedback? Tap below to copy a pre-filled review text and paste it into the Google Play Store app:</p>
+            <button class="copy-pill" id="copyReviewBtn">
+                <span>📋</span> Copy Play Store Review Template
+            </button>
         </section>
 
     </main>
@@ -1105,104 +902,90 @@
     <!-- Footer -->
     <footer>
         <p>🏰 <strong>Kunjika</strong> — 100% Offline Sovereign Password Vault for Android.</p>
-        <p style="margin-top: 8px;">
+        <p style="margin-top: 6px;">
             <a href="index.html">Home</a> •
             <a href="docs/user-guide.html">User Guide</a> •
-            <a href="web-companion/">Web Drop Companion</a> •
-            <a href="PRIVACY_POLICY.html">Privacy Policy</a> •
+            <a href="web-companion/">Web Drop</a> •
             <a href="https://github.com/dwinsi/kunjika">GitHub</a>
         </p>
     </footer>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast">Feedback template copied to clipboard!</div>
+    <div class="toast" id="toast">Review template copied to clipboard!</div>
 
-    <!-- Script for Interactive Day Tracker & Copy -->
+    <!-- JavaScript for 14-Day Progress & Checkoff -->
     <script>
-        const STORAGE_KEY = 'kunjika_beta_days_v1';
-        const TOTAL_DAYS = 14;
+        const STORAGE_KEY = 'kunjika_14_tests_v1';
+        const TOTAL_TESTS = 14;
 
-        // Load saved state or init empty array
-        let savedDays = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        let completedTests = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
-        const daysGrid = document.getElementById('daysGrid');
         const progressBar = document.getElementById('progressBar');
         const progressPill = document.getElementById('progressPill');
         const celebrationBox = document.getElementById('celebrationBox');
-        const resetBtn = document.getElementById('resetProgressBtn');
-        const copyBtn = document.getElementById('copyTemplateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const copyBtn = document.getElementById('copyReviewBtn');
+        const celebCopyBtn = document.getElementById('celebCopyBtn');
         const toast = document.getElementById('toast');
 
-        // Render day items
-        function renderDays() {
-            daysGrid.innerHTML = '';
-            for (let i = 1; i <= TOTAL_DAYS; i++) {
-                const isCompleted = savedDays.includes(i);
-                const dayEl = document.createElement('div');
-                dayEl.className = 'day-box' + (isCompleted ? ' active' : '');
-                dayEl.innerHTML = `
-                    <div class="day-name">Day ${i}</div>
-                    <div class="day-status">${isCompleted ? '✓ Done' : '○ Pending'}</div>
-                `;
-                dayEl.addEventListener('click', () => toggleDay(i));
-                daysGrid.appendChild(dayEl);
+        function updateUI() {
+            for (let i = 1; i <= TOTAL_TESTS; i++) {
+                const item = document.getElementById(`test-${i}`);
+                if (!item) continue;
+                const btn = item.querySelector('.check-btn');
+                const isDone = completedTests.includes(i);
+
+                if (isDone) {
+                    item.classList.add('completed');
+                    btn.textContent = '✓ Completed';
+                } else {
+                    item.classList.remove('completed');
+                    btn.textContent = '○ Mark Done';
+                }
             }
-            updateStats();
-        }
 
-        function toggleDay(dayNum) {
-            if (savedDays.includes(dayNum)) {
-                savedDays = savedDays.filter(d => d !== dayNum);
-            } else {
-                savedDays.push(dayNum);
-            }
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(savedDays));
-            renderDays();
-        }
+            const count = completedTests.length;
+            const pct = Math.round((count / TOTAL_TESTS) * 100);
+            progressBar.style.width = pct + '%';
+            progressPill.textContent = `${count} / ${TOTAL_TESTS} Days (${pct}%)`;
 
-        function updateStats() {
-            const count = savedDays.length;
-            const percentage = Math.round((count / TOTAL_DAYS) * 100);
-            
-            progressBar.style.width = percentage + '%';
-            progressPill.textContent = `${count} / ${TOTAL_DAYS} Days (${percentage}%)`;
-
-            if (count >= TOTAL_DAYS) {
+            if (count >= TOTAL_TESTS) {
                 celebrationBox.style.display = 'block';
             } else {
                 celebrationBox.style.display = 'none';
             }
         }
 
+        window.toggleTest = function(day) {
+            if (completedTests.includes(day)) {
+                completedTests = completedTests.filter(d => d !== day);
+            } else {
+                completedTests.push(day);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(completedTests));
+            updateUI();
+        };
+
         resetBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset your testing tracker?')) {
-                savedDays = [];
+            if (confirm('Reset your 14-day testing checklist?')) {
+                completedTests = [];
                 localStorage.removeItem(STORAGE_KEY);
-                renderDays();
+                updateUI();
             }
         });
 
-        // FAQ Toggle
-        document.querySelectorAll('.faq-question').forEach(item => {
-            item.addEventListener('click', () => {
-                const parent = item.parentElement;
-                parent.classList.toggle('open');
-            });
-        });
-
-        // Copy Template button
-        copyBtn.addEventListener('click', () => {
-            const text = document.getElementById('templateText').innerText;
+        function copyReview() {
+            const text = "Tested Kunjika on Android. Very fast launch, biometric unlock is instantaneous, and 100% offline security with Web Drop works great. Highly recommended!";
             navigator.clipboard.writeText(text).then(() => {
                 toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2800);
+                setTimeout(() => toast.classList.remove('show'), 2500);
             });
-        });
+        }
 
-        // Initialize
-        renderDays();
+        copyBtn.addEventListener('click', copyReview);
+        celebCopyBtn.addEventListener('click', copyReview);
+
+        updateUI();
     </script>
 </body>
 </html>
