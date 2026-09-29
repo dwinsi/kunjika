@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>साइबर सुरक्षा जागरूकता और कुंजिका (Kunjika) - संपूर्ण हिंदी गाइड</title>
+    <meta name="description" content="पासवर्ड मैनेजर क्या है? 2FA ऑथेंटिकेशन क्या होता है? हाल के बड़े डेटा लीक और मजबूत पासवर्ड की जरूरत क्यों है? जानिए सरल हिंदी में। 100% ऑफलाइन कुंजिका (Kunjika) ऐप गाइड।">
+    <meta name="keywords" content="पासवर्ड मैनेजर क्या है, 2FA क्या होता है, Two Factor Authentication in Hindi, Data Breach India, पासवर्ड सुरक्षा, Kunjika app, कुंजिका, offline password vault">
+    <meta name="theme-color" content="#07090E">
+
+    <!-- Open Graph / Social Meta -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dwinsi.github.io/kunjika/hindi.html">
+    <meta property="og:title" content="साइबर सुरक्षा जागरूकता व कुंजिका (Kunjika) हिंदी गाइड">
+    <meta property="og:description" content="Password Manager, 2FA Authentication, हाल के बड़े डेटा ब्रीच (LastPass, RockYou2024), और ऑफलाइन सुरक्षा की पूरी जानकारी आसान हिंदी में।">
+    <meta property="og:image" content="docs/images/feature_graphic_1024x500.png">
+
+    <!-- Google Fonts: Noto Sans Devanagari & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" href="docs/images/app_icon_512.png">
+
+    <style>
+        :root {
+            /* Kunjika Signature Theme Tokens */
+            --gold-300: #FDE68A;
+            --gold-400: #FBBF24;
+            --gold-500: #F59E0B;
+            --gold-600: #D97706;
+            --gold-glow: rgba(245, 158, 11, 0.25);
+            --gold-glow-strong: rgba(245, 158, 11, 0.45);
+
+            --indigo-300: #A5B4FC;
+            --indigo-400: #818CF8;
+            --indigo-500: #6366F1;
+            --indigo-950: #1E1B4B;
+
+            --emerald-300: #6EE7B7;
+            --emerald-400: #34D399;
+            --emerald-500: #10B981;
+
+            --rose-400: #FB7185;
+            --rose-500: #F43F5E;
+            --rose-950: #4C0519;
+
+            --bg-base: #07090E;
+            --bg-surface: #0F141C;
+            --bg-card: #131A26;
+            --bg-card-hover: #182232;
+            --bg-glass: rgba(19, 26, 38, 0.88);
+            
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --border-base: #232D3F;
+            --border-accent: rgba(245, 158, 11, 0.35);
+            --border-glow: rgba(245, 158, 11, 0.6);
+
+            --font-hindi: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            
+            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.35);
+            --shadow-glow: 0 10px 30px rgba(245, 158, 11, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-hindi);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.75;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.09) 0%, transparent 45%),
+                radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* Top Announcement */
+        .announcement-banner {
+            background: linear-gradient(90deg, #1E1B4B 0%, #312E81 50%, #1E1B4B 100%);
+            border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+            text-align: center;
+            padding: 9px 16px;
+            font-size: 0.92rem;
+            color: #E0E7FF;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .announcement-banner a {
+            color: var(--gold-400);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 8px;
+            border-bottom: 1px dashed var(--gold-400);
+            transition: all 0.2s ease;
+        }
+
+        .announcement-banner a:hover {
+            color: var(--gold-300);
+            border-bottom-style: solid;
+        }
+
+        /* Header & Navigation */
+        .nav-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7, 9, 14, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-base);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            box-shadow: 0 0 16px var(--gold-glow);
+            border: 1px solid var(--border-accent);
+        }
+
+        .logo-text-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--gold-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-tagline {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            padding: 4px 0;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--gold-400);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            color: #C7D2FE;
+            padding: 7px 14px;
+            border-radius: 9999px;
+            font-size: 0.88rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-lang:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: var(--indigo-400);
+            color: #FFFFFF;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+            color: #07090E;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px var(--gold-glow);
+            transition: all 0.25s ease;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--gold-glow-strong);
+            background: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-500) 100%);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            text-decoration: none;
+            border: 1px solid var(--border-base);
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+            color: var(--gold-300);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 60px 0 50px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-gold {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: var(--gold-400);
+        }
+
+        .badge-red {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            color: var(--rose-400);
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: var(--emerald-400);
+        }
+
+        .badge-indigo {
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: var(--indigo-300);
+        }
+
+        .hero h1 {
+            font-size: 2.7rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+        }
+
+        .hero h1 span.highlight {
+            background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-lead {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 860px;
+            margin: 0 auto 32px auto;
+            line-height: 1.8;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        /* Awareness Banner / Alert Callout */
+        .awareness-alert-box {
+            background: linear-gradient(135deg, #1C0A15 0%, #171B26 100%);
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            border-radius: var(--radius-lg);
+            padding: 24px 28px;
+            max-width: 980px;
+            margin: 0 auto 40px auto;
+            text-align: left;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.1);
+        }
+
+        .awareness-alert-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        .awareness-alert-content h3 {
+            font-size: 1.25rem;
+            color: var(--rose-400);
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .awareness-alert-content p {
+            color: #E2E8F0;
+            font-size: 0.98rem;
+            line-height: 1.65;
+        }
+
+        /* Hero Graphic */
+        .hero-banner-wrapper {
+            margin: 20px auto 0 auto;
+            max-width: 900px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-accent);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px var(--gold-glow);
+            position: relative;
+        }
+
+        .hero-banner-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Section Common */
+        .section {
+            padding: 75px 0;
+            border-top: 1px solid var(--border-base);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 820px;
+            margin: 0 auto 48px auto;
+        }
+
+        .section-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold-400);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.35;
+            margin-bottom: 14px;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Awareness Topic Cards */
+        .awareness-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+
+        .awareness-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .awareness-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .awareness-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .awareness-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .awareness-icon-box.red {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .awareness-icon-box.blue {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .awareness-icon-box.green {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .awareness-card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .awareness-card-title span.term {
+            display: block;
+            font-size: 0.88rem;
+            color: var(--gold-400);
+            font-family: var(--font-display);
+            font-weight: 600;
+        }
+
+        .awareness-card p {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            line-height: 1.75;
+            margin-bottom: 16px;
+        }
+
+        .awareness-card ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .awareness-card ul li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-size: 0.94rem;
+        }
+
+        .awareness-card ul li::before {
+            content: "•";
+            color: var(--gold-400);
+            position: absolute;
+            left: 6px;
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+
+        /* 2FA Comparison: SMS vs Authenticator */
+        .twofa-compare-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin: 36px 0;
+        }
+
+        .twofa-col {
+            padding: 20px;
+            border-radius: var(--radius-md);
+        }
+
+        .twofa-col.sms {
+            background: rgba(244, 63, 94, 0.05);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        .twofa-col.app {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .twofa-col h4 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .twofa-col.sms h4 { color: var(--rose-400); }
+        .twofa-col.app h4 { color: var(--emerald-400); }
+
+        .twofa-col p {
+            font-size: 0.94rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.65;
+        }
+
+        /* Real World Breaches Timeline / Cards */
+        .breaches-section {
+            background: linear-gradient(180deg, rgba(244, 63, 94, 0.03) 0%, transparent 100%);
+            border-radius: var(--radius-xl);
+            padding: 40px 30px;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            margin: 40px 0;
+        }
+
+        .breach-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .breach-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            position: relative;
+        }
+
+        .breach-badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose-400);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .breach-card h4 {
+            font-size: 1.15rem;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .breach-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .breach-lesson {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 0.86rem;
+            color: var(--gold-300);
+            font-weight: 500;
+        }
+
+        /* Password Crack Time Table */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-base);
+        }
+
+        .crack-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: var(--bg-card);
+            font-size: 0.94rem;
+        }
+
+        .crack-table th {
+            background: #0A0F17;
+            padding: 16px 20px;
+            color: var(--gold-400);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-base);
+        }
+
+        .crack-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .crack-table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .badge-danger-sm {
+            color: var(--rose-400);
+            font-weight: 700;
+        }
+
+        .badge-success-sm {
+            color: var(--emerald-400);
+            font-weight: 700;
+        }
+
+        /* Golden Rules */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .rule-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .rule-num {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--gold-400);
+            margin-bottom: 8px;
+            font-family: var(--font-display);
+        }
+
+        .rule-item h5 {
+            font-size: 1.05rem;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+        }
+
+        .rule-item p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Steps Workflow */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        .step-row {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 36px;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-xl);
+            padding: 36px;
+            transition: border-color 0.2s;
+        }
+
+        .step-row:hover {
+            border-color: var(--border-accent);
+        }
+
+        .step-row.reverse {
+            grid-template-columns: 340px 1fr;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gold-500);
+            color: #07090E;
+            font-weight: 800;
+            font-size: 1.15rem;
+            margin-bottom: 16px;
+        }
+
+        .step-content h3 {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            line-height: 1.75;
+        }
+
+        .step-bullets {
+            list-style: none;
+            margin-bottom: 18px;
+        }
+
+        .step-bullets li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .step-bullets li::before {
+            content: "👉";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.9rem;
+        }
+
+        .step-tip {
+            background: rgba(30, 27, 75, 0.4);
+            border-left: 4px solid var(--indigo-400);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            color: #C7D2FE;
+        }
+
+        .step-warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 4px solid var(--gold-500);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            color: var(--gold-300);
+        }
+
+        .step-media {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .step-screenshot {
+            width: 100%;
+            max-width: 290px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-base);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .step-screenshot:hover {
+            transform: scale(1.03);
+            border-color: var(--gold-400);
+        }
+
+        /* 4 Tabs Guide Bar */
+        .tabs-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            padding: 16px 12px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.5rem;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--border-accent);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, var(--bg-card) 100%);
+            border-color: var(--gold-500);
+            color: var(--gold-400);
+            box-shadow: 0 0 16px var(--gold-glow);
+        }
+
+        .tab-content-panel {
+            display: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .tab-content-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Live Demo Card */
+        .demo-card {
+            background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-xl);
+            padding: 36px;
+            max-width: 760px;
+            margin: 0 auto;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--gold-glow);
+        }
+
+        .demo-output-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #05070A;
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .demo-output-text {
+            font-family: var(--font-mono);
+            font-size: 1.35rem;
+            color: var(--gold-300);
+            letter-spacing: 1.5px;
+            word-break: break-all;
+            user-select: all;
+        }
+
+        .demo-copy-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .demo-copy-btn:hover {
+            border-color: var(--gold-400);
+            color: var(--gold-400);
+        }
+
+        .strength-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .strength-bar-track {
+            flex-grow: 1;
+            height: 8px;
+            background: #1C2331;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #10B981, #34D399);
+            border-radius: 9999px;
+            transition: width 0.3s;
+        }
+
+        .strength-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--emerald-400);
+            white-space: nowrap;
+        }
+
+        .demo-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .slider-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .length-slider {
+            width: 100%;
+            height: 6px;
+            accent-color: var(--gold-500);
+            background: #232D3F;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* FAQ Accordion */
+        .faq-grid {
+            max-width: 880px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--border-accent);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            font-size: 1.12rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-question::after {
+            content: "+";
+            font-size: 1.4rem;
+            color: var(--gold-400);
+            transition: transform 0.25s ease;
+        }
+
+        .faq-item.open .faq-question::after {
+            content: "−";
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px 20px 24px;
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            line-height: 1.75;
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 14px;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* Download Call to Action Box */
+        .cta-banner {
+            background: linear-gradient(135deg, #131A26 0%, #1A1836 100%);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--gold-glow);
+            margin: 40px auto;
+            max-width: 960px;
+        }
+
+        .cta-banner h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+        }
+
+        .cta-banner p {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 30px auto;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-base);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background: #05070A;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--gold-400);
+        }
+
+        .footer-tagline {
+            margin-top: 10px;
+            font-size: 0.82rem;
+        }
+
+        /* Quick Navigation Bar (Sticky Floating Pill) */
+        .quick-nav-pill {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 20, 28, 0.92);
+            border: 1px solid var(--border-accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 8px 20px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 999;
+            font-size: 0.86rem;
+        }
+
+        .quick-nav-pill a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        .quick-nav-pill a:hover {
+            color: var(--gold-400);
+        }
+
+        .quick-nav-divider {
+            color: var(--border-base);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .awareness-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .twofa-compare-box {
+                grid-template-columns: 1fr;
+            }
+
+            .step-row, .step-row.reverse {
+                grid-template-columns: 1fr;
+            }
+
+            .step-media {
+                order: -1;
+                margin-bottom: 20px;
+            }
+
+            .tabs-nav {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+
+            .cta-banner {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .demo-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-nav-pill {
+                display: none;
+            }
+
+            .awareness-alert-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Announcement Banner -->
+    <aside class="announcement-banner" aria-label="घोषणा">
+        🛡️ <strong>साइबर सुरक्षा जागरूकता अभियान</strong> — जानिए कैसे पासवर्ड चोरी और ऑनलाइन फ्रॉड से बचें। 
+        <a href="#awareness">जागरूकता गाइड पढ़ें ↓</a>
+    </aside>
+
+    <!-- Navigation Header -->
+    <header class="nav-header">
+        <div class="nav-container">
+            <a href="#" class="logo-group">
+                <img src="docs/images/app_icon_512.png" alt="कुंजिका लोगो" class="logo-img">
+                <div class="logo-text-block">
+                    <span class="logo-title">KUNJIKA</span>
+                    <span class="logo-tagline">100% ऑफलाइन सुरक्षा गाइड</span>
+                </div>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#awareness" class="nav-link">सुरक्षा क्या है?</a></li>
+                    <li><a href="#breaches" class="nav-link">डेटा लीक के उदाहरण</a></li>
+                    <li><a href="#why-kunjika" class="nav-link">कुंजिका क्यों?</a></li>
+                    <li><a href="#how-to-use" class="nav-link">ऐप का उपयोग</a></li>
+                    <li><a href="#live-demo" class="nav-link">पासवर्ड डेमो</a></li>
+                    <li><a href="#faq" class="nav-link">FAQ</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="./index.html" class="btn-lang" title="Switch to English website">
+                    🇬🇧 <span>English</span>
+                </a>
+                <a href="./testing.html" class="btn-primary">
+                    🚀 <span>बीटा टेस्ट करें</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero container">
+            <div class="hero-badges">
+                <span class="badge badge-red">🚨 साइबर सुरक्षा जागरूकता</span>
+                <span class="badge badge-gold">🔐 पासवर्ड मैनेजर और 2FA गाइड</span>
+                <span class="badge badge-green">🛡️ 100% ऑफलाइन गारंटी</span>
+            </div>
+
+            <h1>
+                क्या आपका पासवर्ड सुरक्षित है?<br>
+                <span class="highlight">साइबर खतरों से खुद को और अपने परिवार को बचाएं।</span>
+            </h1>
+
+            <p class="hero-lead">
+                भारत में हर दिन लाखों लोग पासवर्ड चोरी, <strong>SIM Swapping</strong>, और <strong>Data Breaches</strong> का शिकार होते हैं। इस गाइड में जानिए कि <strong>Password Manager</strong> और <strong>2FA (Two-Factor Authentication)</strong> क्या होते हैं, और कैसे <strong>कुंजिका (Kunjika)</strong> आपको बिना इंटरनेट के 100% सुरक्षित रखती है।
+            </p>
+
+            <div class="hero-cta">
+                <a href="#awareness" class="btn-primary" style="font-size: 1.05rem; padding: 13px 28px;">
+                    🛡️ साइबर जागरूकता गाइड पढ़ें
+                </a>
+                <a href="#breaches" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 28px;">
+                    ⚠️ हाल के डेटा लीक्स के उदाहरण
+                </a>
+                <a href="#how-to-use" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 24px;">
+                    📱 कुंजिका ऐप कैसे चलाएं?
+                </a>
+            </div>
+
+            <!-- Awareness High-Impact Alert Box -->
+            <div class="awareness-alert-box">
+                <div class="awareness-alert-icon">⚠️</div>
+                <div class="awareness-alert-content">
+                    <h3>चेतावनी: क्या आप भी यही गलतियाँ कर रहे हैं?</h3>
+                    <p>
+                        अगर आप अपने बैंक, ईमेल और इंस्टाग्राम के लिए एक ही पासवर्ड (जैसे <em>Rahul@123</em> या <em>Mobile Number</em>) रखते हैं, या पासवर्ड को व्हाट्सएप चैट या डायरी में लिखते हैं, तो आपका खाता किसी भी वक्त हैक हो सकता है। नीचे पढ़ें कि दुनिया भर के हैकर्स पासवर्ड कैसे चुराते हैं!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Hero Graphic Banner -->
+            <div class="hero-banner-wrapper">
+                <img src="docs/images/feature_graphic_1024x500.png" alt="कुंजिका ऐप फीचर ग्राफिक - ऑफलाइन सुरक्षा">
+            </div>
+        </section>
+
+        <!-- Section 1: Security Awareness (साइबर सुरक्षा की बुनियादी बातें) -->
+        <section class="section container" id="awareness">
+            <div class="section-header">
+                <span class="section-tag">Cybersecurity Fundamentals</span>
+                <h2 class="section-title">साइबर सुरक्षा की बुनियादी बातें (सरल हिंदी में)</h2>
+                <p class="section-desc">
+                    तकनीकी शब्दों से घबराएं नहीं। आइए बहुत ही आसान भाषा में समझें कि डिजिटल दुनिया में सुरक्षित रहने के लिए क्या जरूरी है।
+                </p>
+            </div>
+
+            <!-- 4 Fundamental Topics Grid -->
+            <div class="awareness-grid">
+                
+                <!-- Topic 1: What is a Password Manager -->
+                <div class="awareness-card">
+                    <div class="awareness-card-header">
+                        <div class="awareness-icon-box">🗄️</div>
+                        <div>
+                            <h3 class="awareness-card-title">1. पासवर्ड मैनेजर क्या है?</h3>
+                            <span class="term">What is a Password Manager?</span>
+                        </div>
+                    </div>
+                    <p>
+                        <strong>सरल उदाहरण (Analogy):</strong> जैसे आपके घर में गहने और पैसे रखने के लिए एक मजबूत <strong>लॉकर (Vault)</strong> होता है, जिसकी सिर्फ एक मुख्य चाबी होती है।
+                    </p>
+                    <p>
+                        <strong>Password Manager</strong> आपके फोन में एक डिजिटल तिजोरी की तरह है। यह आपके 50-100 सभी खातों के लिए अलग-अलग और बहुत जटिल पासवर्ड (जैसे: <code>x8#Q$9mP!2zL</code>) खुद बनाता है और सुरक्षित रखता है।
+                    </p>
+                    <ul>
+                        <li><strong>आपको सिर्फ 1 मास्टर पिन (Master PIN)</strong> याद रखना होता है। बाकी सब पासवर्ड यह खुद भरता है।</li>
+                        <li><strong>ऑटोफिल (Autofill):</strong> जब आप किसी वेबसाइट पर लॉगिन करते हैं, तो पासवर्ड टाइप करने की ज़रूरत नहीं पड़ती; यह अपने आप भर देता है।</li>
+                        <li><strong>सुरक्षा:</strong> आपको कभी भी एक ही कमजोर पासवर्ड बार-बार दोहराने की ज़रूरत नहीं पड़ती।</li>
+                    </ul>
+                </div>
+
+                <!-- Topic 2: Why Complex Password -->
+                <div class="awareness-card">
+                    <div class="awareness-card-header">
+                        <div class="awareness-icon-box red">🔑</div>
+                        <div>
+                            <h3 class="awareness-card-title">2. जटिल पासवर्ड की जरूरत क्यों है?</h3>
+                            <span class="term">Why We Need Complex Passwords</span>
+                        </div>
+                    </div>
+                    <p>
+                        हैकर्स कभी खुद बैठकर आपका पासवर्ड टाइप नहीं करते। वे सुपरकंप्यूटर और ऑटोमेटेड बॉट्स चलाते हैं:
+                    </p>
+                    <ul>
+                        <li><strong>ब्रूट फोर्स अटैक (Brute Force Attack):</strong> हैकर्स के कंप्यूटर प्रति सेकंड करोड़ों पासवर्ड ट्राइ करते हैं। <code>123456</code> या <code>password</code> को क्रैक करने में <strong>1 सेकंड से भी कम</strong> समय लगता है।</li>
+                        <li><strong>डिक्शनरी अटैक (Dictionary Attack):</strong> नाम, भगवान का नाम, शहर या जन्मदिन (जैसे <code>Amit@1992</code>) हैकर्स के सॉफ्टवेयर सबसे पहले ट्राई करते हैं।</li>
+                        <li><strong>क्रेडेंशियल स्टफिंग (Credential Stuffing):</strong> अगर किसी छोटी शॉपिंग साइट का डेटा लीक हुआ, तो हैकर्स वही पासवर्ड आपके जीमेल और बैंक अकाउंट पर डालकर देखते हैं।</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: var(--gold-300); font-weight: 600;">
+                        💡 नियम: हर अकाउंट का पासवर्ड अलग होना चाहिए और कम से कम 16 अक्षरों का होना चाहिए!
+                    </p>
+                </div>
+
+                <!-- Topic 3: What is 2FA -->
+                <div class="awareness-card">
+                    <div class="awareness-card-header">
+                        <div class="awareness-icon-box blue">⏳</div>
+                        <div>
+                            <h3 class="awareness-card-title">3. 2FA ऑथेंटिकेशन क्या होता है?</h3>
+                            <span class="term">What is 2FA (Two-Factor Authentication)?</span>
+                        </div>
+                    </div>
+                    <p>
+                        <strong>2FA (Two-Factor Authentication)</strong> का अर्थ है <strong>दोहरी सुरक्षा</strong>।
+                    </p>
+                    <p>
+                        <strong>उदाहरण:</strong> बैंक के लॉकर को खोलने के लिए सिर्फ आपकी चाबी काफी नहीं होती; बैंक मैनेजर की चाबी भी चाहिए होती है। इसी तरह 2FA में:
+                    </p>
+                    <ul>
+                        <li><strong>पहला सुरक्षा घेरा (Factor 1):</strong> आपका पासवर्ड (Something you know)।</li>
+                        <li><strong>दूसरा सुरक्षा घेरा (Factor 2):</strong> आपके फोन पर बनने वाला 6-अंकों का गुप्त कोड (Something you have)।</li>
+                    </ul>
+                    <p>
+                        अगर किसी हैकर को आपका पासवर्ड पता भी चल जाए, तब भी वह आपके खाते में लॉगिन नहीं कर सकता क्योंकि 6 अंकों का कोड सिर्फ आपके फोन में होगा!
+                    </p>
+                </div>
+
+                <!-- Topic 4: Cloud vs Offline -->
+                <div class="awareness-card">
+                    <div class="awareness-card-header">
+                        <div class="awareness-icon-box green">🏰</div>
+                        <div>
+                            <h3 class="awareness-card-title">4. क्लाउड बनाम ऑफलाइन वॉल्ट</h3>
+                            <span class="term">Cloud Storage vs 100% Offline Vault</span>
+                        </div>
+                    </div>
+                    <p>
+                        ज़्यादातर लोकप्रिय पासवर्ड ऐप्स (जैसे Google Chrome या LastPass) आपके सभी पासवर्ड इंटरनेट पर अपने <strong>क्लाउड सर्वर</strong> में स्टोर करते हैं।
+                    </p>
+                    <ul>
+                        <li><strong>क्लाउड का खतरा:</strong> अगर उस कंपनी के सर्वर पर हमला हो गया, तो करोड़ों लोगों का डेटा एक साथ लीक हो सकता है।</li>
+                        <li><strong>ऑफलाइन संप्रभुता (Kunjika):</strong> कुंजिका आपके पासवर्ड कभी इंटरनेट पर नहीं भेजती। ऐप में इंटरनेट का कोड ही नहीं है। आपका डेटा सिर्फ और सिर्फ आपके फोन की फिजिकल चिप में सुरक्षित रहता है।</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Deep Dive: SMS OTP vs Authenticator App (TOTP) -->
+            <div class="twofa-compare-box">
+                <div class="twofa-col sms">
+                    <h4>⚠️ SMS OTP के बड़े खतरे (Why SMS OTP is Weak)</h4>
+                    <p>
+                        भारत में ज्यादातर लोग एसएमएस वाले ओटीपी पर निर्भर रहते हैं। लेकिन साइबर एक्सपर्ट्स इसे असुरक्षित मानते हैं:
+                    </p>
+                    <ul style="list-style: none; font-size: 0.92rem; color: #CBD5E1;">
+                        <li style="margin-bottom: 8px;">❌ <strong>SIM Swapping:</strong> फ्रॉड करने वाले फर्जी आधार कार्ड बनाकर टेलीकॉम स्टोर से आपके नंबर का दूसरा सिम जारी करवा लेते हैं। आपके सारे बैंक ओटीपी सीधे उनके पास जाने लगते हैं।</li>
+                        <li style="margin-bottom: 8px;">❌ <strong>SMS Interception (हैक):</strong> टेलीकॉम नेटवर्क (SS7) के कमजोर प्रोटोकॉल के कारण एसएमएस हवा में इंटरसेप्ट किए जा सकते हैं।</li>
+                        <li style="margin-bottom: 8px;">❌ <strong>नेटवर्क की समस्या:</strong> अगर मोबाइल नेटवर्क नहीं है, तो ओटीपी आने में देर हो जाती है।</li>
+                    </ul>
+                </div>
+
+                <div class="twofa-col app">
+                    <h4>✅ ऑथेंटिकेटर ऐप (TOTP) क्यों 1000 गुना बेहतर है?</h4>
+                    <p>
+                        कुंजिका में इन-बिल्ट <strong>TOTP Authenticator</strong> है (जैसे Google Authenticator):
+                    </p>
+                    <ul style="list-style: none; font-size: 0.92rem; color: #CBD5E1;">
+                        <li style="margin-bottom: 8px;">✔️ <strong>शून्य नेटवर्क आवश्यकता:</strong> यह कोड आपके फोन की घड़ी और गणितीय फार्मूले (RFC 6238) से बनता है। फोन फ्लाइट मोड में हो तब भी कोड बनता है!</li>
+                        <li style="margin-bottom: 8px;">✔️ <strong>SIM Swap से कोई असर नहीं:</strong> सिम कार्ड चोरी होने पर भी हैकर यह कोड कभी नहीं पा सकता, क्योंकि यह कोड सिर्फ आपके फोन में है।</li>
+                        <li style="margin-bottom: 8px;">✔️ <strong>हर 30 सेकंड में नया कोड:</strong> कोड तुरंत बदल जाता है, इसलिए कोई भी इसे कॉपी नहीं कर सकता।</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Password Strength & Crack Time Table -->
+            <div style="margin-top: 40px;">
+                <h3 style="font-size: 1.5rem; color: #FFFFFF; margin-bottom: 12px; text-align: center;">
+                    📊 आपका पासवर्ड कितनी देर में क्रैक हो सकता है? (Time to Crack)
+                </h3>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                    देखें कि आधुनिक हैकिंग टूल्स (जैसे RTX 4090 GPU क्लस्टर) के सामने अलग-अलग पासवर्ड कितनी देर टिक पाते हैं:
+                </p>
+
+                <div class="table-responsive">
+                    <table class="crack-table">
+                        <thead>
+                            <tr>
+                                <th>पासवर्ड का प्रकार (Password Type)</th>
+                                <th>उदाहरण (Example)</th>
+                                <th>क्रैक होने में समय (Crack Time)</th>
+                                <th>सुरक्षा स्तर (Security Level)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>केवल 6-8 छोटे अक्षर या अंक</td>
+                                <td><code>12345678</code> / <code>rahul12</code></td>
+                                <td class="badge-danger-sm">0 सेकंड (तुरंत क्रैक)</td>
+                                <td><span style="color: var(--rose-400);">अत्यंत खतरनाक 🔴</span></td>
+                            </tr>
+                            <tr>
+                                <td>नाम + जन्मतिथि / सामान्य शब्द</td>
+                                <td><code>Amit@1995</code> / <code>Pooja#123</code></td>
+                                <td class="badge-danger-sm">लगभग 2 सेकंड से 5 मिनट</td>
+                                <td><span style="color: var(--rose-400);">कमजोर 🔴</span></td>
+                            </tr>
+                            <tr>
+                                <td>10-12 अक्षर (अंक व चिन्ह सहित)</td>
+                                <td><code>k8#Q!v9$L2</code></td>
+                                <td style="color: var(--gold-400); font-weight: 700;">लगभग 3 महीने से 2 वर्ष</td>
+                                <td><span style="color: var(--gold-400);">मध्यम 🟡</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>16+ अक्षर जटिल (कुंजिका जनरेटर)</strong></td>
+                                <td><code>x8#M@8vP!4zL$1qR</code></td>
+                                <td class="badge-success-sm">3.4 लाख वर्ष (अटूट)</td>
+                                <td><span style="color: var(--emerald-400);">सर्वोत्तम सुरक्षा 🟢</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>4-5 शब्दों का पासफ्रेज़ (Diceware)</strong></td>
+                                <td><code>suraj-pahar-chai-kiran</code></td>
+                                <td class="badge-success-sm">करोड़ों वर्ष (अटूट)</td>
+                                <td><span style="color: var(--emerald-400);">याद रखने में आसान + अटूट 🟢</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 2: Real-World Breaches (हाल के बड़े डेटा लीक - असली उदाहरण) -->
+        <section class="section container" id="breaches">
+            <div class="section-header">
+                <span class="section-tag">Real World Warning</span>
+                <h2 class="section-title">हाल के बड़े डेटा ब्रीच (असली घटनाएं)</h2>
+                <p class="section-desc">
+                    डेटा लीक केवल फिल्मों में नहीं होता। वास्तविक दुनिया में बड़ी-बड़ी कंपनियों के साथ क्या हुआ, खुद देखें:
+                </p>
+            </div>
+
+            <div class="breaches-section">
+                <div class="breach-cards-grid">
+                    
+                    <!-- Breach 1: LastPass -->
+                    <div class="breach-card">
+                        <span class="breach-badge">क्लाउड वॉल्ट हैक (2022-2023)</span>
+                        <h4>LastPass डेटा ब्रीच</h4>
+                        <p>
+                            दुनिया के सबसे बड़े ऑनलाइन पासवर्ड मैनेजर <strong>LastPass</strong> के क्लाउड सर्वर में हैकर्स घुस गए। उन्होंने लाखों यूज़र्स के एन्क्रिप्टेड पासवर्ड वॉल्ट्स चुरा लिए।
+                        </p>
+                        <div class="breach-lesson">
+                            💡 <strong>सबक:</strong> चाहे कंपनी कितनी भी बड़ी हो, अगर आपका पासवर्ड इंटरनेट सर्वर पर रखा है, तो वह कभी भी चोरी हो सकता है। इसीलिए कुंजिका 100% ऑफलाइन है।
+                        </div>
+                    </div>
+
+                    <!-- Breach 2: RockYou2024 -->
+                    <div class="breach-card">
+                        <span class="breach-badge">इतिहास का सबसे बड़ा लीक (2024)</span>
+                        <h4>RockYou2024 (10 अरब पासवर्ड्स)</h4>
+                        <p>
+                            वर्ष 2024 में डार्क वेब पर <strong>9.94 अरब (10 Billion)</strong> असली पासवर्ड्स की फाइल मुफ्त में लीक कर दी गई। इसमें दुनिया भर के आम यूज़र्स के पासवर्ड शामिल थे।
+                        </p>
+                        <div class="breach-lesson">
+                            💡 <strong>सबक:</strong> अगर आप वही पुराना पासवर्ड सालों से इस्तेमाल कर रहे हैं, तो वह पहले से ही हैकर्स की डिक्शनरी फाइल में मौजूद है।
+                        </div>
+                    </div>
+
+                    <!-- Breach 3: Indian Aadhaar & ICMR Data Breach -->
+                    <div class="breach-card">
+                        <span class="breach-badge">भारत में बड़ा डेटा लीक (2023)</span>
+                        <h4>81.5 करोड़ भारतीयों का डेटा लीक</h4>
+                        <p>
+                            डार्क वेब पर 81.5 करोड़ भारतीयों का व्यक्तिगत डेटा बिक्री के लिए उपलब्ध हुआ, जिसमें फोन नंबर, पते और आधार से जुड़ी जानकारियां शामिल थीं।
+                        </p>
+                        <div class="breach-lesson">
+                            💡 <strong>सबक:</strong> लीक हुए फोन नंबर और जन्मदिन का उपयोग करके हैकर्स सोशल इंजीनियरिंग कॉल्स और बैंक फ्रॉड करते हैं।
+                        </div>
+                    </div>
+
+                    <!-- Breach 4: Domino's & BigBasket -->
+                    <div class="breach-card">
+                        <span class="breach-badge">ई-कॉमर्स व फूड डिलीवरी लीक</span>
+                        <h4>Domino's और BigBasket लीक्स</h4>
+                        <p>
+                            करोड़ों ग्राहकों के ईमेल, फोन नंबर और पासवर्ड हैश इंटरनेट पर सार्वजनिक हो गए। जिन लोगों ने वही पासवर्ड बैंक या गूगल पर रखा था, उनके खाते भी खतरे में आ गए।
+                        </p>
+                        <div class="breach-lesson">
+                            💡 <strong>सबक:</strong> एक वेबसाइट की लापरवाही आपके बाकी सभी सुरक्षित खातों को खतरे में डाल सकती है।
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 5 Golden Security Rules -->
+            <div style="margin-top: 30px;">
+                <h3 style="font-size: 1.45rem; color: #FFFFFF; text-align: center; margin-bottom: 10px;">
+                    🏆 साइबर सुरक्षा के 5 सुनहरे नियम (5 Golden Rules)
+                </h3>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 24px;">
+                    इन 5 नियमों का पालन करें और 99.9% ऑनलाइन फ्रॉड और हैकिंग से पूरी तरह सुरक्षित रहें:
+                </p>
+
+                <div class="rules-grid">
+                    <div class="rule-item">
+                        <div class="rule-num">1</div>
+                        <h5>एक पासवर्ड, एक अकाउंट</h5>
+                        <p>कभी भी एक ही पासवर्ड दो अलग-अलग वेबसाइट्स पर इस्तेमाल न करें।</p>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-num">2</div>
+                        <h5>2FA ऑथेंटिकेटर चालू रखें</h5>
+                        <p>Gmail, WhatsApp, Instagram और बैंकिंग ऐप्स में TOTP 2FA जरूर ऑन करें।</p>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-num">3</div>
+                        <h5>डायरी या चैट में न लिखें</h5>
+                        <p>पासवर्ड को व्हाट्सएप मैसेज, स्क्रीनशॉट या नोटबुक में कभी न रखें।</p>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-num">4</div>
+                        <h5>अनजान लिंक पर क्लिक न करें</h5>
+                        <p>एसएमएस या ईमेल में आए लुभावने लॉटरी या बिजली बिल के लिंक से बचें (Phishing)।</p>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-num">5</div>
+                        <h5>कुंजिका (Kunjika) का उपयोग करें</h5>
+                        <p>100% ऑफलाइन वॉल्ट में पासवर्ड रखें ताकि आपका डेटा कभी फोन से बाहर न जाए।</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Why Use Kunjika (यह ऐप क्यों इस्तेमाल करें?) -->
+        <section class="section container" id="why-kunjika">
+            <div class="section-header">
+                <span class="section-tag">सॉवरेन ऑफलाइन समाधान</span>
+                <h2 class="section-title">कुंजिका (Kunjika) आपके लिए सबसे सुरक्षित विकल्प क्यों है?</h2>
+                <p class="section-desc">
+                    कुंजिका को विशेष रूप से इस तरह बनाया गया है कि यदि आपका फोन किसी हैकर के हाथ में भी लग जाए, तब भी वह आपके पासवर्ड नहीं निकाल सकता।
+                </p>
+            </div>
+
+            <div class="reasons-grid">
+                <!-- Card 1 -->
+                <div class="reason-card">
+                    <div class="reason-icon">🚫🌐</div>
+                    <h3 class="reason-title">1. शून्य इंटरनेट परमिशन (Zero Network)</h3>
+                    <p class="reason-text">
+                        कुंजिका आपके फोन के इंटरनेट (Wi-Fi या मोबाइल डेटा) का इस्तेमाल ही नहीं कर सकती। इसका मतलब है कि कोई भी साइबर अपराधी आपके पासवर्ड दूर बैठे चुरा ही नहीं सकता।
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="reason-card">
+                    <div class="reason-icon">🔐📱</div>
+                    <h3 class="reason-title">2. हार्डवेयर डबल-लॉक एन्क्रिप्शन</h3>
+                    <p class="reason-text">
+                        हर पासवर्ड को दोहरी सुरक्षा दी जाती है। आपके मास्टर पिन और फोन के फिंगरप्रिंट हार्डवेयर से सुरक्षित की (Key) बनाई जाती है, जिसे तोड़ना नामुमकिन है।
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="reason-card">
+                    <div class="reason-icon">⏳🔢</div>
+                    <h3 class="reason-title">3. इन-बिल्ट 2FA ओटीपी जनरेटर</h3>
+                    <p class="reason-text">
+                        अपने जीमेल, इंस्टाग्राम या फेसबुक के लिए टू-फैक्टर ऑथेंटिकेशन (TOTP) कोड इसी ऐप में पाएं। गोल टाइमर के साथ हर 30 सेकंड में नया कोड मिलता है।
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="reason-card">
+                    <div class="reason-icon">⚡💻</div>
+                    <h3 class="reason-title">4. वेब ड्रॉप (Web Drop) - कंप्यूटर पर भेजें</h3>
+                    <p class="reason-text">
+                        लैपटॉप या कंप्यूटर पर 30 अक्षरों का पासवर्ड टाइप करने की परेशानी खत्म! बिना किसी इंटरनेट या केबल के, सिर्फ ब्लूटूथ और क्यूआर कोड से 2 सेकंड में पासवर्ड कंप्यूटर पर भेजें।
+                    </p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="reason-card">
+                    <div class="reason-icon">📲🔄</div>
+                    <h3 class="reason-title">5. फोन-से-फोन ट्रांसफर (Encrypted QR)</h3>
+                    <p class="reason-text">
+                        नया फोन खरीदने पर पुराने फोन से नए फोन में पासवर्ड ट्रांसफर करना बेहद आसान है। बिना इंटरनेट, सुरक्षित एन्क्रिप्टेड क्यूआर कोड स्कैन करके पासवर्ड भेजें।
+                    </p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="reason-card">
+                    <div class="reason-icon">🗂️✨</div>
+                    <h3 class="reason-title">6. आसान वर्गीकरण व सर्च</h3>
+                    <p class="reason-text">
+                        अपने पासवर्ड को **Personal (व्यक्तिगत)**, **Work (काम)**, **Finance (बैंक/UPI)** और **Social** श्रेणियों में बांटें। पसंदीदा पासवर्ड को पिन करें और एक क्लिक में खोजें।
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: How to Use This App (इस ऐप का उपयोग कैसे करें?) -->
+        <section class="section container" id="how-to-use">
+            <div class="section-header">
+                <span class="section-tag">कदम-दर-कदम मार्गदर्शन</span>
+                <h2 class="section-title">इस ऐप का उपयोग कैसे करें? (User Guide)</h2>
+                <p class="section-desc">
+                    कुंजिका को इस्तेमाल करना बेहद आसान है। बस नीचे दिए गए 5 सरल कदमों का पालन करें और अपने डिजिटल जीवन को सुरक्षित बनाएं।
+                </p>
+            </div>
+
+            <!-- Steps Container -->
+            <div class="steps-container">
+
+                <!-- Step 1: First Time Setup -->
+                <div class="step-row">
+                    <div class="step-content">
+                        <span class="step-number">१</span>
+                        <h3>कदम 1: ऐप खोलें और मास्टर पिन (Master PIN) बनाएं</h3>
+                        <p>
+                            जब आप पहली बार कुंजिका ऐप खोलते हैं, तो सेटअप पूरा करने में 1 मिनट से भी कम समय लगता है:
+                        </p>
+                        <ul class="step-bullets">
+                            <li>ऐप खोलें और वेलकम स्क्रीन पर "Get Started" या "शुरू करें" दबाएं।</li>
+                            <li>अपना <strong>4 से 8 अंकों का मास्टर पिन</strong> चुनें और दोबारा डालकर कन्फर्म करें।</li>
+                            <li><strong>बायोमेट्रिक्स (Fingerprint / Face Unlock)</strong> को चालू करें ताकि बार-बार पिन न डालना पड़े।</li>
+                        </ul>
+                        <div class="step-warning">
+                            ⚠️ <strong>महत्वपूर्ण सूचना:</strong> अपना मास्टर पिन हमेशा याद रखें या किसी सुरक्षित जगह लिख लें। क्योंकि कुंजिका पूरी तरह ऑफलाइन है, इसलिए यहां "Forgot Password" (पासवर्ड भूल गए) का कोई विकल्प नहीं होता।
+                        </div>
+                    </div>
+                    <div class="step-media">
+                        <img src="docs/images/screenshot_phone_02.png" alt="मास्टर पिन और फिंगरप्रिंट अनलॉक स्क्रीन" class="step-screenshot">
+                    </div>
+                </div>
+
+                <!-- Step 2: Generate Password -->
+                <div class="step-row reverse">
+                    <div class="step-media">
+                        <img src="docs/images/screenshot_phone_03.png" alt="पासवर्ड जनरेटर स्क्रीन" class="step-screenshot">
+                    </div>
+                    <div class="step-content">
+                        <span class="step-number">२</span>
+                        <h3>कदम 2: नया मजबूत पासवर्ड बनाएं (Generator Tab)</h3>
+                        <p>
+                            जब भी आप किसी नए ऐप या वेबसाइट पर अकाउंट बनाएं, तो कुंजिका के <strong>'Generator'</strong> टैब का उपयोग करें:
+                        </p>
+                        <ul class="step-bullets">
+                            <li>नीचे दिए गए मेन्यू में <strong>🔄 Generator</strong> पर टैप करें।</li>
+                            <li>प्रकार चुनें:
+                                <br>• <strong>Password:</strong> अक्षरों, अंकों और प्रतीकों का अटूट मिश्रण (जैसे: <code>x7#K$9mP!2qL</code>)
+                                <br>• <strong>Passphrase:</strong> याद रखने में आसान शब्दों की श्रृंखला (जैसे: <code>kunjika-suraksha-sundar-deep</code>)
+                                <br>• <strong>PIN:</strong> एटीएम या बैंक के लिए 4 से 6 अंकों का सुरक्षित पिन।
+                            </li>
+                            <li>स्लाइडर से पासवर्ड की लंबाई तय करें (हम 16 या अधिक अक्षरों की सलाह देते हैं)।</li>
+                            <li><strong>'Copy'</strong> दबाकर तुरंत इस्तेमाल करें, या <strong>'Save'</strong> दबाकर सीधे अपने वॉल्ट में सुरक्षित रख लें।</li>
+                        </ul>
+                        <div class="step-tip">
+                            💡 <strong>टिप:</strong> यदि आप हाल ही में बनाया गया कोई पुराना पासवर्ड देखना चाहते हैं, तो नीचे 'Generation History' कार्ड में वह सुरक्षित मिल जाएगा।
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Vault & Save -->
+                <div class="step-row">
+                    <div class="step-content">
+                        <span class="step-number">३</span>
+                        <h3>कदम 3: पासवर्ड सेव करें और खोजें (Vault Tab)</h3>
+                        <p>
+                            आपके सभी सुरक्षित खाते <strong>🔒 Vault</strong> टैब में रहते हैं:
+                        </p>
+                        <ul class="step-bullets">
+                            <li>नया खाता जोड़ने के लिए नीचे दिए गए <strong>'+'</strong> (प्लस) बटन पर टैप करें।</li>
+                            <li>अकाउंट का नाम (जैसे SBI Bank, Gmail, Netflix), यूजरनेम या ईमेल, और पासवर्ड भरें।</li>
+                            <li>श्रेणी चुनें (Personal, Work, Finance, Social) ताकि बाद में ढूंढना आसान हो।</li>
+                            <li>आप चाहें तो इसमें <strong>सीक्रेट नोट्स</strong> (जैसे रिकवरी कोड्स, बैंक खाता नंबर) भी लिख सकते हैं।</li>
+                            <li>ऊपर सर्च बार में सिर्फ नाम टाइप करके कोई भी पासवर्ड 1 सेकंड में खोजें।</li>
+                        </ul>
+                        <div class="step-tip">
+                            ⭐ <strong>पसंदीदा (Favorites):</strong> जिन खातों की आपको रोज़ ज़रूरत पड़ती है, उन पर स्टार (★) दबाएं ताकि वे हमेशा सबसे ऊपर दिखें।
+                        </div>
+                    </div>
+                    <div class="step-media">
+                        <img src="docs/images/screenshot_phone_04.png" alt="वॉल्ट और क्रेडेंशियल लिस्ट स्क्रीन" class="step-screenshot">
+                    </div>
+                </div>
+
+                <!-- Step 4: Web Drop to PC -->
+                <div class="step-row reverse">
+                    <div class="step-media">
+                        <img src="docs/images/screenshot_phone_01.png" alt="वेब ड्रॉप स्क्रीन" class="step-screenshot">
+                    </div>
+                    <div class="step-content">
+                        <span class="step-number">४</span>
+                        <h3>कदम 4: कंप्यूटर/लैपटॉप पर पासवर्ड भेजें (Web Drop)</h3>
+                        <p>
+                            क्या आपको कंप्यूटर पर 25 अक्षरों का जटिल पासवर्ड टाइप करने में परेशानी होती है? कुंजिका का <strong>Web Drop</strong> फीचर इसे चुटकियों में हल कर देता है:
+                        </p>
+                        <ul class="step-bullets">
+                            <li>अपने कंप्यूटर के ब्राउज़र (Chrome, Edge) में यह लिंक खोलें: <br><a href="./web-companion/" target="_blank" style="color: var(--gold-400); text-decoration: underline;">dwinsi.github.io/kunjika/web-companion/</a></li>
+                            <li>कंप्यूटर स्क्रीन पर एक क्यूआर कोड (QR Code) दिखाई देगा।</li>
+                            <li>अपने फोन में कुंजिका खोलें और उस पासवर्ड पर जाकर <strong>'Web Drop'</strong> चुनें।</li>
+                            <li>कंप्यूटर के क्यूआर कोड को स्कैन करें और फिंगरप्रिंट लगाएं।</li>
+                            <li>पासवर्ड तुरंत ब्लूटूथ के जरिए आपके कंप्यूटर के क्लिपबोर्ड पर कॉपी हो जाएगा!</li>
+                        </ul>
+                        <div class="step-tip">
+                            ⚡ <strong>शून्य इंटरनेट:</strong> यह ट्रांसफर ब्लूटूथ (BLE) से होता है, इसलिए कंप्यूटर और फोन दोनों ऑफलाइन होने पर भी यह काम करता है!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Android Autofill & Backup -->
+                <div class="step-row">
+                    <div class="step-content">
+                        <span class="step-number">५</span>
+                        <h3>कदम 5: ऑटोफिल (Autofill) और सुरक्षित बैकअप</h3>
+                        <p>
+                            रोजमर्रा के उपयोग को और भी आसान व सुरक्षित बनाएं:
+                        </p>
+                        <ul class="step-bullets">
+                            <li><strong>ऑटोफिल (Autofill):</strong> ऐप की सेटिंग्स में जाकर 'Autofill Service' को ऑन करें। अब जब भी आप किसी ऐप या वेबसाइट में लॉगिन करेंगे, कुंजिका खुद पासवर्ड भर देगी।</li>
+                            <li><strong>सुरक्षित बैकअप (Encrypted Backup):</strong> सेटिंग्स में जाकर 'Export Backup' चुनें। एक मजबूत बैकअप पासवर्ड डालें और फाइल को अपनी पेनड्राइव या सुरक्षित स्थान पर सहेजें।</li>
+                            <li><strong>नया फोन लेने पर (Restore):</strong> नए फोन में ऐप इंस्टॉल करें, 'Import Backup' दबाएं, अपना बैकअप पासवर्ड डालें और सारे पासवर्ड तुरंत वापस पाएं!</li>
+                        </ul>
+                    </div>
+                    <div class="step-media">
+                        <img src="docs/images/app_icon_512.png" alt="कुंजिका सेटिंग्स और सुरक्षा" style="width: 200px; border-radius: 28px; box-shadow: 0 10px 30px var(--gold-glow);">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 5: Interactive App Modules (ऐप के 4 मुख्य हिस्से) -->
+        <section class="section container" id="app-modules">
+            <div class="section-header">
+                <span class="section-tag">नेविगेशन और मॉड्यूल</span>
+                <h2 class="section-title">ऐप के 4 मुख्य टैब्स को समझें</h2>
+                <p class="section-desc">
+                    कुंजिका के नीचे 4 आसान टैब्स दिए गए हैं। टैब पर क्लिक करके जानें कि हर टैब में क्या होता है:
+                </p>
+            </div>
+
+            <!-- Tabs Buttons -->
+            <div class="tabs-nav" role="tablist">
+                <button class="tab-btn active" onclick="switchTab(0)" role="tab" id="tab-btn-0">
+                    <span class="tab-icon">🔄</span>
+                    <span>1. Generator (जनरेटर)</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab(1)" role="tab" id="tab-btn-1">
+                    <span class="tab-icon">🔒</span>
+                    <span>2. Vault (वॉल्ट)</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab(2)" role="tab" id="tab-btn-2">
+                    <span class="tab-icon">🛡️</span>
+                    <span>3. Security (सुरक्षा)</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab(3)" role="tab" id="tab-btn-3">
+                    <span class="tab-icon">⚙️</span>
+                    <span>4. Settings (सेटिंग्स)</span>
+                </button>
+            </div>
+
+            <!-- Tab Panel 0: Generator -->
+            <div class="tab-content-panel active" id="tab-panel-0">
+                <h3 style="font-size: 1.4rem; color: var(--gold-400); margin-bottom: 12px;">🔄 Generator - पासवर्ड बनाने का इंजन</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    यह सेक्शन आपको 4 तरह के मजबूत कोड बनाने की सुविधा देता है:
+                </p>
+                <ul style="color: var(--text-primary); margin-left: 20px; line-height: 1.9; margin-bottom: 16px;">
+                    <li><strong>Password मोड:</strong> कठिन पासवर्ड, जिसमें कैपिटल अक्षर, छोटे अक्षर, अंक और चिन्ह शामिल होते हैं। इसमें अस्पष्ट अक्षर (जैसे 1, l, O, 0) हटाने का भी विकल्प है।</li>
+                    <li><strong>Passphrase (शब्द) मोड:</strong> 4 से 6 आसान शब्दों को जोड़कर बनाया गया ऐसा पासवर्ड जिसे इंसान आसानी से याद रख सकता है, लेकिन कंप्यूटर कभी क्रैक नहीं कर सकता।</li>
+                    <li><strong>Numeric PIN मोड:</strong> यूपीआई या फोन अनलॉक के लिए 4 से 12 अंकों का रैंडम पिन।</li>
+                    <li><strong>2FA TOTP Secret:</strong> दो-चरणीय सुरक्षा के लिए गुप्त की (Key) जनरेट करना।</li>
+                </ul>
+            </div>
+
+            <!-- Tab Panel 1: Vault -->
+            <div class="tab-content-panel" id="tab-panel-1">
+                <h3 style="font-size: 1.4rem; color: var(--gold-400); margin-bottom: 12px;">🔒 Vault - आपकी निजी डिजिटल तिजोरी</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    आपकी तिजोरी में आपके सारे क्रेडेंशियल्स सुरक्षित रहते हैं:
+                </p>
+                <ul style="color: var(--text-primary); margin-left: 20px; line-height: 1.9; margin-bottom: 16px;">
+                    <li><strong>कैटिगरी फिल्टर:</strong> पर्सनल, वर्क, फाइनेंस, और सोशल - एक टैप में छांटें।</li>
+                    <li><strong>लाइव 2FA कोड:</strong> जिन खातों में 2FA सेट है, उनके 6-अंकों के कोड इसी कार्ड में चलते रहते हैं।</li>
+                    <li><strong>एक टैप कॉपी:</strong> यूजरनेम या पासवर्ड कॉपी करने के लिए बस बटन दबाएं। 30 सेकंड बाद क्लिपबोर्ड खुद साफ़ हो जाता है।</li>
+                    <li><strong>सुरक्षित नोट्स:</strong> किसी भी एंट्री के साथ महत्वपूर्ण नोट्स या रिकवरी कीज़ जोड़ें।</li>
+                </ul>
+            </div>
+
+            <!-- Tab Panel 2: Security -->
+            <div class="tab-content-panel" id="tab-panel-2">
+                <h3 style="font-size: 1.4rem; color: var(--gold-400); margin-bottom: 12px;">🛡️ Security - पासवर्ड स्वास्थ्य जांच</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    यह डैशबोर्ड आपके पासवर्ड्स का हेल्थ चेकअप करता है:
+                </p>
+                <ul style="color: var(--text-primary); margin-left: 20px; line-height: 1.9; margin-bottom: 16px;">
+                    <li><strong>कमजोर पासवर्ड की पहचान:</strong> बताता है कि कौन से पासवर्ड बहुत छोटे या कमजोर हैं।</li>
+                    <li><strong>दोहराए गए पासवर्ड (Reused Passwords):</strong> अगर आपने एक ही पासवर्ड कई जगह इस्तेमाल किया है, तो यह आपको तुरंत सचेत करता है।</li>
+                    <li><strong>फोन की सुरक्षा स्थिति:</strong> जांचता है कि फोन का हार्डवेयर एन्क्रिप्शन और स्क्रीन लॉक ठीक से सक्रिय है या नहीं।</li>
+                </ul>
+            </div>
+
+            <!-- Tab Panel 3: Settings -->
+            <div class="tab-content-panel" id="tab-panel-3">
+                <h3 style="font-size: 1.4rem; color: var(--gold-400); margin-bottom: 12px;">⚙️ Settings - अनुकूलन और बैकअप</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    ऐप को अपनी पसंद के अनुसार ढालें:
+                </p>
+                <ul style="color: var(--text-primary); margin-left: 20px; line-height: 1.9; margin-bottom: 16px;">
+                    <li><strong>थीम बदलें:</strong> प्रीमियम ऑब्सिडियन गोल्ड (Obsidian Gold) या प्लैटिनम सिल्वर (Platinum Silver) थीम चुनें।</li>
+                    <li><strong>ऑटो-लॉक टाइमर:</strong> ऐप से बाहर निकलते ही तुरंत लॉक हो या 1 मिनट बाद—आप तय करें।</li>
+                    <li><strong>ऑटोफिल सर्विस:</strong> एंड्रॉयड ऑटोफिल ऑन या ऑफ करें।</li>
+                    <li><strong>बैकअप व रीस्टोर:</strong> एन्क्रिप्टेड फाइल एक्सपोर्ट या इम्पोर्ट करें।</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 6: Live Interactive Password Demo (इंटरैक्टिव पासवर्ड डेमो) -->
+        <section class="section container" id="live-demo">
+            <div class="section-header">
+                <span class="section-tag">लाइव डेमो</span>
+                <h2 class="section-title">देखें कि मजबूत पासवर्ड कैसे काम करता है</h2>
+                <p class="section-desc">
+                    नीचे स्लाइडर को आगे-पीछे करके देखें कि पासवर्ड की लंबाई बढ़ाने पर सुरक्षा (Entropy) कितनी ज्यादा बढ़ जाती है:
+                </p>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-output-box">
+                    <span class="demo-output-text" id="demo-password-display">k9#M@8vP!4zL$1qR</span>
+                    <button class="demo-copy-btn" id="demo-copy-btn" onclick="copyDemoPassword()">
+                        📋 कॉपी करें
+                    </button>
+                </div>
+
+                <div class="strength-indicator">
+                    <div class="strength-bar-track">
+                        <div class="strength-bar-fill" id="demo-strength-bar" style="width: 100%;"></div>
+                    </div>
+                    <span class="strength-label" id="demo-strength-label">अत्यंत सुरक्षित (128-बिट)</span>
+                </div>
+
+                <div class="demo-controls">
+                    <div class="slider-group">
+                        <label for="demo-length-slider">
+                            पासवर्ड की लंबाई: <strong id="demo-length-val" style="color: var(--gold-400); font-size: 1.1rem;">16</strong> अक्षर
+                        </label>
+                        <input type="range" id="demo-length-slider" class="length-slider" min="8" max="32" value="16" oninput="updateDemoPassword()">
+                    </div>
+
+                    <button class="btn-primary" onclick="updateDemoPassword()">
+                        🔄 नया पासवर्ड बनाएं
+                    </button>
+                </div>
+
+                <div style="font-size: 0.92rem; color: var(--text-secondary); background: #07090E; padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-base);">
+                    ⏱️ <strong>क्रैक करने में अनुमानित समय:</strong> <span id="demo-crack-time" style="color: var(--emerald-400); font-weight: 700;">लगभग 3.4 लाख वर्ष</span> 
+                    (सुपरकंप्यूटर द्वारा)
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: FAQ (अक्सर पूछे जाने वाले सवाल) -->
+        <section class="section container" id="faq">
+            <div class="section-header">
+                <span class="section-tag">आपके सवाल, हमारे जवाब</span>
+                <h2 class="section-title">अक्सर पूछे जाने वाले सवाल (FAQ)</h2>
+                <p class="section-desc">
+                    कुंजिका और साइबर सुरक्षा के बारे में आपके मन में उठने वाले सामान्य सवालों के सरल व स्पष्ट जवाब:
+                </p>
+            </div>
+
+            <div class="faq-grid">
+                <!-- FAQ 1 -->
+                <div class="faq-item open">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        1. क्या कुंजिका ऐप सच में बिना इंटरनेट के चलती है?
+                    </div>
+                    <div class="faq-answer">
+                        जी हां, बिल्कुल 100%! आप अपने एंड्रॉयड फोन की सेटिंग्स में जाकर <em>Apps → Kunjika → Permissions</em> में देख सकते हैं—इस ऐप में इंटरनेट (INTERNET permission) की कोई अनुमति ही नहीं है। इसका मतलब है कि यह ऐप चाहकर भी कभी किसी सर्वर से नहीं जुड़ सकती।
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        2. अगर मैं अपना मास्टर पिन (Master PIN) भूल जाऊं तो क्या होगा?
+                    </div>
+                    <div class="faq-answer">
+                        चूंकि ऐप पूरी तरह से ऑफलाइन है और कोई सर्वर नहीं है, इसलिए हम या कोई भी अन्य व्यक्ति आपका मास्टर पिन रीसेट नहीं कर सकता। इसीलिए पहली बार सेटअप करते समय अपने मास्टर पिन को किसी सुरक्षित जगह लिखकर जरूर रखें। यदि आपने फिंगरप्रिंट चालू किया है, तो आप फिंगरप्रिंट से ऐप खोल सकते हैं और सेटिंग्स में जाकर नया पिन सेट कर सकते हैं।
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        3. नया फोन लेने पर मेरे पासवर्ड कैसे ट्रांसफर होंगे?
+                    </div>
+                    <div class="faq-answer">
+                        इसके दो बहुत आसान और सुरक्षित तरीके हैं:
+                        <br><strong>तरीका 1 (Encrypted QR):</strong> पुराने फोन में ऐप खोलें, 'Share Vault' चुनें, एक 6-अंकों का कोड डालें और नए फोन के कैमरे से क्यूआर कोड स्कैन करें।
+                        <br><strong>तरीका 2 (Backup File):</strong> सेटिंग्स में जाकर 'Export Backup' करें। यह फाइल एक एन्क्रिप्टेड फाइल होती है, जिसे आप पेनड्राइव या सुरक्षित फोल्डर में रख सकते हैं और नए फोन में 'Import Backup' कर सकते हैं।
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        4. क्या मुझे 2FA के लिए अलग से Google Authenticator डाउनलोड करना पड़ेगा?
+                    </div>
+                    <div class="faq-answer">
+                        नहीं! कुंजिका के अंदर ही 2FA ऑथेंटिकेटर इन-बिल्ट है। आप अपने जीमेल, फेसबुक या इंस्टाग्राम का 2FA क्यूआर कोड सीधे कुंजिका में स्कैन कर सकते हैं और यहीं से 6-अंकों का ओटीपी कोड पा सकते हैं।
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        5. क्या वेब ड्रॉप (Web Drop) से कंप्यूटर पर पासवर्ड भेजने के लिए इंटरनेट चाहिए?
+                    </div>
+                    <div class="faq-answer">
+                        नहीं! वेब ड्रॉप पूरी तरह से ब्लूटूथ लो एनर्जी (Bluetooth Low Energy / BLE) पर काम करता है। आपका फोन और कंप्यूटर आपस में सीधे ब्लूटूथ से जुड़ते हैं। आपका पासवर्ड कभी किसी वाई-फाई या इंटरनेट राउटर से नहीं गुजरता।
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        6. क्या मेरा डेटा गूगल या किसी अन्य कंपनी के पास जाता है?
+                    </div>
+                    <div class="faq-answer">
+                        नहीं। कोई एनालिटिक्स नहीं, कोई क्रैश ट्रैकर नहीं, कोई गूगल सर्विस नहीं। आपका डेटा सिर्फ और सिर्फ आपके फोन की फिजिकल स्टोरेज में कड़े एन्क्रिप्शन के साथ रहता है।
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: CTA Banner (डाउनलोड व बीटा टेस्टिंग) -->
+        <section class="container" style="padding-bottom: 70px;">
+            <div class="cta-banner">
+                <h2>आज ही अपने पासवर्ड्स को सुरक्षित बनाएं!</h2>
+                <p>
+                    कुंजिका के साथ अपने पासवर्ड्स का पूर्ण नियंत्रण अपने हाथों में लें। अभी क्लोज्ड बीटा टेस्टिंग में भाग लें और सबसे सुरक्षित अनुभव पाएं।
+                </p>
+                <div class="cta-buttons">
+                    <a href="./testing.html" class="btn-primary" style="font-size: 1.05rem; padding: 13px 28px;">
+                        🧪 गूगल प्ले 14-दिन टेस्टिंग पोर्टल
+                    </a>
+                    <a href="https://github.com/dwinsi/kunjika" target="_blank" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 24px;">
+                        ⭐ GitHub पर कोड देखें
+                    </a>
+                    <a href="./web-companion/" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 24px;">
+                        ⚡ Web Drop कंपेनियन खोलें
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Quick Navigation Sticky Pill (for effortless navigation) -->
+    <nav class="quick-nav-pill" aria-label="त्वरित नेविगेशन">
+        <a href="#awareness">सुरक्षा क्या है?</a>
+        <span class="quick-nav-divider">|</span>
+        <a href="#breaches">डेटा ब्रीच</a>
+        <span class="quick-nav-divider">|</span>
+        <a href="#why-kunjika">कुंजिका क्यों?</a>
+        <span class="quick-nav-divider">|</span>
+        <a href="#how-to-use">गाइड</a>
+        <span class="quick-nav-divider">|</span>
+        <a href="#live-demo">डेमो</a>
+        <span class="quick-nav-divider">|</span>
+        <a href="./index.html">English ↗</a>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                © 2026 <strong>Kunjika (कुंजिका)</strong>. संप्रभु, ऑफलाइन पासवर्ड वॉल्ट और 2FA ऑथेंटिकेटर।
+            </p>
+            <div style="margin: 14px 0;">
+                <a href="./index.html">English Home</a>
+                <a href="./docs/user-guide-hindi.md">हिंदी यूजर गाइड (MD)</a>
+                <a href="./PRIVACY_POLICY.html">Privacy Policy</a>
+                <a href="./testing.html">Beta Testing Portal</a>
+                <a href="https://github.com/dwinsi/kunjika" target="_blank">GitHub</a>
+            </div>
+            <p class="footer-tagline">
+                Zero Cloud. Zero Subscriptions. 100% Sovereign Security for Android.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Tab switching logic for 4 main tabs
+        function switchTab(index) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-content-panel');
+            
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            panels.forEach((panel, i) => {
+                if (i === index) {
+                    panel.classList.add('active');
+                } else {
+                    panel.classList.remove('active');
+                }
+            });
+        }
+
+        // FAQ Accordion Toggle
+        function toggleFaq(el) {
+            const item = el.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Live Password Generator Demo
+        const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const lower = "abcdefghijkmnopqrstuvwxyz";
+        const digits = "23456789";
+        const symbols = "!@#$%^&*()_+-=";
+
+        function getRandomChar(str) {
+            return str.charAt(Math.floor(Math.random() * str.length));
+        }
+
+        function generateDemoPassword(len) {
+            const all = upper + lower + digits + symbols;
+            let pwd = [
+                getRandomChar(upper),
+                getRandomChar(lower),
+                getRandomChar(digits),
+                getRandomChar(symbols)
+            ];
+
+            for (let i = pwd.length; i < len; i++) {
+                pwd.push(getRandomChar(all));
+            }
+
+            // Shuffle
+            for (let i = pwd.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pwd[i], pwd[j]] = [pwd[j], pwd[i]];
+            }
+
+            return pwd.join('');
+        }
+
+        function updateDemoPassword() {
+            const slider = document.getElementById('demo-length-slider');
+            const lenVal = document.getElementById('demo-length-val');
+            const display = document.getElementById('demo-password-display');
+            const strengthBar = document.getElementById('demo-strength-bar');
+            const strengthLabel = document.getElementById('demo-strength-label');
+            const crackTime = document.getElementById('demo-crack-time');
+
+            const len = parseInt(slider.value, 10);
+            lenVal.textContent = len;
+
+            const pwd = generateDemoPassword(len);
+            display.textContent = pwd;
+
+            // Calculate strength estimates
+            if (len < 10) {
+                strengthBar.style.width = '35%';
+                strengthBar.style.background = '#F43F5E';
+                strengthLabel.textContent = 'साधारण (Weak)';
+                strengthLabel.style.color = '#FB7185';
+                crackTime.textContent = 'लगभग कुछ मिनट या घंटे';
+                crackTime.style.color = '#FB7185';
+            } else if (len < 14) {
+                strengthBar.style.width = '70%';
+                strengthBar.style.background = '#F59E0B';
+                strengthLabel.textContent = 'अच्छा (Good - 75-बिट)';
+                strengthLabel.style.color = '#FBBF24';
+                crackTime.textContent = 'लगभग 500 वर्ष';
+                crackTime.style.color = '#FBBF24';
+            } else {
+                strengthBar.style.width = '100%';
+                strengthBar.style.background = 'linear-gradient(90deg, #10B981, #34D399)';
+                strengthLabel.textContent = 'अत्यंत सुरक्षित (Very Strong - 128+ बिट)';
+                strengthLabel.style.color = '#34D399';
+                crackTime.textContent = 'लाखों-करोड़ों वर्ष (अटूट)';
+                crackTime.style.color = '#34D399';
+            }
+        }
+
+        // Copy Password to Clipboard
+        function copyDemoPassword() {
+            const display = document.getElementById('demo-password-display');
+            const btn = document.getElementById('demo-copy-btn');
+            
+            navigator.clipboard.writeText(display.textContent).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = '✓ कॉपी हो गया!';
+                btn.style.color = 'var(--emerald-400)';
+                btn.style.borderColor = 'var(--emerald-400)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            }).catch(() => {
+                alert('कॉपी नहीं हो पाया, कृपया खुद सेलेक्ट करके कॉपी करें।');
+            });
+        }
+
+        // Initial generation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDemoPassword();
+        });
+    </script>
+</body>
+</html>

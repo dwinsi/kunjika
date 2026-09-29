@@ -1,5 +1,5 @@
 title: Kunjika
-description: Military-Grade, Offline-First Password Vault & Generator for Android
+description: Sovereign, Offline-First Password Vault & 2FA Authenticator for Android
 theme: jekyll-theme-cayman
 show_downloads: true
 google_analytics:
@@ -15,3 +15,5 @@ exclude:
   - settings.gradle.kts
   - play_store_assets
   - .artifacts
+  - index.md
+

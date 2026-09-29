@@ -13,7 +13,9 @@ Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentat
 
 1. **[📖 User Guide & Quickstart](user-guide.md)**
    - Simple, step-by-step beginner guide with screenshots, common use cases (generating passwords, vault search, 2FA codes, Web Drop to PC, phone-to-phone transfer), and FAQs.
-2. **[🏗️ Architecture & Data Flow](architecture.md)**
+2. **[🇮🇳 हिंदी यूजर गाइड (Hindi User Guide)](user-guide-hindi.md)** / **[🌐 हिंदी वेब पेज (Web Page)](https://dwinsi.github.io/kunjika/hindi.html)**
+   - सरल और आसान हिंदी गाइड: यह ऐप क्यों इस्तेमाल करें, कैसे इस्तेमाल करें, स्क्रीनशॉट्स और जरूरी सवाल-जवाब।
+3. **[🏗️ Architecture & Data Flow](architecture.md)**
    - System design, MVVM architecture, Security Core layer, Biometric PIN unwrap pipeline, Web Bluetooth GATT peripheral, and modern Android 15+ dependency stack.
 3. **[🛡️ Security & Hardening Deep-Dive](security.md)**
    - Double-Lock encryption (Android KeyStore TEE + SQLCipher), Biometric-backed PIN storage via `BiometricPrompt.CryptoObject`, Local Blockchain Audit Log, Environmental Tamper Defenses (Root/Emulator detection, Play Integrity API), and the Direct Web Drop Cryptographic Protocol.
