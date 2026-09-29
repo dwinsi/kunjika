@@ -22,6 +22,7 @@ Most password managers (like Chrome, LastPass, or 1Password) save your passwords
 
 **Kunjika is 100% offline.** 
 - It does **not** have internet permission. The Android operating system ensures the app cannot connect to Wi-Fi, cellular networks, or cloud servers.
+- Outbound data transfer occurs strictly under your explicit, biometric-authorized control via local channels: **Direct Web Drop** (Bluetooth BLE to your PC) or **Encrypted QR** (phone-to-phone).
 - Your passwords are encrypted directly by your phone's physical security chip (Hardware TEE / StrongBox).
 - **You** own the keys. No accounts to create, no monthly subscriptions, and zero tracking.
 

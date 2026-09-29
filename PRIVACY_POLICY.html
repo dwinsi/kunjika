@@ -96,10 +96,10 @@
         <h1>Privacy Policy for Kunjika</h1>
         <p><strong>Effective Date: August 26, 2026</strong></p>
 
-        <p>Kunjika is a 100% offline password manager. We believe that your data belongs solely to you, and our application is designed to ensure it never leaves your device.</p>
+        <p>Kunjika is a 100% offline password manager. We believe that your data belongs solely to you, and our application is designed to ensure it never leaves your device over the internet or cloud. Any outbound data transfer occurs exclusively under your explicit, local control via direct Bluetooth (Web Drop) or Encrypted QR sync after biometric confirmation.</p>
 
         <div class="highlight">
-            Kunjika does not collect, transmit, or share any personal information, passwords, or usage statistics.
+            Kunjika does not collect, transmit, or share any personal information, passwords, or usage statistics over any network.
         </div>
 
         <h2>1. No Data Collection</h2>
@@ -113,7 +113,7 @@
         <p>All data stored within the app is protected using multi-layered, cryptographically hardened encryption:</p>
         <ul>
             <li><strong>At Rest</strong>: Data is stored in a SQLCipher-encrypted database, further protected by field-level AES-256-GCM encryption with hardware-backed keys (Android KeyStore).</li>
-            <li><strong>In Transit (Local Only)</strong>: When syncing data between devices via QR code, the data is encrypted with a session-specific AES key derived from a random 6-digit code.</li>
+            <li><strong>In Transit (Local Only)</strong>: When transferring data between devices (via Encrypted QR code or direct Web Bluetooth Web Drop to your PC), the transmission is end-to-end encrypted with authenticated AES-256-GCM and ephemeral ECDH keys.</li>
         </ul>
 
         <h2>3. Permissions Used</h2>

@@ -24,7 +24,7 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 ### 1. The Cloud Vulnerability Crisis
 - **The Problem:** Cloud password managers advertise "zero-knowledge encryption," yet their servers hold your encrypted vault files, email addresses, IP access logs, and website URLs. If their cloud infrastructure is compromised, attackers can copy your entire vault offline and subject it to specialized GPU brute-force clusters.
-- **The Kunjika Solution:** Kunjika operates completely offline. It contains no tracking SDKs, no analytics, no account registration, and zero network code. Your data physically cannot leave your phone over the web.
+- **The Kunjika Solution:** Kunjika operates completely offline. It contains no tracking SDKs, no analytics, no account registration, and zero network code. Your data physically cannot leave your phone over the web (local device-to-device transfers occur strictly under your biometric control via Bluetooth Web Drop or Encrypted QR).
 
 ### 2. The Subscription Tax on Security
 - **The Problem:** Leading commercial password managers charge $3 to $5 every single month just to autofill passwords across devices or store two-factor authentication codes. If you cancel your subscription, your access is throttled or locked down.

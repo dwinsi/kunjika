@@ -8,13 +8,13 @@
 **Effective Date: August 26, 2026**  
 **Last Updated: September 17, 2026 (v1.1.2)**
 
-Kunjika is an offline-first, sovereign password manager engineered on a **Zero-Network, Zero-Trust** model. We believe that your credentials belong solely to you, and our application is architected to guarantee that your data never leaves your device.
+Kunjika is an offline-first, sovereign password manager engineered on a **Zero-Network, Zero-Trust** model. We believe that your credentials belong solely to you, and our application is architected to guarantee that your data never leaves your device over the internet or cloud.
 
 ---
 
 ### 1. No Data Collection or Telemetry
 Kunjika **does not collect, transmit, log, or share** any personal information, passwords, financial data, or usage metrics.
-- **Zero Network Permissions**: The application does not declare or request the `android.permission.INTERNET` permission in its manifest. Data is physically incapable of transmitting over any network.
+- **Zero Network Permissions**: The application does not declare or request the `android.permission.INTERNET` permission in its manifest. Data is physically incapable of transmitting over the internet or reaching any remote servers (local peer-to-peer sharing occurs exclusively under explicit biometric authorization via Bluetooth Web Drop or Encrypted QR).
 - **No Analytics or Trackers**: We include zero third-party analytics libraries, tracking SDKs, or crash reporting telemetry.
 - **No Cloud Synchronization**: Kunjika does not operate cloud servers, synchronization relays, or user accounts. All vault data resides exclusively in local, hardware-encrypted storage on your physical device.
 

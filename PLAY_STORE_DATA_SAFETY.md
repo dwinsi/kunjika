@@ -13,7 +13,7 @@ When publishing Kunjika (v1.1.2), use the following information for the Google P
 - **Does your app collect or share any of the required user data types?** -> **No**. (Zero data collected, transmitted, or shared).
 - **Is all user data encrypted in transit?** -> **Yes**. All local transmissions (both Phone-to-Phone QR Sync and Phone-to-PC Web Bluetooth Drop) are end-to-end encrypted using authenticated **AES-256-GCM** with ephemeral ECDH / PBKDF2 keys.
 - **Do you provide a way for users to request that their data is deleted?** -> **Yes**. Uninstalling the app or using "Clear Data" permanently destroys all hardware keys and encrypted databases.
-- **Does the app connect to the internet?** -> **No**. The app does not request or hold `android.permission.INTERNET`. Data physically cannot leave the device.
+- **Does the app connect to the internet?** -> **No**. The app does not request or hold `android.permission.INTERNET`. Data physically cannot leave the device over any network or cloud (local peer-to-peer transfers are strictly user-initiated via Bluetooth or QR).
 
 ---
 
