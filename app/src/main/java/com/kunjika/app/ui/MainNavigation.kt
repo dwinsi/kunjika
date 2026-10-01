@@ -122,7 +122,8 @@ fun MainNavigation(
                     when (targetTab) {
                         NavigationTab.GENERATOR -> GeneratorScreen(
                             generatorViewModel = generatorViewModel,
-                            vaultViewModel = vaultViewModel
+                            vaultViewModel = vaultViewModel,
+                            settingsViewModel = settingsViewModel
                         )
                         NavigationTab.VAULT -> VaultScreen(
                             vaultViewModel = vaultViewModel,

@@ -53,6 +53,12 @@ class SettingsViewModel(
     val pinHint: StateFlow<String> = userPreferences.pinHint
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
+    val hasSeenGeneratorTour: StateFlow<Boolean> = userPreferences.hasSeenGeneratorTour
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val hasSeenVaultTour: StateFlow<Boolean> = userPreferences.hasSeenVaultTour
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     val securityStatus = MutableStateFlow(
         SecurityStatus(
             isRooted = SecurityManager.isDeviceRooted(),
@@ -98,6 +104,24 @@ class SettingsViewModel(
     fun setDarkTheme(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setDarkTheme(enabled)
+        }
+    }
+
+    fun setHasSeenGeneratorTour(hasSeen: Boolean = true) {
+        viewModelScope.launch {
+            userPreferences.setHasSeenGeneratorTour(hasSeen)
+        }
+    }
+
+    fun setHasSeenVaultTour(hasSeen: Boolean = true) {
+        viewModelScope.launch {
+            userPreferences.setHasSeenVaultTour(hasSeen)
+        }
+    }
+
+    fun resetFeatureTours() {
+        viewModelScope.launch {
+            userPreferences.resetFeatureTours()
         }
     }
 

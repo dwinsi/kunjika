@@ -37,6 +37,8 @@ class UserPreferences(private val context: Context) {
         private val KEY_LAST_BACKGROUND_TIME = stringPreferencesKey("last_background_time")
         private val KEY_PIN_HINT = stringPreferencesKey("pin_hint")
         private val KEY_IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
+        private val KEY_HAS_SEEN_GENERATOR_TOUR = booleanPreferencesKey("has_seen_generator_tour")
+        private val KEY_HAS_SEEN_VAULT_TOUR = booleanPreferencesKey("has_seen_vault_tour")
 
         private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
         private const val ITERATIONS = 100000
@@ -77,6 +79,14 @@ class UserPreferences(private val context: Context) {
 
     val isFirstLaunch: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[KEY_IS_FIRST_LAUNCH] ?: true
+    }
+
+    val hasSeenGeneratorTour: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_HAS_SEEN_GENERATOR_TOUR] ?: false
+    }
+
+    val hasSeenVaultTour: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_HAS_SEEN_VAULT_TOUR] ?: false
     }
 
     suspend fun setMasterPin(pin: String) {
@@ -206,6 +216,25 @@ class UserPreferences(private val context: Context) {
     suspend fun setFirstLaunchCompleted() {
         context.dataStore.edit { preferences ->
             preferences[KEY_IS_FIRST_LAUNCH] = false
+        }
+    }
+
+    suspend fun setHasSeenGeneratorTour(hasSeen: Boolean = true) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_HAS_SEEN_GENERATOR_TOUR] = hasSeen
+        }
+    }
+
+    suspend fun setHasSeenVaultTour(hasSeen: Boolean = true) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_HAS_SEEN_VAULT_TOUR] = hasSeen
+        }
+    }
+
+    suspend fun resetFeatureTours() {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_HAS_SEEN_GENERATOR_TOUR] = false
+            preferences[KEY_HAS_SEEN_VAULT_TOUR] = false
         }
     }
 

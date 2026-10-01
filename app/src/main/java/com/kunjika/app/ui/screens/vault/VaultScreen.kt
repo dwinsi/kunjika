@@ -1,5 +1,6 @@
 package com.kunjika.app.ui.screens.vault
 
+import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -86,8 +87,13 @@ import com.kunjika.app.ui.theme.StrengthStrong
 import com.kunjika.app.ui.theme.StrengthVeryStrong
 import com.kunjika.app.ui.theme.StrengthVeryWeak
 import com.kunjika.app.ui.theme.StrengthWeak
+import com.kunjika.app.ui.components.tour.SpotlightOverlay
+import com.kunjika.app.ui.components.tour.TourStep
+import com.kunjika.app.ui.components.tour.rememberSpotlightState
+import com.kunjika.app.ui.components.tour.spotlightTarget
 import com.kunjika.app.ui.viewmodel.SettingsViewModel
 import com.kunjika.app.ui.viewmodel.VaultViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun VaultScreen(
@@ -100,6 +106,40 @@ fun VaultScreen(
     val filteredPasswords by vaultViewModel.filteredPasswords.collectAsState()
     val selectedCategory by vaultViewModel.selectedCategory.collectAsState()
     val searchQuery by vaultViewModel.searchQuery.collectAsState()
+
+    val spotlightState = rememberSpotlightState()
+    val hasSeenVaultTour by (settingsViewModel?.hasSeenVaultTour?.collectAsState() ?: remember { mutableStateOf(true) })
+
+    LaunchedEffect(hasSeenVaultTour, isVaultUnlocked) {
+        if (!hasSeenVaultTour && isVaultUnlocked) {
+            delay(400)
+            spotlightState.startTour(
+                steps = listOf(
+                    TourStep(
+                        id = "vault_search",
+                        targetKey = "vault_search_filter",
+                        title = "Search & Categories",
+                        description = "Quickly search through your accounts or filter by Logins, Cards, Notes, or TOTP."
+                    ),
+                    TourStep(
+                        id = "vault_sync",
+                        targetKey = "vault_sync_fab",
+                        title = "Offline QR Sync",
+                        description = "Import or transfer vault entries using encrypted zero-network QR payloads."
+                    ),
+                    TourStep(
+                        id = "vault_add",
+                        targetKey = "vault_add_fab",
+                        title = "Add Vault Entry",
+                        description = "Tap to securely store a new password or sensitive secret in your encrypted vault."
+                    )
+                ),
+                onDismissed = {
+                    settingsViewModel?.setHasSeenVaultTour(true)
+                }
+            )
+        }
+    }
 
     val context = LocalContext.current
 
@@ -218,81 +258,90 @@ fun VaultScreen(
     var selectedItemForDetail by remember { mutableStateOf<DecryptedPasswordItem?>(null) }
     var selectedItemForEdit by remember { mutableStateOf<DecryptedPasswordItem?>(null) }
 
-    Scaffold(
-        floatingActionButton = {
-            Column(horizontalAlignment = Alignment.End) {
-                FloatingActionButton(
-                    onClick = { cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA) },
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    shape = CircleShape,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.QrCodeScanner,
-                        contentDescription = "Scan QR code to import password"
-                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            floatingActionButton = {
+                Column(horizontalAlignment = Alignment.End) {
+                    FloatingActionButton(
+                        onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        shape = CircleShape,
+                        modifier = Modifier.spotlightTarget("vault_sync_fab", spotlightState)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.QrCodeScanner,
+                            contentDescription = "Scan QR code to import password"
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    FloatingActionButton(
+                        onClick = { showAddDialog = true },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        shape = CircleShape,
+                        modifier = Modifier.spotlightTarget("vault_add_fab", spotlightState)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add new password to vault"
+                        )
+                    }
                 }
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                FloatingActionButton(
-                    onClick = { showAddDialog = true },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = CircleShape,
+                // Search Bar & Categories Container
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .spotlightTarget("vault_search_filter", spotlightState)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add new password to vault"
+                    CustomTextField(
+                        value = searchQuery,
+                        onValueChange = { vaultViewModel.onSearchQueryChanged(it) },
+                        label = "Search vault",
+                        placeholder = "Search accounts, sites, emails...",
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { vaultViewModel.onSearchQueryChanged("") }) {
+                                    Icon(Icons.Default.Clear, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
                     )
-                }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
 
-            // Search Bar
-            CustomTextField(
-                value = searchQuery,
-                onValueChange = { vaultViewModel.onSearchQueryChanged(it) },
-                label = "Search vault",
-                placeholder = "Search accounts, sites, emails...",
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { vaultViewModel.onSearchQueryChanged("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Horizontal Category Selector
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        vaultViewModel.categories.forEach { category ->
+                            CategoryChip(
+                                label = category,
+                                isSelected = selectedCategory == category,
+                                onClick = { vaultViewModel.selectCategory(category) }
+                            )
                         }
                     }
                 }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Horizontal Category Selector
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                vaultViewModel.categories.forEach { category ->
-                    CategoryChip(
-                        label = category,
-                        isSelected = selectedCategory == category,
-                        onClick = { vaultViewModel.selectCategory(category) }
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -473,6 +522,9 @@ fun VaultScreen(
                 }
             }
         )
+    }
+
+        SpotlightOverlay(state = spotlightState)
     }
 }
 

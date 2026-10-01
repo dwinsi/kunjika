@@ -78,9 +78,15 @@ import com.kunjika.app.core.totp.TotpManager
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.StrengthIndicator
 import com.kunjika.app.ui.screens.vault.AddEditPasswordDialog
+import com.kunjika.app.ui.components.tour.SpotlightOverlay
+import com.kunjika.app.ui.components.tour.TourStep
+import com.kunjika.app.ui.components.tour.rememberSpotlightState
+import com.kunjika.app.ui.components.tour.spotlightTarget
 import com.kunjika.app.ui.viewmodel.GeneratorMode
 import com.kunjika.app.ui.viewmodel.GeneratorViewModel
+import com.kunjika.app.ui.viewmodel.SettingsViewModel
 import com.kunjika.app.ui.viewmodel.VaultViewModel
+import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -88,12 +94,53 @@ import kotlinx.coroutines.delay
 fun GeneratorScreen(
     generatorViewModel: GeneratorViewModel,
     vaultViewModel: VaultViewModel,
+    settingsViewModel: SettingsViewModel,
 ) {
     val uiState by generatorViewModel.uiState.collectAsState()
     val history by generatorViewModel.history.collectAsState()
     val context = LocalContext.current
     var showSaveDialog by remember { mutableStateOf(false) }
     var showHistoryBottomSheet by remember { mutableStateOf(false) }
+
+    val spotlightState = rememberSpotlightState()
+    val hasSeenGeneratorTour by settingsViewModel.hasSeenGeneratorTour.collectAsState()
+
+    LaunchedEffect(hasSeenGeneratorTour) {
+        if (!hasSeenGeneratorTour) {
+            delay(400)
+            spotlightState.startTour(
+                steps = listOf(
+                    TourStep(
+                        id = "gen_modes",
+                        targetKey = "gen_mode_tabs",
+                        title = "Generator Modes",
+                        description = "Choose between Passwords, Passphrases (word sequences), PINs, or TOTP 2FA keys."
+                    ),
+                    TourStep(
+                        id = "gen_output",
+                        targetKey = "gen_output_card",
+                        title = "Secret & Strength Evaluator",
+                        description = "View your generated secret alongside real-time entropy scoring and crack-time estimations."
+                    ),
+                    TourStep(
+                        id = "gen_actions",
+                        targetKey = "gen_action_buttons",
+                        title = "Copy & Vault Actions",
+                        description = "Generate secrets, copy with 30s auto-clearing clipboard security, or save directly to your Vault."
+                    ),
+                    TourStep(
+                        id = "gen_options",
+                        targetKey = "gen_options_card",
+                        title = "Customization Sliders",
+                        description = "Fine-tune length, word count, numbers, uppercase letters, and special symbols."
+                    )
+                ),
+                onDismissed = {
+                    settingsViewModel.setHasSeenGeneratorTour(true)
+                }
+            )
+        }
+    }
 
     val totpLiveCode by produceState(initialValue = "", key1 = uiState.totpSecret) {
         if (uiState.totpSecret.isNotEmpty()) {
@@ -119,62 +166,64 @@ fun GeneratorScreen(
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Header Row with History Button
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
-                Text(
-                    text = "Generator",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Cryptographically secure credentials",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            // Header Row with History Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Generator",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Cryptographically secure credentials",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                IconButton(onClick = { showHistoryBottomSheet = true }) {
+                    Icon(
+                        imageVector = Icons.Default.History,
+                        contentDescription = "Generation History",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
-            IconButton(onClick = { showHistoryBottomSheet = true }) {
-                Icon(
-                    imageVector = Icons.Default.History,
-                    contentDescription = "Generation History",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Mode Tabs (4 Active Generators)
-        TabRow(
-            selectedTabIndex = uiState.mode.ordinal,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[uiState.mode.ordinal]),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            },
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .glossyBorder(shape = RoundedCornerShape(16.dp))
-        ) {
+            // Mode Tabs (4 Active Generators)
+            TabRow(
+                selectedTabIndex = uiState.mode.ordinal,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[uiState.mode.ordinal]),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
+                modifier = Modifier
+                    .spotlightTarget("gen_mode_tabs", spotlightState)
+                    .clip(RoundedCornerShape(16.dp))
+                    .glossyBorder(shape = RoundedCornerShape(16.dp))
+            ) {
             Tab(
                 selected = uiState.mode == GeneratorMode.PASSWORD,
                 onClick = { generatorViewModel.setMode(GeneratorMode.PASSWORD) },
@@ -235,6 +284,7 @@ fun GeneratorScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .spotlightTarget("gen_output_card", spotlightState)
                 .glossyBorder(shape = RoundedCornerShape(20.dp)),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -312,7 +362,9 @@ fun GeneratorScreen(
                 val disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .spotlightTarget("gen_action_buttons", spotlightState),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     GlossyButton(
@@ -434,7 +486,9 @@ fun GeneratorScreen(
 
             // Configuration Card
             GlossyCard(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .spotlightTarget("gen_options_card", spotlightState),
                 shape = RoundedCornerShape(20.dp)
             ) {
                 Column(
@@ -749,7 +803,10 @@ fun GeneratorScreen(
                 showSaveDialog = false
             }
         }
+
+        SpotlightOverlay(state = spotlightState)
     }
+}
 }
 
 @Composable
