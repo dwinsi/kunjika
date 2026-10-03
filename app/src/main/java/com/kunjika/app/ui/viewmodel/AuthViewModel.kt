@@ -80,6 +80,10 @@ class AuthViewModel(
         }
     }
 
+    suspend fun verifyMasterPin(pin: String): Boolean {
+        return userPreferences.verifyMasterPin(pin)
+    }
+
     fun unlockWithPin(pin: String) {
         viewModelScope.launch {
             val isValid = userPreferences.verifyMasterPin(pin)

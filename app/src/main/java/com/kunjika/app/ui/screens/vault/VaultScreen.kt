@@ -87,18 +87,28 @@ import com.kunjika.app.ui.theme.StrengthStrong
 import com.kunjika.app.ui.theme.StrengthVeryStrong
 import com.kunjika.app.ui.theme.StrengthVeryWeak
 import com.kunjika.app.ui.theme.StrengthWeak
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.kunjika.app.ui.components.tour.SpotlightOverlay
 import com.kunjika.app.ui.components.tour.TourStep
 import com.kunjika.app.ui.components.tour.rememberSpotlightState
 import com.kunjika.app.ui.components.tour.spotlightTarget
+import com.kunjika.app.ui.viewmodel.AuthViewModel
 import com.kunjika.app.ui.viewmodel.SettingsViewModel
 import com.kunjika.app.ui.viewmodel.VaultViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun VaultScreen(
     vaultViewModel: VaultViewModel,
-    settingsViewModel: SettingsViewModel? = null
+    settingsViewModel: SettingsViewModel? = null,
+    authViewModel: AuthViewModel? = null
 ) {
     val lockVaultOnTabSelect by (settingsViewModel?.lockVaultOnTabSelect?.collectAsState() ?: remember { mutableStateOf(true) })
     val isVaultUnlocked by vaultViewModel.isVaultUnlocked.collectAsState()
@@ -106,6 +116,11 @@ fun VaultScreen(
     val filteredPasswords by vaultViewModel.filteredPasswords.collectAsState()
     val selectedCategory by vaultViewModel.selectedCategory.collectAsState()
     val searchQuery by vaultViewModel.searchQuery.collectAsState()
+
+    var showPinModal by remember { mutableStateOf(false) }
+    var vaultPinInput by remember { mutableStateOf("") }
+    var pinError by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
     val spotlightState = rememberSpotlightState()
     val hasSeenVaultTour by (settingsViewModel?.hasSeenVaultTour?.collectAsState() ?: remember { mutableStateOf(true) })
@@ -197,7 +212,7 @@ fun VaultScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Authenticate to access your encrypted credentials",
+                        text = "Dual-Factor Required: Fingerprint + Master PIN",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -210,15 +225,17 @@ fun VaultScreen(
                             if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
                                 BiometricAuthManager.promptBiometric(
                                     activity = activity,
-                                    title = "Unlock Vault",
-                                    subtitle = "Authenticate to access your passwords",
-                                    onSuccess = { vaultViewModel.unlockVault() },
+                                    title = "Step 1: Fingerprint Scan",
+                                    subtitle = "Scan fingerprint to proceed to Master PIN",
+                                    onSuccess = {
+                                        showPinModal = true
+                                    },
                                     onError = { err ->
                                         Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             } else {
-                                vaultViewModel.unlockVault()
+                                showPinModal = true
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -231,10 +248,102 @@ fun VaultScreen(
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Unlock Vault", fontWeight = FontWeight.Bold)
+                        Text("Unlock Vault (PIN + Fingerprint)", fontWeight = FontWeight.Bold)
                     }
                 }
             }
+        }
+
+        if (showPinModal) {
+            AlertDialog(
+                onDismissRequest = {
+                    showPinModal = false
+                    vaultPinInput = ""
+                    pinError = null
+                },
+                title = {
+                    Text(
+                        text = "Step 2: Enter Master PIN",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "Fingerprint verified! Enter Master PIN to complete dual-factor vault unlock.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CustomTextField(
+                            value = vaultPinInput,
+                            onValueChange = { input ->
+                                if (input.all { it.isDigit() }) {
+                                    vaultPinInput = input
+                                    pinError = null
+                                }
+                            },
+                            label = "Master PIN",
+                            visualTransformation = PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.NumberPassword,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    scope.launch {
+                                        if (authViewModel?.verifyMasterPin(vaultPinInput) == true) {
+                                            vaultViewModel.unlockVault()
+                                            showPinModal = false
+                                            vaultPinInput = ""
+                                            pinError = null
+                                        } else {
+                                            pinError = "Incorrect Master PIN"
+                                        }
+                                    }
+                                }
+                            )
+                        )
+                        if (pinError != null) {
+                            Text(
+                                text = pinError!!,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                if (authViewModel?.verifyMasterPin(vaultPinInput) == true) {
+                                    vaultViewModel.unlockVault()
+                                    showPinModal = false
+                                    vaultPinInput = ""
+                                    pinError = null
+                                } else {
+                                    pinError = "Incorrect Master PIN"
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Unlock Vault")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showPinModal = false
+                            vaultPinInput = ""
+                            pinError = null
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
         return
     }
@@ -667,7 +776,20 @@ private fun PasswordCardItem(
                         )
                     }
 
-                    IconButton(onClick = onCopyPassword) {
+                    IconButton(onClick = {
+                        val activity = context.findActivity()
+                        if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
+                            BiometricAuthManager.promptBiometric(
+                                activity = activity,
+                                title = "Biometric Re-Verification",
+                                subtitle = "Authenticate to copy password for ${item.title}",
+                                onSuccess = { onCopyPassword() },
+                                onError = { err -> Toast.makeText(context, err, Toast.LENGTH_SHORT).show() }
+                            )
+                        } else {
+                            onCopyPassword()
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
                             contentDescription = "Copy Password",

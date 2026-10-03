@@ -58,6 +58,8 @@ import com.kunjika.app.core.generator.PasswordStrengthEvaluator
 import com.kunjika.app.core.qr.QrEncryptionManager
 import com.kunjika.app.core.qr.QrManager
 import com.kunjika.app.core.qr.QrSyncPayload
+import com.kunjika.app.core.security.BiometricAuthManager
+import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
 import com.kunjika.app.data.repository.DecryptedPasswordItem
@@ -104,6 +106,21 @@ fun PasswordDetailDialog(
     }
 
     val dateFormatter = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+
+    fun requestBiometricToReveal(onSuccess: () -> Unit) {
+        val activity = context.findActivity()
+        if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
+            BiometricAuthManager.promptBiometric(
+                activity = activity,
+                title = "Biometric Re-Verification",
+                subtitle = "Authenticate to reveal/copy secret for ${item.title}",
+                onSuccess = { onSuccess() },
+                onError = { err -> Toast.makeText(context, err, Toast.LENGTH_SHORT).show() }
+            )
+        } else {
+            onSuccess()
+        }
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -192,7 +209,18 @@ fun PasswordDetailDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Row {
-                            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }, modifier = Modifier.size(28.dp)) {
+                            IconButton(
+                                onClick = {
+                                    if (!isPasswordVisible) {
+                                        requestBiometricToReveal {
+                                            isPasswordVisible = true
+                                        }
+                                    } else {
+                                        isPasswordVisible = false
+                                    }
+                                },
+                                modifier = Modifier.size(28.dp)
+                            ) {
                                 Icon(
                                     imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                                     contentDescription = "Toggle Visibility",
@@ -203,8 +231,10 @@ fun PasswordDetailDialog(
                             Spacer(modifier = Modifier.width(8.dp))
                             IconButton(
                                 onClick = {
-                                    ClipboardHelper.copyToClipboard(context, "Password", item.plaintextPassword, isSensitive = true, autoClearSeconds = 30L)
-                                    Toast.makeText(context, "Password copied! Auto-clears in 30s", Toast.LENGTH_SHORT).show()
+                                    requestBiometricToReveal {
+                                        ClipboardHelper.copyToClipboard(context, "Password", item.plaintextPassword, isSensitive = true, autoClearSeconds = 30L)
+                                        Toast.makeText(context, "Password copied! Auto-clears in 30s", Toast.LENGTH_SHORT).show()
+                                    }
                                 },
                                 modifier = Modifier.size(28.dp)
                             ) {
@@ -270,8 +300,10 @@ fun PasswordDetailDialog(
                             )
                             IconButton(
                                 onClick = {
-                                    ClipboardHelper.copyToClipboard(context, "TOTP", totpCode)
-                                    Toast.makeText(context, "2FA code copied", Toast.LENGTH_SHORT).show()
+                                    requestBiometricToReveal {
+                                        ClipboardHelper.copyToClipboard(context, "TOTP", totpCode)
+                                        Toast.makeText(context, "2FA code copied", Toast.LENGTH_SHORT).show()
+                                    }
                                 },
                                 modifier = Modifier.size(24.dp)
                             ) {

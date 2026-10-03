@@ -127,7 +127,8 @@ fun MainNavigation(
                         )
                         NavigationTab.VAULT -> VaultScreen(
                             vaultViewModel = vaultViewModel,
-                            settingsViewModel = settingsViewModel
+                            settingsViewModel = settingsViewModel,
+                            authViewModel = authViewModel
                         )
                         NavigationTab.AUDIT -> {
                             if (showAuditLog) {
