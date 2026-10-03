@@ -1956,31 +1956,73 @@
                 <!-- FAQ 2 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>2. यदि मैं अपना मास्टर पिन भूल जाऊं तो क्या होगा?</span>
+                        <span>2. यदि मेरा फोन खो जाए, खराब हो जाए या मैं नया फोन खरीदूँ, तो क्या मैं अपने पासवर्ड नए फोन में वापस पा सकता हूँ?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        क्योंकि कुंजिका सॉवरेन और ऑफलाइन है, इसलिए इसमें कोई रिमोट 'पासवर्ड भूल गए' सर्वर नहीं होता। यदि आपने फिंगरप्रिंट या बायोमेट्रिक्स ऑन किया है, तो आप फिंगरप्रिंट से ऐप खोलकर सेटिंग्स में नया पिन बना सकते हैं। इसीलिए मास्टर पिन को किसी सुरक्षित स्थान पर लिखकर रखना आवश्यक है।
+                        हाँ, बिल्कुल! कुंजिका (Kunjika) का <strong>पोर्टेबल <code>.kunjika</code> बैकअप</strong> आपके पासवर्ड को आपके <strong>बैकअप पासफ़्रेज़</strong> से सुरक्षित रूप से एन्क्रिप्ट करता है। नए फोन में कुंजिका इंस्टॉल करके अपना बैकअप पासफ़्रेज़ डालें, और ऐप खुद-ब-खुद सारे पासवर्ड नए फोन की चिप (Keystore) में फिर से सुरक्षित कर देगा।
                     </div>
                 </div>
 
                 <!-- FAQ 3 -->
-                <div class="faq-header-wrapper faq-card">
+                <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>3. नया फोन लेने पर मेरे पासवर्ड्स कैसे स्थानांतरित होंगे?</span>
+                        <span>3. मैं अपनी बैकअप <code>.kunjika</code> फाइल पेनड्राइव (USB), SD कार्ड या कंप्यूटर में कैसे सेव करूँ?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        इसके दो सरल और पूरी तरह ऑफलाइन तरीके हैं:
-                        <br><strong>विधि 1 (Encrypted QR):</strong> पुराने फोन में 'Share Vault' खोलें, 6 अंकों का कोड सेट करें और नए फोन के कैमरे से स्कैन करें।
-                        <br><strong>विधि 2 (Backup File):</strong> सेटिंग्स में जाकर 'Export Backup' से एन्क्रिप्टेड फाइल बनाएं और नए फोन में 'Import Backup' द्वारा रीस्टोर करें।
+                        ऐप की <strong>सेटिंग्स → Encrypted Offline Backup → Save File</strong> पर टैप करें। कुंजिका एंड्रॉयड के ऑफिशियल स्टोरेज पिकर (SAF) का इस्तेमाल करता है, जिससे आप पेनड्राइव, SD कार्ड या कंप्यूटर में बिना इंटरनेट के सीधे फाइल सेव कर सकते हैं।
                     </div>
                 </div>
 
                 <!-- FAQ 4 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>4. क्या 2FA के लिए अलग से Google Authenticator की जरूरत है?</span>
+                        <span>4. वॉल्ट खोलने के लिए फिंगरप्रिंट और मास्टर पिन दोनों (PIN + Fingerprint) की आवश्यकता क्यों होती है?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </div>
+                    <div class="faq-content">
+                        आपकी सुरक्षा को सबसे मजबूत बनाने के लिए कुंजिका वॉल्ट में <strong>डुअल-फैक्टर सिक्योरिटी (2FA)</strong> का उपयोग करता है। <strong>पहला कदम:</strong> बायोमेट्रिक (फिंगरप्रिंट) स्कैन, और <strong>दूसरा कदम:</strong> मास्टर पिन। यदि कोई आपका पिन देख भी ले या सोते समय फिंगरप्रिंट लगाने की कोशिश करे, तब भी बिना दोनों स्टेप्स पूरे किए वॉल्ट नहीं खुलेगा।
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-card">
+                    <div class="faq-header" onclick="toggleFaq(this)">
+                        <span>5. "High-Security Entries" (हाई-सिक्योरिटी खाते) क्या हैं और ये मेरे बैंक खाते को कैसे सुरक्षित रखते हैं?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </div>
+                    <div class="faq-content">
+                        आप अपने बैंक खाते, क्रिप्टोकरेंसी वॉलेट या मुख्य ईमेल को <strong>High-Security</strong> मार्क कर सकते हैं। अगर आपका वॉल्ट खुला भी हो, तब भी हाई-सिक्योरिटी खातों का पासवर्ड देखने या कॉपी करने के लिए हर बार फिर से फिंगरप्रिंट स्कैन (Biometric Step-Up) करना अनिवार्य होता है।
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="faq-card">
+                    <div class="faq-header" onclick="toggleFaq(this)">
+                        <span>6. एंटी-कोएर्शन (Duress PIN) क्या है और यदि कोई मुझसे जबर्दस्ती ऐप खुलवाए तो Decoy Vault मेरी सुरक्षा कैसे करता है?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </div>
+                    <div class="faq-content">
+                        यदि कोई आपसे जबर्दस्ती ऐप अनलॉक करवाता है, तो आप अपने असली पिन की जगह अपना गुप्त <strong>Duress PIN</strong> दर्ज कर सकते हैं। कुंजिका तुरंत एक <strong>नकली (Decoy Vault)</strong> खोल देगा जिसमें डमी अकाउंट (जैसे Netflix, Spotify) दिखेंगे, और आपका असली एन्क्रिप्टेड वॉल्ट पूरी तरह छुपा रहेगा।
+                    </div>
+                </div>
+
+                <!-- FAQ 7 -->
+                <div class="faq-card">
+                    <div class="faq-header" onclick="toggleFaq(this)">
+                        <span>7. बैकअप एक्सपोर्ट करते समय 5-सेकंड की उल्टी गिनती (काउंटडाउन) क्यों चलती है?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </div>
+                    <div class="faq-content">
+                        यह 5-सेकंड की सुरक्षा देरी (<code>5... 4... 3... Cancel</code>) गलती से बैकअप फाइल बनने या किसी अनधिकृत व्यक्ति द्वारा तुरंत सारे पासवर्ड चुराने से रोकती है। यदि एक्सपोर्ट गलती से हुआ है, तो आप तुरंत 'Cancel Export' बटन दबा सकते हैं।
+                    </div>
+                </div>
+
+                <!-- FAQ 8 -->
+                <div class="faq-card">
+                    <div class="faq-header" onclick="toggleFaq(this)">
+                        <span>8. क्या 2FA के लिए अलग से Google Authenticator की जरूरत है?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
@@ -1988,10 +2030,10 @@
                     </div>
                 </div>
 
-                <!-- FAQ 5 -->
+                <!-- FAQ 9 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>5. क्या वेब ड्रॉप (Web Drop) से कंप्यूटर पर पासवर्ड भेजने के लिए इंटरनेट चाहिए?</span>
+                        <span>9. क्या वेब ड्रॉप (Web Drop) से कंप्यूटर पर पासवर्ड भेजने के लिए इंटरनेट चाहिए?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
@@ -1999,15 +2041,16 @@
                     </div>
                 </div>
 
-                <!-- FAQ 6 -->
+                <!-- FAQ 10 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>6. क्या कुंजिका के उपयोग के लिए कोई शुल्क या सदस्यता है?</span>
+                        <span>10. क्या कुंजिका के उपयोग के लिए कोई शुल्क या सदस्यता है?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
                         नहीं। कुंजिका 100% मुफ़्त और ओपन-सोर्स सॉफ्टवेयर है। इसमें न कोई विज्ञापन हैं, न ट्रैकर, और न ही कोई इन-ऐप खरीदारी।
                     </div>
+                </div>
                 </div>
             </div>
         </section>

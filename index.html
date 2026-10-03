@@ -1766,15 +1766,51 @@
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>If Kunjika is 100% offline, what happens if I lose or break my phone?</span>
+                    <span>If Kunjika is 100% offline, what happens if I lose, break, or upgrade my phone?</span>
                     <span class="faq-icon">▼</span>
                 </div>
                 <div class="faq-answer">
-                    Because Kunjika does not store your vault on cloud servers, nobody else holds a copy of your passwords. That is why Kunjika includes two easy sovereign backup tools in <strong>Settings</strong>:
-                    <br><br>
-                    1. <strong>Emergency Recovery Kit:</strong> Generates an encrypted, printable physical backup document you can store in your home safe or deposit box.
-                    <br>
-                    2. <strong>Encrypted Vault Export:</strong> Export your double-encrypted database file to an external USB flash drive or physical cold storage.
+                    Kunjika's <strong>portable <code>.kunjika</code> backup files</strong> are encrypted with your custom Backup Passphrase using bank-grade AES-256-GCM + PBKDF2. When you restore your backup on a new or replacement phone, Kunjika decrypts the portable file using your passphrase and automatically re-encrypts all entries with the new phone's physical Android Keystore hardware chip (TEE/HSM)—ensuring smooth migration without decryption errors.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How do I save my backup file to a USB flash drive or SD card?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Go to <strong>Settings → Encrypted Offline Backup → Save File</strong>. Kunjika connects directly to Android's official Storage Access Framework (SAF) file picker, allowing you to choose any destination—like a USB-C flash drive, external SD card, or local download folder—completely offline without Kunjika ever needing internet permission.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Why does opening the Vault require BOTH my fingerprint AND Master PIN?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    For maximum security, Kunjika's Vault implements <strong>True Dual-Factor Authentication (2FA)</strong> at unlock. <strong>Step 1</strong> requires your physical Fingerprint / Biometric scan, and <strong>Step 2</strong> requires your Master PIN. Even if someone shoulder-surfs your PIN or attempts to use your fingerprint while you sleep, neither factor alone can open your vault.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What are "High-Security Entries" and how do they protect my sensitive accounts?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    You can mark critical accounts (like Banking, Crypto Wallets, or Primary Email) as <strong>"High Security"</strong>. Even when your vault is unlocked, viewing, revealing, or copying a High-Security password or 2FA code requires an additional <strong>Biometric Step-Up re-verification</strong> (fingerprint scan), preventing a phone-snatcher from accessing your most valuable credentials.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What is the Anti-Coercion Duress PIN and how does the Decoy Vault work?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    If you are forced or threatened to unlock Kunjika, entering your pre-configured secret <strong>Duress PIN</strong> instead of your real Master PIN instantly opens a realistic <strong>Decoy Vault</strong> populated with dummy accounts (like Netflix, Spotify, or School Portal)—completely concealing your real encrypted passwords.
                 </div>
             </div>
 
@@ -1785,16 +1821,6 @@
                 </div>
                 <div class="faq-answer">
                     Web Drop uses <strong>Web Bluetooth Low Energy (BLE)</strong> directly between your phone and your desktop browser. Bluetooth is localized radio communication, not the internet. The transmission is protected by ephemeral ECDH P-256 key agreement, client-side Proof of Work, and a matching 6-digit visual code displayed on both screens. Data exists only in computer RAM and is shredded after 30 seconds.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>Is my Master PIN stored on the phone?</span>
-                    <span class="faq-icon">▼</span>
-                </div>
-                <div class="faq-answer">
-                    No plaintext Master PIN is ever stored anywhere. Your PIN is encrypted directly inside the phone's physical security chip (Android KeyStore TEE / StrongBox). When you touch your fingerprint, the hardware chip securely unwraps the key without exposing plaintext in storage or memory.
                 </div>
             </div>
 

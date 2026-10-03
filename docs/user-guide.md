@@ -328,6 +328,27 @@ Because Kunjika is a zero-knowledge, sovereign vault, your Master PIN is the cry
 ### Q: Why can't I take screenshots inside the app?
 Kunjika enables Android's `FLAG_SECURE` protection throughout the app. This prevents spyware, malware, or background apps from capturing your screen, and keeps your sensitive information hidden when you view recent apps in Android's task switcher.
 
+### Q: What happens if I lose my phone, upgrade to a new phone, or replace a damaged device?
+Kunjika's **`.kunjika` portable backup files** are encrypted with your custom **Backup Passphrase** using industry-standard **AES-256-GCM + PBKDF2**. When you restore your `.kunjika` backup on a new or replacement phone, Kunjika decrypts the backup using your passphrase and automatically re-encrypts all entries with the new device's physical Android Keystore hardware chip (`TEE/HSM`), ensuring seamless cross-device migration without decryption errors.
+
+### Q: How do I save my `.kunjika` backup file to a USB flash drive, SD card, or local folder?
+Go to **Settings → Encrypted Offline Backup → Save File**. Kunjika uses Android's official Storage Access Framework (SAF) file picker, allowing you to choose any storage destination—such as a USB-C flash drive, external SD card, or local download folder—completely offline without Kunjika ever needing internet permission.
+
+### Q: How does Kunjika help me remember to back up my passwords?
+Kunjika automatically tracks changes to your vault. Whenever you add or edit 5 or more credentials, a discreet **"Backup Recommended"** banner chip appears at the top of your Vault screen to remind you to export a fresh backup before you forget.
+
+### Q: Why does opening the Vault require BOTH my fingerprint AND Master PIN?
+For maximum security, Kunjika's Vault implements **True Dual-Factor Authentication (2FA)** at unlock. **Step 1** requires your physical **Fingerprint / Biometric scan**, and **Step 2** requires your **Master PIN**. Even if someone shoulder-surfs your PIN or tries to use your fingerprint while you sleep, neither factor alone can unlock your vault.
+
+### Q: What are "High-Security Entries" and how do they protect my sensitive accounts?
+You can mark critical accounts (like Banking, Crypto Wallets, or Primary Email) as **"High Security"**. Even when your vault is unlocked, viewing, revealing, or copying a High-Security password or 2FA code requires an additional **Biometric Step-Up re-verification**, preventing an attacker who snatched an unlocked phone from accessing your most valuable credentials.
+
+### Q: What is the Anti-Coercion Duress PIN and how does the Decoy Vault work?
+Under physical coercion or threat, you can enter a pre-configured secret **Duress PIN** instead of your real Master PIN. Kunjika will open a convincing **Decoy Vault** populated with realistic dummy accounts (e.g. Netflix, Spotify, School), completely concealing your real encrypted passwords.
+
+### Q: Why is there a 5-second countdown timer when I export a backup?
+The 5-second safety delay (`5... 4... 3... Cancel`) prevents accidental exports or unauthorized rapid bulk extraction of your vault if someone briefly handles your unlocked device, giving you time to tap "Cancel Export".
+
 ### Q: What browsers work with Web Drop?
 Web Drop uses the Web Bluetooth standard, which is natively supported in **Google Chrome**, **Microsoft Edge**, **Brave**, and **Opera** on Windows, macOS, Linux, and ChromeOS.
 
