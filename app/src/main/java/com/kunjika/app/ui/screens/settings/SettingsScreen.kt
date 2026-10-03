@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Upload
@@ -51,6 +52,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,11 +69,14 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,6 +85,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
@@ -119,7 +125,16 @@ fun SettingsScreen(
     var selectedCategory by remember { mutableStateOf<SettingsCategory?>(null) }
 
     var showChangePinDialog by remember { mutableStateOf(false) }
+    var showDuressPinDialog by remember { mutableStateOf(false) }
+    var duressPinInput by remember { mutableStateOf("") }
+    var confirmDuressPinInput by remember { mutableStateOf("") }
+    var isDuressConfirmStep by remember { mutableStateOf(false) }
+
     var showExportDialog by remember { mutableStateOf(false) }
+    var showExportCountdownDialog by remember { mutableStateOf(false) }
+    var pendingExportUri by remember { mutableStateOf<Uri?>(null) }
+    var pendingExportPayloadCallback by remember { mutableStateOf<(() -> Unit)?>(null) }
+
     var showImportDialog by remember { mutableStateOf(false) }
 
     var exportFilePassphrase by remember { mutableStateOf("") }
@@ -371,6 +386,26 @@ fun SettingsScreen(
                                 onCheckedChange = { settingsViewModel.setLockVaultOnTabSelect(it) },
                                 colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
                             )
+                        }
+
+                        // Anti-Coercion Duress PIN (Decoy Vault)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showDuressPinDialog = true }
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Shield, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text("Anti-Coercion Duress PIN", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                                    Text("Opens decoy vault with dummy accounts if forced to unlock", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -907,11 +942,14 @@ fun SettingsScreen(
                     TextButton(
                         onClick = {
                             if (exportPassphrase.isNotBlank()) {
-                                settingsViewModel.exportEncryptedBackup(exportPassphrase) { payload ->
-                                    ClipboardHelper.copyToClipboard(context, "Encrypted Backup", payload, isSensitive = true)
-                                    Toast.makeText(context, "Encrypted backup copied to clipboard!", Toast.LENGTH_LONG).show()
+                                pendingExportPayloadCallback = {
+                                    settingsViewModel.exportEncryptedBackup(exportPassphrase) { payload ->
+                                        ClipboardHelper.copyToClipboard(context, "Encrypted Backup", payload, isSensitive = true)
+                                        Toast.makeText(context, "Encrypted backup copied to clipboard!", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                                 showExportDialog = false
+                                showExportCountdownDialog = true
                             }
                         },
                         enabled = exportPassphrase.isNotBlank()
@@ -922,8 +960,9 @@ fun SettingsScreen(
                         onClick = {
                             if (exportPassphrase.isNotBlank()) {
                                 exportFilePassphrase = exportPassphrase
-                                createDocumentLauncher.launch("kunjika_backup_${System.currentTimeMillis()}.json")
+                                pendingExportPayloadCallback = null
                                 showExportDialog = false
+                                showExportCountdownDialog = true
                             }
                         },
                         enabled = exportPassphrase.isNotBlank()
@@ -934,6 +973,123 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showExportDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showExportCountdownDialog) {
+        var secondsLeft by remember { mutableIntStateOf(5) }
+        LaunchedEffect(Unit) {
+            while (secondsLeft > 0) {
+                delay(1000)
+                secondsLeft--
+            }
+            showExportCountdownDialog = false
+            if (pendingExportPayloadCallback != null) {
+                pendingExportPayloadCallback?.invoke()
+                pendingExportPayloadCallback = null
+            } else {
+                createDocumentLauncher.launch("kunjika_backup_${System.currentTimeMillis()}.json")
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = {
+                showExportCountdownDialog = false
+                pendingExportPayloadCallback = null
+            },
+            title = { Text("Export Safety Delay") },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Exporting encrypted vault in $secondsLeft seconds. Tap cancel if this export was triggered by mistake.",
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CircularProgressIndicator(
+                        progress = { secondsLeft / 5f },
+                        strokeWidth = 4.dp
+                    )
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showExportCountdownDialog = false
+                        pendingExportPayloadCallback = null
+                    }
+                ) {
+                    Text("Cancel Export")
+                }
+            }
+        )
+    }
+
+    if (showDuressPinDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDuressPinDialog = false
+                duressPinInput = ""
+                confirmDuressPinInput = ""
+                isDuressConfirmStep = false
+            },
+            title = { Text("Anti-Coercion Duress PIN") },
+            text = {
+                Column {
+                    Text(
+                        text = if (!isDuressConfirmStep) "Create a secret Duress PIN. If forced to unlock Kunjika, entering this PIN opens a Decoy Vault with dummy accounts." else "Confirm your Duress PIN",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    CustomTextField(
+                        value = if (!isDuressConfirmStep) duressPinInput else confirmDuressPinInput,
+                        onValueChange = { input ->
+                            if (input.all { it.isDigit() }) {
+                                if (!isDuressConfirmStep) duressPinInput = input else confirmDuressPinInput = input
+                            }
+                        },
+                        label = if (!isDuressConfirmStep) "Duress PIN" else "Confirm Duress PIN",
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (!isDuressConfirmStep) {
+                            if (duressPinInput.length >= 4) isDuressConfirmStep = true
+                        } else {
+                            if (duressPinInput == confirmDuressPinInput) {
+                                authViewModel.setDuressPin(duressPinInput)
+                                Toast.makeText(context, "Anti-Coercion Duress PIN set!", Toast.LENGTH_SHORT).show()
+                                showDuressPinDialog = false
+                                duressPinInput = ""
+                                confirmDuressPinInput = ""
+                                isDuressConfirmStep = false
+                            } else {
+                                Toast.makeText(context, "PINs do not match", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    enabled = (!isDuressConfirmStep && duressPinInput.length >= 4) || (isDuressConfirmStep && confirmDuressPinInput.length >= 4)
+                ) {
+                    Text(if (!isDuressConfirmStep) "Next" else "Save Duress PIN")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDuressPinDialog = false
+                        duressPinInput = ""
+                        confirmDuressPinInput = ""
+                        isDuressConfirmStep = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
             }
         )
     }

@@ -49,15 +49,72 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         _isVaultUnlocked.value = false
     }
 
+    private val _isDecoyVault = MutableStateFlow(false)
+    val isDecoyVault: StateFlow<Boolean> = _isDecoyVault.asStateFlow()
+
+    fun enableDecoyVault(enabled: Boolean = true) {
+        _isDecoyVault.value = enabled
+    }
+
+    private val decoyPasswords = listOf(
+        DecryptedPasswordItem(
+            id = 9001L,
+            title = "Netflix",
+            username = "personal.account@gmail.com",
+            plaintextPassword = "N3tfl!xStreaming2024$",
+            websiteUrl = "https://netflix.com",
+            category = "Streaming",
+            notes = "Family Subscription",
+            createdAt = System.currentTimeMillis() - 864000000L,
+            updatedAt = System.currentTimeMillis() - 864000000L,
+            isFavorite = true,
+            expiryDays = 0,
+            totpSecret = null,
+            isHighSecurity = false
+        ),
+        DecryptedPasswordItem(
+            id = 9002L,
+            title = "Spotify",
+            username = "music.fan@gmail.com",
+            plaintextPassword = "Sp0t!fyP4ss#2024",
+            websiteUrl = "https://spotify.com",
+            category = "Streaming",
+            notes = "Premium Plan",
+            createdAt = System.currentTimeMillis() - 720000000L,
+            updatedAt = System.currentTimeMillis() - 720000000L,
+            isFavorite = false,
+            expiryDays = 0,
+            totpSecret = null,
+            isHighSecurity = false
+        ),
+        DecryptedPasswordItem(
+            id = 9003L,
+            title = "Public Library Portal",
+            username = "card_num_883921",
+            plaintextPassword = "L!br4ry#Access99",
+            websiteUrl = "https://library.org",
+            category = "Personal",
+            notes = "eBook Access Account",
+            createdAt = System.currentTimeMillis() - 500000000L,
+            updatedAt = System.currentTimeMillis() - 500000000L,
+            isFavorite = false,
+            expiryDays = 0,
+            totpSecret = null,
+            isHighSecurity = false
+        )
+    )
+
     val allPasswords: StateFlow<List<DecryptedPasswordItem>> = repository.getAllPasswords()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val filteredPasswords: StateFlow<List<DecryptedPasswordItem>> = combine(
         allPasswords,
         _selectedCategory,
-        _searchQuery
-    ) { list, category, query ->
-        list.filter { item ->
+        _searchQuery,
+        _isDecoyVault
+    ) { list, category, query, isDecoy ->
+        val sourceList = if (isDecoy) decoyPasswords else list
+        sourceList.filter { item ->
             val matchesCategory = (category == "All" || item.category.equals(category, ignoreCase = true))
             val matchesQuery = query.isEmpty() ||
                     item.title.contains(query, ignoreCase = true) ||
@@ -112,7 +169,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
         notes: String,
         isFavorite: Boolean = false,
         expiryDays: Int = 0,
-        totpSecret: String? = null
+        totpSecret: String? = null,
+        isHighSecurity: Boolean = false
     ) {
         viewModelScope.launch {
             repository.savePassword(
@@ -125,7 +183,8 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
                 notes = notes,
                 isFavorite = isFavorite,
                 expiryDays = expiryDays,
-                totpSecret = totpSecret
+                totpSecret = totpSecret,
+                isHighSecurity = isHighSecurity
             )
         }
     }

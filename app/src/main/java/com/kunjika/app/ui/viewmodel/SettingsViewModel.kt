@@ -59,6 +59,12 @@ class SettingsViewModel(
     val hasSeenVaultTour: StateFlow<Boolean> = userPreferences.hasSeenVaultTour
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val changesSinceBackup: StateFlow<Int> = userPreferences.changesSinceBackup
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val isDuressPinSet: StateFlow<Boolean> = userPreferences.isDuressPinSet
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     val securityStatus = MutableStateFlow(
         SecurityStatus(
             isRooted = SecurityManager.isDeviceRooted(),
@@ -174,10 +180,11 @@ class SettingsViewModel(
     fun exportEncryptedBackup(passphrase: String, onComplete: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                val entities = passwordRepository.getRawEntities()
-                val exportJson = BackupManager.exportEncryptedBackup(entities, passphrase)
-                passwordRepository.recordExportBackupBlock("JSON_STRING", entities.size)
-                _backupStatus.value = "Backup generated successfully (${entities.size} items)"
+                val items = passwordRepository.getAllPasswords().first()
+                val exportJson = BackupManager.exportEncryptedBackup(items, passphrase)
+                passwordRepository.recordExportBackupBlock("JSON_STRING", items.size)
+                userPreferences.resetBackupTracker()
+                _backupStatus.value = "Backup generated successfully (${items.size} items)"
                 onComplete(exportJson)
             } catch (e: Exception) {
                 _backupStatus.value = "Export failed: ${e.localizedMessage}"
@@ -188,10 +195,9 @@ class SettingsViewModel(
     fun importEncryptedBackup(backupJson: String, passphrase: String) {
         viewModelScope.launch {
             try {
-                val entities = BackupManager.importEncryptedBackup(backupJson, passphrase)
-                passwordRepository.importRawEntities(entities)
-                passwordRepository.recordImportBlock("JSON_STRING", entities.size)
-                _backupStatus.value = "Imported ${entities.size} passwords successfully"
+                val items = BackupManager.importEncryptedBackup(backupJson, passphrase)
+                passwordRepository.importBackupItems(items)
+                _backupStatus.value = "Imported ${items.size} passwords successfully"
             } catch (e: Exception) {
                 _backupStatus.value = "Import failed. Invalid passphrase or corrupted file."
             }
@@ -201,16 +207,17 @@ class SettingsViewModel(
     fun exportToFile(context: Context, uri: Uri, passphrase: String) {
         viewModelScope.launch {
             try {
-                val entities = passwordRepository.getRawEntities()
-                val exportJson = BackupManager.exportEncryptedBackup(entities, passphrase)
-                
+                val items = passwordRepository.getAllPasswords().first()
+                val exportJson = BackupManager.exportEncryptedBackup(items, passphrase)
+
                 withContext(Dispatchers.IO) {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                         outputStream.write(exportJson.toByteArray())
                     }
                 }
-                passwordRepository.recordExportBackupBlock("JSON_FILE", entities.size)
-                _backupStatus.value = "Backup saved to file: ${entities.size} items"
+                passwordRepository.recordExportBackupBlock("JSON_FILE", items.size)
+                userPreferences.resetBackupTracker()
+                _backupStatus.value = "Backup saved to file: ${items.size} items"
             } catch (e: Exception) {
                 _backupStatus.value = "Export to file failed: ${e.localizedMessage}"
             }
@@ -226,10 +233,9 @@ class SettingsViewModel(
                     }
                 } ?: throw Exception("Could not read file")
 
-                val entities = BackupManager.importEncryptedBackup(importJson, passphrase)
-                passwordRepository.importRawEntities(entities)
-                passwordRepository.recordImportBlock("JSON_FILE", entities.size)
-                _backupStatus.value = "Imported ${entities.size} passwords from file"
+                val items = BackupManager.importEncryptedBackup(importJson, passphrase)
+                passwordRepository.importBackupItems(items)
+                _backupStatus.value = "Imported ${items.size} passwords from file"
             } catch (e: Exception) {
                 _backupStatus.value = "Import from file failed. Check passphrase."
             }

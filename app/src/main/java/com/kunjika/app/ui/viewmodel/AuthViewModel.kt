@@ -36,6 +36,9 @@ class AuthViewModel(
     private val _isBiometricEnabled = MutableStateFlow(true)
     val isBiometricEnabled: StateFlow<Boolean> = _isBiometricEnabled.asStateFlow()
 
+    private val _isDecoyMode = MutableStateFlow(false)
+    val isDecoyMode: StateFlow<Boolean> = _isDecoyMode.asStateFlow()
+
     private var lastBackgroundTimestamp: Long = 0L
 
     init {
@@ -86,14 +89,33 @@ class AuthViewModel(
 
     fun unlockWithPin(pin: String) {
         viewModelScope.launch {
-            val isValid = userPreferences.verifyMasterPin(pin)
-            if (isValid) {
-                _errorMessage.value = null
-                _authState.value = AuthState.Authenticated
-                // If biometric is enabled but no biometric-encrypted PIN is saved yet, save it using an encryption cipher on next prompt
-            } else {
-                _errorMessage.value = "Incorrect Master PIN"
+            val pinMode = userPreferences.verifyPinMode(pin)
+            when (pinMode) {
+                UserPreferences.PinMode.MASTER -> {
+                    _isDecoyMode.value = false
+                    _errorMessage.value = null
+                    _authState.value = AuthState.Authenticated
+                }
+                UserPreferences.PinMode.DURESS -> {
+                    _isDecoyMode.value = true
+                    _errorMessage.value = null
+                    _authState.value = AuthState.Authenticated
+                }
+                UserPreferences.PinMode.INVALID -> {
+                    _errorMessage.value = "Incorrect Master PIN"
+                }
             }
+        }
+    }
+
+    fun setDuressPin(pin: String) {
+        if (pin.length < 4) {
+            _errorMessage.value = "Duress PIN must be at least 4 digits"
+            return
+        }
+        viewModelScope.launch {
+            userPreferences.setDuressPin(pin)
+            _errorMessage.value = null
         }
     }
 

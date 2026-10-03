@@ -17,5 +17,6 @@ data class PasswordEntity(
     val updatedAt: Long = System.currentTimeMillis(),
     val isFavorite: Boolean = false,
     val expiryDays: Int = 0, // 0 means no expiry
-    val totpSecret: String? = null
+    val totpSecret: String? = null,
+    val isHighSecurity: Boolean = false
 )

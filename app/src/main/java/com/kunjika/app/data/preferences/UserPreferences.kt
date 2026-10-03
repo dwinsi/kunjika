@@ -39,6 +39,10 @@ class UserPreferences(private val context: Context) {
         private val KEY_IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
         private val KEY_HAS_SEEN_GENERATOR_TOUR = booleanPreferencesKey("has_seen_generator_tour")
         private val KEY_HAS_SEEN_VAULT_TOUR = booleanPreferencesKey("has_seen_vault_tour")
+        private val KEY_LAST_BACKUP_TIMESTAMP = stringPreferencesKey("last_backup_timestamp")
+        private val KEY_CHANGES_SINCE_BACKUP = intPreferencesKey("changes_since_backup")
+        private val KEY_DURESS_PIN_HASH = stringPreferencesKey("duress_pin_hash")
+        private val KEY_DURESS_PIN_SALT = stringPreferencesKey("duress_pin_salt")
 
         private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
         private const val ITERATIONS = 100000
@@ -87,6 +91,14 @@ class UserPreferences(private val context: Context) {
 
     val hasSeenVaultTour: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[KEY_HAS_SEEN_VAULT_TOUR] ?: false
+    }
+
+    val changesSinceBackup: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[KEY_CHANGES_SINCE_BACKUP] ?: 0
+    }
+
+    val isDuressPinSet: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        !preferences[KEY_DURESS_PIN_HASH].isNullOrEmpty()
     }
 
     suspend fun setMasterPin(pin: String) {
@@ -236,6 +248,59 @@ class UserPreferences(private val context: Context) {
             preferences[KEY_HAS_SEEN_GENERATOR_TOUR] = false
             preferences[KEY_HAS_SEEN_VAULT_TOUR] = false
         }
+    }
+
+    suspend fun incrementChangesSinceBackup() {
+        context.dataStore.edit { preferences ->
+            val current = preferences[KEY_CHANGES_SINCE_BACKUP] ?: 0
+            preferences[KEY_CHANGES_SINCE_BACKUP] = current + 1
+        }
+    }
+
+    suspend fun resetBackupTracker() {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_CHANGES_SINCE_BACKUP] = 0
+            preferences[KEY_LAST_BACKUP_TIMESTAMP] = System.currentTimeMillis().toString()
+        }
+    }
+
+    suspend fun setDuressPin(pin: String) {
+        val salt = generateSalt()
+        val hash = hashPin(pin, salt)
+        context.dataStore.edit { preferences ->
+            preferences[KEY_DURESS_PIN_HASH] = hash
+            preferences[KEY_DURESS_PIN_SALT] = Base64.encodeToString(salt, Base64.NO_WRAP)
+        }
+    }
+
+    enum class PinMode {
+        MASTER,
+        DURESS,
+        INVALID
+    }
+
+    suspend fun verifyPinMode(pin: String): PinMode {
+        val preferences = context.dataStore.data.first()
+
+        val storedMasterHash = preferences[KEY_MASTER_PIN_HASH]
+        val masterSaltBase64 = preferences[KEY_MASTER_PIN_SALT]
+        if (!storedMasterHash.isNullOrEmpty() && !masterSaltBase64.isNullOrEmpty()) {
+            val salt = Base64.decode(masterSaltBase64, Base64.NO_WRAP)
+            if (storedMasterHash == hashPin(pin, salt)) {
+                return PinMode.MASTER
+            }
+        }
+
+        val storedDuressHash = preferences[KEY_DURESS_PIN_HASH]
+        val duressSaltBase64 = preferences[KEY_DURESS_PIN_SALT]
+        if (!storedDuressHash.isNullOrEmpty() && !duressSaltBase64.isNullOrEmpty()) {
+            val salt = Base64.decode(duressSaltBase64, Base64.NO_WRAP)
+            if (storedDuressHash == hashPin(pin, salt)) {
+                return PinMode.DURESS
+            }
+        }
+
+        return PinMode.INVALID
     }
 
     private fun hashPin(pin: String, salt: ByteArray): String {

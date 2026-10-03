@@ -26,7 +26,8 @@ data class DecryptedPasswordItem(
     val updatedAt: Long,
     val isFavorite: Boolean,
     val expiryDays: Int,
-    val totpSecret: String? = null
+    val totpSecret: String? = null,
+    val isHighSecurity: Boolean = false
 )
 
 class PasswordRepository(
@@ -247,7 +248,8 @@ class PasswordRepository(
         notes: String,
         isFavorite: Boolean = false,
         expiryDays: Int = 0,
-        totpSecret: String? = null
+        totpSecret: String? = null,
+        isHighSecurity: Boolean = false
     ): Long = withContext(Dispatchers.IO) {
         val encryptedPassword = KeystoreManager.encrypt(plainPassword)
         val encryptedTotp = if (totpSecret.isNullOrEmpty()) null else KeystoreManager.encrypt(totpSecret)
@@ -264,7 +266,8 @@ class PasswordRepository(
             updatedAt = System.currentTimeMillis(),
             isFavorite = isFavorite,
             expiryDays = expiryDays,
-            totpSecret = encryptedTotp
+            totpSecret = encryptedTotp,
+            isHighSecurity = isHighSecurity
         )
         val rowId = passwordDao.insertPassword(entity)
         val finalId = if (id == 0L) rowId else id
@@ -298,6 +301,30 @@ class PasswordRepository(
         passwordDao.insertPasswords(entities)
     }
 
+    suspend fun importBackupItems(items: List<DecryptedPasswordItem>) = withContext(Dispatchers.IO) {
+        val entities = items.map { item ->
+            val encryptedPassword = KeystoreManager.encrypt(item.plaintextPassword)
+            val encryptedTotp = if (item.totpSecret.isNullOrEmpty()) null else KeystoreManager.encrypt(item.totpSecret)
+            PasswordEntity(
+                id = 0L,
+                title = item.title,
+                username = item.username,
+                encryptedPassword = encryptedPassword,
+                websiteUrl = item.websiteUrl,
+                category = item.category,
+                notes = item.notes,
+                createdAt = item.createdAt,
+                updatedAt = System.currentTimeMillis(),
+                isFavorite = item.isFavorite,
+                expiryDays = item.expiryDays,
+                totpSecret = encryptedTotp,
+                isHighSecurity = item.isHighSecurity
+            )
+        }
+        passwordDao.insertPasswords(entities)
+        recordImportBlock("PORTABLE_BACKUP", entities.size)
+    }
+
     private fun PasswordEntity.toDecrypted(): DecryptedPasswordItem {
         val decryptedTotp = try {
             if (totpSecret.isNullOrEmpty()) null 
@@ -327,7 +354,8 @@ class PasswordRepository(
             updatedAt = updatedAt,
             isFavorite = isFavorite,
             expiryDays = expiryDays,
-            totpSecret = decryptedTotp
+            totpSecret = decryptedTotp,
+            isHighSecurity = isHighSecurity
         )
     }
 }

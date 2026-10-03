@@ -17,6 +17,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,8 +59,13 @@ fun MainNavigation(
     initialTab: NavigationTab = NavigationTab.GENERATOR
 ) {
     val authState by authViewModel.authState.collectAsState()
+    val isDecoyMode by authViewModel.isDecoyMode.collectAsState()
     var selectedTab by remember(initialTab) { mutableStateOf(initialTab) }
     var showAuditLog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isDecoyMode) {
+        vaultViewModel.enableDecoyVault(isDecoyMode)
+    }
 
     when (authState) {
         AuthState.Loading -> {

@@ -1,7 +1,7 @@
 package com.kunjika.app.core.backup
 
 import android.util.Base64
-import com.kunjika.app.data.local.PasswordEntity
+import com.kunjika.app.data.repository.DecryptedPasswordItem
 import org.json.JSONArray
 import org.json.JSONObject
 import java.security.SecureRandom
@@ -18,9 +18,9 @@ object BackupManager {
     private const val IV_LENGTH = 12
     private const val GCM_TAG_LENGTH = 128
 
-    fun exportEncryptedBackup(passwords: List<PasswordEntity>, backupPassphrase: String): String {
+    fun exportEncryptedBackup(passwords: List<DecryptedPasswordItem>, backupPassphrase: String): String {
         val rootJson = JSONObject()
-        rootJson.put("version", 1)
+        rootJson.put("version", 2)
         rootJson.put("exportedAt", System.currentTimeMillis())
 
         val array = JSONArray()
@@ -29,7 +29,7 @@ object BackupManager {
                 put("id", item.id)
                 put("title", item.title)
                 put("username", item.username)
-                put("encryptedPassword", item.encryptedPassword)
+                put("plaintextPassword", item.plaintextPassword)
                 put("websiteUrl", item.websiteUrl)
                 put("category", item.category)
                 put("notes", item.notes)
@@ -37,6 +37,8 @@ object BackupManager {
                 put("updatedAt", item.updatedAt)
                 put("isFavorite", item.isFavorite)
                 put("expiryDays", item.expiryDays)
+                put("totpSecret", item.totpSecret ?: "")
+                put("isHighSecurity", item.isHighSecurity)
             }
             array.put(obj)
         }
@@ -66,7 +68,7 @@ object BackupManager {
         return exportPayload.toString()
     }
 
-    fun importEncryptedBackup(encryptedBackupJson: String, backupPassphrase: String): List<PasswordEntity> {
+    fun importEncryptedBackup(encryptedBackupJson: String, backupPassphrase: String): List<DecryptedPasswordItem> {
         val root = JSONObject(encryptedBackupJson)
         val salt = Base64.decode(root.getString("salt"), Base64.NO_WRAP)
         val iv = Base64.decode(root.getString("iv"), Base64.NO_WRAP)
@@ -84,23 +86,26 @@ object BackupManager {
 
         val dataRoot = JSONObject(decryptedJson)
         val itemsArray = dataRoot.getJSONArray("items")
-        val list = mutableListOf<PasswordEntity>()
+        val list = mutableListOf<DecryptedPasswordItem>()
 
         for (i in 0 until itemsArray.length()) {
             val obj = itemsArray.getJSONObject(i)
+            val passwordText = if (obj.has("plaintextPassword")) obj.getString("plaintextPassword") else obj.optString("encryptedPassword", "")
             list.add(
-                PasswordEntity(
+                DecryptedPasswordItem(
                     id = if (obj.has("id")) obj.getLong("id") else 0L,
                     title = obj.getString("title"),
                     username = obj.optString("username", ""),
-                    encryptedPassword = obj.getString("encryptedPassword"),
+                    plaintextPassword = passwordText,
                     websiteUrl = obj.optString("websiteUrl", ""),
                     category = obj.optString("category", "Personal"),
                     notes = obj.optString("notes", ""),
                     createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
                     updatedAt = obj.optLong("updatedAt", System.currentTimeMillis()),
                     isFavorite = obj.optBoolean("isFavorite", false),
-                    expiryDays = obj.optInt("expiryDays", 0)
+                    expiryDays = obj.optInt("expiryDays", 0),
+                    totpSecret = obj.optString("totpSecret", "").ifEmpty { null },
+                    isHighSecurity = obj.optBoolean("isHighSecurity", false)
                 )
             )
         }

@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -70,6 +71,7 @@ fun AddEditPasswordDialog(
     var notes by remember { mutableStateOf(existingItem?.notes ?: "") }
     var expiryDays by remember { mutableStateOf(existingItem?.expiryDays ?: 0) }
     var totpSecret by remember { mutableStateOf(existingItem?.totpSecret ?: initialTotpSecret) }
+    var isHighSecurity by remember { mutableStateOf(existingItem?.isHighSecurity ?: false) }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val strengthResult = remember(password) { PasswordStrengthEvaluator.evaluate(password) }
@@ -227,6 +229,33 @@ fun AddEditPasswordDialog(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "High-Security Entry",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Requires Biometric Step-Up Auth on reveal/copy",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Switch(
+                        checked = isHighSecurity,
+                        onCheckedChange = { isHighSecurity = it }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
@@ -250,7 +279,8 @@ fun AddEditPasswordDialog(
                                     notes = notes.trim(),
                                     isFavorite = existingItem?.isFavorite ?: false,
                                     expiryDays = expiryDays,
-                                    totpSecret = totpSecret.trim().ifEmpty { null }
+                                    totpSecret = totpSecret.trim().ifEmpty { null },
+                                    isHighSecurity = isHighSecurity
                                 )
                                 onDismiss()
                             }
