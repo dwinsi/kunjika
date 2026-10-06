@@ -77,6 +77,7 @@ import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
 import com.kunjika.app.data.repository.DecryptedPasswordItem
+import com.kunjika.app.ui.components.AntiMoireBackground
 import com.kunjika.app.ui.components.CategoryChip
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.glossyBorder
@@ -367,7 +368,8 @@ fun VaultScreen(
     var selectedItemForDetail by remember { mutableStateOf<DecryptedPasswordItem?>(null) }
     var selectedItemForEdit by remember { mutableStateOf<DecryptedPasswordItem?>(null) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    AntiMoireBackground(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             floatingActionButton = {
                 Column(horizontalAlignment = Alignment.End) {
@@ -635,6 +637,7 @@ fun VaultScreen(
 
         SpotlightOverlay(state = spotlightState)
     }
+}
 }
 
 @Composable

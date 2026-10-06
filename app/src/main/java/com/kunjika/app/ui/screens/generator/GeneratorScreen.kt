@@ -75,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
+import com.kunjika.app.ui.components.AntiMoireText
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.StrengthIndicator
 import com.kunjika.app.ui.screens.vault.AddEditPasswordDialog
@@ -316,18 +317,28 @@ fun GeneratorScreen(
                         .padding(18.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = uiState.generatedPassword.ifEmpty { "Tap Generate to start" },
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = if (uiState.generatedPassword.length > 24) 16.sp else 20.sp
-                        ),
-                        color = if (uiState.generatedPassword.isEmpty())
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        else MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
-                    )
+                    if (uiState.generatedPassword.isNotEmpty()) {
+                        AntiMoireText(
+                            text = uiState.generatedPassword,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = if (uiState.generatedPassword.length > 24) 16.sp else 20.sp
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        Text(
+                            text = "Tap Generate to start",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -714,7 +725,6 @@ fun GeneratorScreen(
                                 }
                             }
                         }
-                        else -> {}
                     }
                 }
             }

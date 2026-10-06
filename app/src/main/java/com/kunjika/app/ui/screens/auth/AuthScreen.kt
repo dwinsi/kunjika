@@ -52,6 +52,7 @@ import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.security.BiometricAuthManager
 import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.SecurityManager
+import com.kunjika.app.ui.components.AntiMoireBackground
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.GlossyButton
 import com.kunjika.app.ui.components.GlossyCard
@@ -95,21 +96,15 @@ fun AuthScreen(authViewModel: AuthViewModel) {
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFF3A280B), // Ambient Gold Glow
-                        Color(0xFF0F141C),
-                        Color(0xFF07090E)  // Pitch Black Edge
-                    )
-                )
-            )
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
+    AntiMoireBackground(
+        modifier = Modifier.fillMaxSize()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
         GlossyCard(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp)
@@ -289,4 +284,5 @@ fun AuthScreen(authViewModel: AuthViewModel) {
             }
         }
     }
+}
 }

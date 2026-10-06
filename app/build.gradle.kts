@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.kunjika.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.kunjika.app"

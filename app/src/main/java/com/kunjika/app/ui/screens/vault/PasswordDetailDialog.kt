@@ -55,6 +55,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.kunjika.app.core.generator.PasswordStrengthEvaluator
+import com.kunjika.app.ui.components.AntiMoireBackground
+import com.kunjika.app.ui.components.AntiMoireText
+import com.kunjika.app.ui.components.CardStealthBrightnessEffect
+import com.kunjika.app.ui.components.rememberPrivacyAngleState
 import com.kunjika.app.core.qr.QrEncryptionManager
 import com.kunjika.app.core.qr.QrManager
 import com.kunjika.app.core.qr.QrSyncPayload
@@ -82,6 +86,13 @@ fun PasswordDetailDialog(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showQrDialog by remember { mutableStateOf(false) }
     var showWebDropDialog by remember { mutableStateOf(false) }
+
+    val privacyAngle = rememberPrivacyAngleState(isActive = isPasswordVisible)
+
+    CardStealthBrightnessEffect(
+        isRevealed = isPasswordVisible,
+        onFocusLost = { isPasswordVisible = false }
+    )
 
     val strengthResult = remember(item.plaintextPassword) {
         PasswordStrengthEvaluator.evaluate(item.plaintextPassword)
@@ -131,12 +142,13 @@ fun PasswordDetailDialog(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(24.dp)
-            ) {
+            AntiMoireBackground(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(24.dp)
+                ) {
                 // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -195,7 +207,7 @@ fun PasswordDetailDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.18f))
                         .padding(14.dp)
                 ) {
                     Row(
@@ -250,13 +262,52 @@ fun PasswordDetailDialog(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = if (isPasswordVisible) item.plaintextPassword else "•".repeat(item.plaintextPassword.length.coerceAtLeast(8)),
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    val isAngleLegible = privacyAngle.isWithinPrivacyCone
+
+                    if (isPasswordVisible) {
+                        if (isAngleLegible) {
+                            AntiMoireText(
+                                text = item.plaintextPassword,
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            )
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "•".repeat(item.plaintextPassword.length.coerceAtLeast(8)),
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(MaterialTheme.colorScheme.tertiaryContainer)
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "📐 Tilt phone toward you",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "•".repeat(item.plaintextPassword.length.coerceAtLeast(8)),
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
                     StrengthIndicator(strengthResult = strengthResult)
@@ -446,6 +497,7 @@ fun PasswordDetailDialog(
             }
         )
     }
+}
 }
 
 @Composable
