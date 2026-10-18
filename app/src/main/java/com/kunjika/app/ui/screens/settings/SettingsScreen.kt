@@ -489,7 +489,7 @@ fun SettingsScreen(
                     // Emergency Recovery Section
                     SettingsSection(title = "Security & Recovery") {
                         Text(
-                            text = "Set a hint for your Master PIN and generate a physical recovery kit. This is your emergency safeguard if you lose access to your device.",
+                            text = "Set a PIN hint or print the local SQLCipher passphrase. This PDF is unencrypted and does not restore entries to a new device; use an encrypted vault export for migration.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -530,7 +530,7 @@ fun SettingsScreen(
                         ) {
                             Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Generate Recovery Kit (PDF)")
+                            Text("Print Local Database Passphrase (PDF)")
                         }
                     }
                 }
@@ -647,7 +647,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = "Transfer passwords directly to your laptop or desktop browser without typing, user accounts, or cloud servers. Powered by local Web Bluetooth (BLE) and Proof of Work.",
+                            text = "Transfer a selected password to a trusted desktop browser over Bluetooth. Both screens show a pairing code that must match before sending.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -793,7 +793,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         
                         Text(
-                            text = "Kunjika is a zero-network, hardware-hardened password manager designed for users who demand absolute privacy.",
+                            text = "Kunjika stores vault data locally and uses Android Keystore where available. Trust the device and any computer that receives a password.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -892,8 +892,8 @@ fun SettingsScreen(
             },
             confirmButton = {
                 Button(onClick = {
-                    if (newPin.length < 4) {
-                        error = "PIN must be at least 4 digits"
+                    if (newPin.length < 6) {
+                        error = "PIN must be at least 6 digits"
                     } else if (newPin != confirmPin) {
                         error = "PINs do not match"
                     } else {
@@ -920,7 +920,7 @@ fun SettingsScreen(
             title = { Text("Export Encrypted Backup") },
             text = {
                 Column {
-                    Text("Choose a strong passphrase to encrypt your exported backup payload. This passphrase is required to restore on any device.")
+                    Text("Choose a unique passphrase of at least 12 characters. You will need it to restore this encrypted export on any device.")
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomTextField(
                         value = exportPassphrase,
@@ -945,7 +945,7 @@ fun SettingsScreen(
                                 showExportCountdownDialog = true
                             }
                         },
-                        enabled = exportPassphrase.isNotBlank()
+                        enabled = exportPassphrase.length >= 12
                     ) {
                         Text("To Clipboard")
                     }
@@ -958,7 +958,7 @@ fun SettingsScreen(
                                 showExportCountdownDialog = true
                             }
                         },
-                        enabled = exportPassphrase.isNotBlank()
+                        enabled = exportPassphrase.length >= 12
                     ) {
                         Text("To File")
                     }
@@ -1031,7 +1031,7 @@ fun SettingsScreen(
             text = {
                 Column {
                     Text(
-                        text = if (!isDuressConfirmStep) "Create a secret Duress PIN. If forced to unlock Kunjika, entering this PIN opens a Decoy Vault with dummy accounts." else "Confirm your Duress PIN",
+                        text = if (!isDuressConfirmStep) "Create a secret Duress PIN of at least 6 digits. If forced to unlock Kunjika, entering this PIN opens a Decoy Vault with dummy accounts." else "Confirm your Duress PIN",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1053,7 +1053,7 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         if (!isDuressConfirmStep) {
-                            if (duressPinInput.length >= 4) isDuressConfirmStep = true
+                            if (duressPinInput.length >= 6) isDuressConfirmStep = true
                         } else {
                             if (duressPinInput == confirmDuressPinInput) {
                                 authViewModel.setDuressPin(duressPinInput)
@@ -1067,7 +1067,7 @@ fun SettingsScreen(
                             }
                         }
                     },
-                    enabled = (!isDuressConfirmStep && duressPinInput.length >= 4) || (isDuressConfirmStep && confirmDuressPinInput.length >= 4)
+                    enabled = (!isDuressConfirmStep && duressPinInput.length >= 6) || (isDuressConfirmStep && confirmDuressPinInput.length >= 6)
                 ) {
                     Text(if (!isDuressConfirmStep) "Next" else "Save Duress PIN")
                 }

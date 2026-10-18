@@ -33,7 +33,7 @@ object RecoveryPdfManager {
         paint.color = Color.BLACK
         paint.textSize = 28f
         paint.isFakeBoldText = true
-        canvas.drawText("Kunjika: Emergency Recovery Kit", 50f, 80f, paint)
+        canvas.drawText("Kunjika: Local Database Key Copy", 50f, 80f, paint)
 
         paint.textSize = 14f
         paint.isFakeBoldText = false
@@ -53,10 +53,9 @@ object RecoveryPdfManager {
         paint.textSize = 12f
         paint.isFakeBoldText = false
         val instructions = """
-            This document contains essential information to recover your vault in case 
-            you lose your phone or forget your Master PIN. Do not share this kit 
-            with anyone you do not trust. It is recommended to print this 
-            and store it in a secure physical location.
+            This document contains the local SQLCipher database passphrase. Keep it private.
+            It does not restore entries on a new device; field keys stay in Android Keystore.
+            Use an encrypted vault export to migrate entries to another device.
         """.trimIndent().split("\n")
 
         var currentY = 190f
@@ -81,19 +80,21 @@ object RecoveryPdfManager {
         paint.color = Color.BLACK
         paint.textSize = 16f
         paint.isFakeBoldText = true
-        canvas.drawText("Vault Recovery Key:", 50f, currentY, paint)
+        canvas.drawText("Local Database Passphrase:", 50f, currentY, paint)
 
         currentY += 30f
-        paint.textSize = 20f
+        paint.textSize = 14f
         paint.color = Color.RED
         paint.typeface = android.graphics.Typeface.MONOSPACE
-        canvas.drawText(recoveryKey, 70f, currentY, paint)
+        recoveryKey.chunked(32).forEachIndexed { index, part ->
+            canvas.drawText(part, 70f, currentY + index * 20f, paint)
+        }
 
         // Bottom Warning
         paint.color = Color.GRAY
         paint.textSize = 10f
         paint.isFakeBoldText = false
-        canvas.drawText("Kunjika is a 100% localized application. Only you possess these keys.", 50f, 800f, paint)
+        canvas.drawText("This PDF is not encrypted. Protect it and delete exported copies securely.", 50f, 800f, paint)
 
         pdfDocument.finishPage(page)
 

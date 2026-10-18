@@ -2,7 +2,6 @@ package com.kunjika.app.core.webdrop
 
 import com.google.gson.Gson
 import java.math.BigInteger
-import java.nio.ByteBuffer
 import java.security.AlgorithmParameters
 import java.security.KeyFactory
 import java.security.KeyPair
@@ -23,14 +22,22 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 data class WebDropQrPayload(
-    val v: Int = 1,
+    val v: Int = 2,
     val sid: String,
     val pk: String,
-    val nonce: String,
+    val svc: String,
     val t: Long
 )
 
 object WebDropCrypto {
+    private val consumedSessionIds = LinkedHashSet<String>()
+
+    @Synchronized
+    fun consumeSessionId(sessionId: String): Boolean {
+        if (!sessionId.matches(Regex("[0-9a-f]{32}")) || !consumedSessionIds.add(sessionId)) return false
+        while (consumedSessionIds.size > 128) consumedSessionIds.remove(consumedSessionIds.first())
+        return true
+    }
 
     fun parseQrPayload(rawJson: String): WebDropQrPayload? {
         return try {
@@ -41,23 +48,7 @@ object WebDropCrypto {
     }
 
     /**
-     * Verifies the client Proof of Work (PoW) solution.
-     * Ensures SHA-256(sid:t:nonce) starts with the target number of zero hex characters (default 4).
-     */
-    fun verifyProofOfWork(sessionId: String, timestamp: Long, nonce: String, difficulty: Int = 4): Boolean {
-        return try {
-            val prefix = "0".repeat(difficulty)
-            val base = "$sessionId:$timestamp:$nonce"
-            val digest = MessageDigest.getInstance("SHA-256").digest(base.toByteArray(Charsets.UTF_8))
-            val hashHex = digest.joinToString("") { "%02x".format(it) }
-            hashHex.startsWith(prefix)
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    /**
-     * Verifies the timestamp is within acceptable drift (default 120s).
+     * Verifies the timestamp is within the short pairing window.
      */
     fun verifyTimeWindow(timestamp: Long, maxDriftSeconds: Long = 120): Boolean {
         val now = System.currentTimeMillis() / 1000
@@ -127,16 +118,34 @@ object WebDropCrypto {
         return ka.generateSecret()
     }
 
-    /**
-     * Computes the TOTP 6-digit Short Authentication String (SAS) for visual verification.
-     * Code = Truncate6(HMAC-SHA256(sharedSecret, floor(timestamp / 30)))
-     */
-    fun computeTotpCode(sharedSecret: ByteArray, timestamp: Long = System.currentTimeMillis() / 1000): String {
-        val timeBucket = timestamp / 30
+    /** HKDF-SHA-256 session key, bound to both public keys and the one-time QR session. */
+    fun deriveSessionKey(sharedSecret: ByteArray, sessionId: String, webPublicKey: ByteArray, phonePublicKey: ByteArray): ByteArray {
+        val transcript = "kunjika-web-drop-v2|$sessionId|${bytesToHex(webPublicKey)}|${bytesToHex(phonePublicKey)}".toByteArray(Charsets.UTF_8)
+        val salt = MessageDigest.getInstance("SHA-256").digest(transcript)
+        return hkdfExpand(sharedSecret, salt, "kunjika-web-drop-v2/aes-gcm")
+    }
+
+    fun derivePairingCodeKey(sharedSecret: ByteArray, sessionId: String, webPublicKey: ByteArray, phonePublicKey: ByteArray): ByteArray {
+        val transcript = "kunjika-web-drop-v2|$sessionId|${bytesToHex(webPublicKey)}|${bytesToHex(phonePublicKey)}".toByteArray(Charsets.UTF_8)
+        val salt = MessageDigest.getInstance("SHA-256").digest(transcript)
+        return hkdfExpand(sharedSecret, salt, "kunjika-web-drop-v2/pairing-code")
+    }
+
+    private fun hkdfExpand(sharedSecret: ByteArray, salt: ByteArray, info: String): ByteArray {
         val mac = Mac.getInstance("HmacSHA256")
-        mac.init(SecretKeySpec(sharedSecret, "HmacSHA256"))
-        val buffer = ByteBuffer.allocate(8).putLong(timeBucket).array()
-        val hmac = mac.doFinal(buffer)
+        mac.init(SecretKeySpec(salt, "HmacSHA256"))
+        val prk = mac.doFinal(sharedSecret)
+        mac.init(SecretKeySpec(prk, "HmacSHA256"))
+        return mac.doFinal("$info\u0001".toByteArray(Charsets.UTF_8))
+    }
+
+    /**
+     * Computes a six-digit short authentication string for transcript comparison.
+     */
+    fun computePairingCode(sessionKey: ByteArray): String {
+        val mac = Mac.getInstance("HmacSHA256")
+        mac.init(SecretKeySpec(sessionKey, "HmacSHA256"))
+        val hmac = mac.doFinal("kunjika-web-drop-v2/pairing-code".toByteArray(Charsets.UTF_8))
 
         val offset = hmac[hmac.size - 1].toInt() and 0x0f
         val binary = ((hmac[offset].toInt() and 0x7f) shl 24) or
@@ -152,9 +161,9 @@ object WebDropCrypto {
      * Encrypts a JSON payload using AES-256-GCM.
      * Format: IV (12 bytes) + CipherText (with 16-byte auth tag).
      */
-    fun encryptPayload(jsonPayload: String, sharedSecret: ByteArray): ByteArray {
+    fun encryptPayload(jsonPayload: String, sessionKey: ByteArray): ByteArray {
         val iv = ByteArray(12).apply { SecureRandom().nextBytes(this) }
-        val keySpec = SecretKeySpec(sharedSecret, "AES")
+        val keySpec = SecretKeySpec(sessionKey, "AES")
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, GCMParameterSpec(128, iv))
         val cipherText = cipher.doFinal(jsonPayload.toByteArray(Charsets.UTF_8))

@@ -3,7 +3,6 @@
  * Handles pairing, GATT notifications, MTU packet reassembly, and status acknowledgment.
  */
 
-const KUNJIKA_SERVICE_UUID = "e9a30001-9c3f-4e89-9a2d-7d81a9c41b80";
 const CHAR_HANDSHAKE_UUID = "e9a30002-9c3f-4e89-9a2d-7d81a9c41b80";
 const CHAR_TRANSFER_UUID = "e9a30003-9c3f-4e89-9a2d-7d81a9c41b80";
 const CHAR_ACK_UUID = "e9a30004-9c3f-4e89-9a2d-7d81a9c41b80";
@@ -19,6 +18,7 @@ class KunjikaBleClient {
         this.expectedTotalLength = 0;
         this.expectedTotalChunks = 0;
         this.onTransferComplete = null;
+        this.onHandshake = null;
         this.onStatusChange = null;
     }
 
@@ -36,7 +36,7 @@ class KunjikaBleClient {
      * Request device and establish BLE connection.
      * Uses the Session ID prefix for device filtering.
      */
-    async connect(expectedSessionPrefix) {
+    async connect(serviceUuid) {
         if (!this.isSupported()) {
             const errorMsg = "Web Bluetooth is disabled or not supported in this browser. Please use Chrome, Edge, or enable Web Bluetooth in Brave settings.";
             this.updateStatus(errorMsg, "error");
@@ -46,25 +46,10 @@ class KunjikaBleClient {
         this.updateStatus("Scanning for Kunjika via Bluetooth...", "busy");
 
         try {
-            // First attempt: Request device with Kunjika BLE Service UUID filter
-            try {
-                this.device = await navigator.bluetooth.requestDevice({
-                    filters: [
-                        { services: [KUNJIKA_SERVICE_UUID] }
-                    ],
-                    optionalServices: [KUNJIKA_SERVICE_UUID]
-                });
-            } catch (filterErr) {
-                // If filter didn't find device or threw non-cancel error, try acceptAllDevices fallback
-                if (filterErr.name !== "NotFoundError") {
-                    this.device = await navigator.bluetooth.requestDevice({
-                        acceptAllDevices: true,
-                        optionalServices: [KUNJIKA_SERVICE_UUID]
-                    });
-                } else {
-                    throw filterErr;
-                }
-            }
+            this.device = await navigator.bluetooth.requestDevice({
+                filters: [{ services: [serviceUuid] }],
+                optionalServices: [serviceUuid]
+            });
 
             this.device.addEventListener("gattserverdisconnected", () => {
                 this.updateStatus("Bluetooth device disconnected", "info");
@@ -74,7 +59,7 @@ class KunjikaBleClient {
             this.server = await this.device.gatt.connect();
 
             this.updateStatus("Discovering Kunjika Security Services...", "busy");
-            const service = await this.server.getPrimaryService(KUNJIKA_SERVICE_UUID);
+            const service = await this.server.getPrimaryService(serviceUuid);
 
             this.handshakeChar = await service.getCharacteristic(CHAR_HANDSHAKE_UUID);
             this.transferChar = await service.getCharacteristic(CHAR_TRANSFER_UUID);
@@ -84,7 +69,9 @@ class KunjikaBleClient {
             await this.transferChar.startNotifications();
             this.transferChar.addEventListener("characteristicvaluechanged", (e) => this.handleIncomingChunk(e));
 
-            this.updateStatus("⚡ Bluetooth Connected to Kunjika Vault!", "success");
+            const phoneKey = await this.handshakeChar.readValue();
+            if (this.onHandshake) await this.onHandshake(new Uint8Array(phoneKey.buffer, phoneKey.byteOffset, phoneKey.byteLength).slice());
+            this.updateStatus("Connected. Compare the pairing code on both devices before approving.", "success");
             return true;
         } catch (error) {
             if (error.name === "NotFoundError") {
@@ -104,6 +91,10 @@ class KunjikaBleClient {
         await this.handshakeChar.writeValue(dataBytes);
     }
 
+    async confirmPairing() {
+        await this.sendHandshake(new Uint8Array([0x02]));
+    }
+
     /**
      * Handles chunked data arriving over BLE (MTU may be 20 to 512 bytes).
      * Chunk format: [TotalLength (2 bytes big endian)] [ChunkIndex (1 byte)] [TotalChunks (1 byte)] [Payload]
@@ -119,9 +110,23 @@ class KunjikaBleClient {
         const totalChunks = data[3];
         const chunkData = data.slice(4);
 
-        if (!this.expectedTotalLength || chunkIndex === 0) {
+        if (totalLength < 93 || totalLength > 4080 || totalChunks !== Math.ceil(totalLength / 16) || chunkIndex >= totalChunks) {
+            this.receivedChunks.clear();
+            this.expectedTotalLength = 0;
+            this.expectedTotalChunks = 0;
+            this.updateStatus("Invalid BLE packet framing. Transfer stopped.", "error");
+            return;
+        }
+
+        if (!this.expectedTotalLength) {
             this.expectedTotalLength = totalLength;
             this.expectedTotalChunks = totalChunks;
+        } else if (totalLength !== this.expectedTotalLength || totalChunks !== this.expectedTotalChunks) {
+            this.receivedChunks.clear();
+            this.expectedTotalLength = 0;
+            this.expectedTotalChunks = 0;
+            this.updateStatus("Inconsistent BLE packet framing. Transfer stopped.", "error");
+            return;
         }
 
         // Deduplicate and store by chunk index
@@ -141,8 +146,17 @@ class KunjikaBleClient {
                 fullPayload.set(chunk, offset);
                 offset += chunk.length;
             }
+            if (offset !== this.expectedTotalLength) {
+                this.receivedChunks.clear();
+                this.expectedTotalLength = 0;
+                this.expectedTotalChunks = 0;
+                this.updateStatus("Truncated BLE payload. Transfer stopped.", "error");
+                return;
+            }
 
             this.receivedChunks.clear();
+            this.expectedTotalLength = 0;
+            this.expectedTotalChunks = 0;
             this.updateStatus("Payload received! Verifying and decrypting...", "busy");
             if (this.onTransferComplete) {
                 this.onTransferComplete(fullPayload);
@@ -172,6 +186,8 @@ class KunjikaBleClient {
         this.server = null;
         this.transferChar = null;
         this.receivedChunks.clear();
+        this.expectedTotalLength = 0;
+        this.expectedTotalChunks = 0;
     }
 }
 

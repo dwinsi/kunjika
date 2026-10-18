@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kunjika.app.core.security.KeystoreManager
@@ -43,9 +44,12 @@ class UserPreferences(private val context: Context) {
         private val KEY_CHANGES_SINCE_BACKUP = intPreferencesKey("changes_since_backup")
         private val KEY_DURESS_PIN_HASH = stringPreferencesKey("duress_pin_hash")
         private val KEY_DURESS_PIN_SALT = stringPreferencesKey("duress_pin_salt")
+        private val KEY_PIN_FAILURES = intPreferencesKey("pin_failures")
+        private val KEY_PIN_LOCKOUT_UNTIL = longPreferencesKey("pin_lockout_until")
 
         private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
-        private const val ITERATIONS = 100000
+        private const val ITERATIONS = 600000
+        private const val LEGACY_PIN_ITERATIONS = 100000
         private const val KEY_LENGTH = 256
     }
 
@@ -103,7 +107,7 @@ class UserPreferences(private val context: Context) {
 
     suspend fun setMasterPin(pin: String) {
         val salt = generateSalt()
-        val hash = hashPin(pin, salt)
+        val hash = "v2:${hashPin(pin, salt, ITERATIONS)}"
         context.dataStore.edit { preferences ->
             preferences[KEY_MASTER_PIN_HASH] = hash
             preferences[KEY_MASTER_PIN_SALT] = android.util.Base64.encodeToString(salt, android.util.Base64.NO_WRAP)
@@ -116,8 +120,7 @@ class UserPreferences(private val context: Context) {
         val saltBase64 = preferences[KEY_MASTER_PIN_SALT] ?: return false
         val salt = android.util.Base64.decode(saltBase64, android.util.Base64.NO_WRAP)
         
-        val enteredHash = hashPin(pin, salt)
-        return storedHash == enteredHash
+        return verifyStoredPin(pin, salt, storedHash)
     }
 
     suspend fun getOrCreateDatabasePassphrase(): ByteArray {
@@ -265,8 +268,9 @@ class UserPreferences(private val context: Context) {
     }
 
     suspend fun setDuressPin(pin: String) {
+        require(pin.length >= 6 && pin.all(Char::isDigit)) { "Duress PIN must contain at least 6 digits" }
         val salt = generateSalt()
-        val hash = hashPin(pin, salt)
+        val hash = "v2:${hashPin(pin, salt, ITERATIONS)}"
         context.dataStore.edit { preferences ->
             preferences[KEY_DURESS_PIN_HASH] = hash
             preferences[KEY_DURESS_PIN_SALT] = Base64.encodeToString(salt, Base64.NO_WRAP)
@@ -281,12 +285,15 @@ class UserPreferences(private val context: Context) {
 
     suspend fun verifyPinMode(pin: String): PinMode {
         val preferences = context.dataStore.data.first()
+        if ((preferences[KEY_PIN_LOCKOUT_UNTIL] ?: 0L) > System.currentTimeMillis()) return PinMode.INVALID
 
         val storedMasterHash = preferences[KEY_MASTER_PIN_HASH]
         val masterSaltBase64 = preferences[KEY_MASTER_PIN_SALT]
         if (!storedMasterHash.isNullOrEmpty() && !masterSaltBase64.isNullOrEmpty()) {
             val salt = Base64.decode(masterSaltBase64, Base64.NO_WRAP)
-            if (storedMasterHash == hashPin(pin, salt)) {
+            if (verifyStoredPin(pin, salt, storedMasterHash)) {
+                resetPinFailures()
+                upgradePinHashIfLegacy(pin, salt, storedMasterHash, KEY_MASTER_PIN_HASH)
                 return PinMode.MASTER
             }
         }
@@ -295,16 +302,47 @@ class UserPreferences(private val context: Context) {
         val duressSaltBase64 = preferences[KEY_DURESS_PIN_SALT]
         if (!storedDuressHash.isNullOrEmpty() && !duressSaltBase64.isNullOrEmpty()) {
             val salt = Base64.decode(duressSaltBase64, Base64.NO_WRAP)
-            if (storedDuressHash == hashPin(pin, salt)) {
+            if (verifyStoredPin(pin, salt, storedDuressHash)) {
+                resetPinFailures()
+                upgradePinHashIfLegacy(pin, salt, storedDuressHash, KEY_DURESS_PIN_HASH)
                 return PinMode.DURESS
             }
         }
 
+        context.dataStore.edit { prefs ->
+            val failures = (prefs[KEY_PIN_FAILURES] ?: 0) + 1
+            prefs[KEY_PIN_FAILURES] = failures
+            if (failures >= 5) {
+                val exponent = (failures - 5).coerceAtMost(10)
+                val delayMillis = 60_000L * (1L shl exponent)
+                prefs[KEY_PIN_LOCKOUT_UNTIL] = System.currentTimeMillis() + delayMillis
+            }
+        }
         return PinMode.INVALID
     }
 
-    private fun hashPin(pin: String, salt: ByteArray): String {
-        val spec = PBEKeySpec(pin.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+    private suspend fun resetPinFailures() {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_PIN_FAILURES] = 0
+            prefs[KEY_PIN_LOCKOUT_UNTIL] = 0L
+        }
+    }
+
+    private fun verifyStoredPin(pin: String, salt: ByteArray, stored: String): Boolean {
+        val legacy = !stored.startsWith("v2:")
+        val expected = if (legacy) stored else stored.removePrefix("v2:")
+        val iterations = if (legacy) LEGACY_PIN_ITERATIONS else ITERATIONS
+        return expected == hashPin(pin, salt, iterations)
+    }
+
+    private suspend fun upgradePinHashIfLegacy(pin: String, salt: ByteArray, oldHash: String, key: androidx.datastore.preferences.core.Preferences.Key<String>) {
+        if (oldHash.startsWith("v2:")) return
+        val upgraded = "v2:${hashPin(pin, salt, ITERATIONS)}"
+        context.dataStore.edit { it[key] = upgraded }
+    }
+
+    private fun hashPin(pin: String, salt: ByteArray, iterations: Int = ITERATIONS): String {
+        val spec = PBEKeySpec(pin.toCharArray(), salt, iterations, KEY_LENGTH)
         val factory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
         val hash = factory.generateSecret(spec).encoded
         return hash.joinToString("") { "%02x".format(it) }

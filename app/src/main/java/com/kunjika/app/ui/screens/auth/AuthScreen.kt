@@ -191,7 +191,7 @@ fun AuthScreen(authViewModel: AuthViewModel) {
                             keyboardController?.hide()
                             if (isSetup) {
                                 if (!isConfirmStep) {
-                                    if (pin.length >= 4) isConfirmStep = true
+                                    if (pin.length >= 6) isConfirmStep = true
                                 } else {
                                     if (pin == confirmPin) authViewModel.setupMasterPin(pin)
                                 }

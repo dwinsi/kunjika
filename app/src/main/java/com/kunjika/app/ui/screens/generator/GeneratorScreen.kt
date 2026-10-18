@@ -127,7 +127,7 @@ fun GeneratorScreen(
                         id = "gen_actions",
                         targetKey = "gen_action_buttons",
                         title = "Copy & Vault Actions",
-                        description = "Generate secrets, copy with 30s auto-clearing clipboard security, or save directly to your Vault."
+                        description = "Generate secrets, copy when needed, or save directly to your Vault. Clipboard history and other apps may retain copied values."
                     ),
                     TourStep(
                         id = "gen_options",
@@ -425,9 +425,8 @@ fun GeneratorScreen(
                                     label = "Generated Password",
                                     text = uiState.generatedPassword,
                                     isSensitive = true,
-                                    autoClearSeconds = 30L
                                 )
-                                Toast.makeText(context, "Copied! Clipboard clears in 30s", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Copied. Clipboard history may retain it.", Toast.LENGTH_SHORT).show()
                             }
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center

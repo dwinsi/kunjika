@@ -42,20 +42,20 @@ fun OnboardingScreen(
 ) {
     val pages = listOf(
         OnboardingPage(
-            title = "Zero-Network Privacy",
-            description = "Kunjika works 100% offline. No internet permission means your data never reaches the cloud. Total sovereignty over your secrets.",
+            title = "Local-First Privacy",
+            description = "Kunjika has no Android internet permission. Bluetooth, QR, clipboard, Autofill, and exports can share selected data with other apps or devices.",
             icon = Icons.Default.WifiOff,
             color = MaterialTheme.colorScheme.primary
         ),
         OnboardingPage(
-            title = "Hardware-Backed Security",
-            description = "Your Master PIN and vault entries are protected by the device's secure hardware (TEE/HSM) and a local blockchain audit log.",
+            title = "Encrypted Local Storage",
+            description = "Vault data is protected with SQLCipher and Android Keystore. Hardware backing varies by device; the Master PIN is an app access gate.",
             icon = Icons.Default.Lock,
             color = MaterialTheme.colorScheme.secondary
         ),
         OnboardingPage(
             title = "Biometric Convenience",
-            description = "Use your fingerprint or face to unlock your vault instantly. Quick, secure, and cryptographically bound to your hardware.",
+            description = "Use a supported fingerprint or face biometric for convenient vault access.",
             icon = Icons.Default.Fingerprint,
             color = MaterialTheme.colorScheme.tertiary
         )

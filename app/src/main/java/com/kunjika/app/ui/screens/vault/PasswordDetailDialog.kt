@@ -244,8 +244,8 @@ fun PasswordDetailDialog(
                             IconButton(
                                 onClick = {
                                     requestBiometricToReveal {
-                                        ClipboardHelper.copyToClipboard(context, "Password", item.plaintextPassword, isSensitive = true, autoClearSeconds = 30L)
-                                        Toast.makeText(context, "Password copied! Auto-clears in 30s", Toast.LENGTH_SHORT).show()
+                                        ClipboardHelper.copyToClipboard(context, "Password", item.plaintextPassword, isSensitive = true)
+                                        Toast.makeText(context, "Password copied. Clipboard history may retain it.", Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 modifier = Modifier.size(28.dp)
@@ -505,6 +505,7 @@ fun QrCodeDisplayDialog(
     item: DecryptedPasswordItem,
     onDismiss: () -> Unit
 ) {
+    var showTransferCode by remember { mutableStateOf(false) }
     val transferCode = remember { QrEncryptionManager.generateTransferCode() }
     val payload = remember(item, transferCode) { 
         val json = QrSyncPayload.fromDecryptedItem(item).toJson()
@@ -535,40 +536,39 @@ fun QrCodeDisplayDialog(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                qrBitmap?.let {
-                    androidx.compose.foundation.Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = "QR Code",
-                        modifier = Modifier
-                            .size(220.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(androidx.compose.ui.graphics.Color.White)
-                            .padding(8.dp)
+                if (showTransferCode) {
+                    Text("Transfer Code", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = transferCode.chunked(4).joinToString(" "),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = FontFamily.Monospace,
+                        letterSpacing = 2.sp,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
+                    Text(
+                        text = "Enter this 16-digit code on the receiving device. Keep it separate from the QR image.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                    TextButton(onClick = { showTransferCode = false }) { Text("Back to QR") }
+                } else {
+                    qrBitmap?.let {
+                        androidx.compose.foundation.Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = "Encrypted transfer QR code",
+                            modifier = Modifier
+                                .size(220.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(androidx.compose.ui.graphics.Color.White)
+                                .padding(8.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextButton(onClick = { showTransferCode = true }) { Text("Hide QR and reveal transfer code") }
                 }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    text = "Transfer Code",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                
-                Text(
-                    text = transferCode.chunked(3).joinToString(" "),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFamily = FontFamily.Monospace,
-                    letterSpacing = 4.sp
-                )
-
-                Text(
-                    text = "Enter this code on the receiving device",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 

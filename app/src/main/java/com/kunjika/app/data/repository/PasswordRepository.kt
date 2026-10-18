@@ -48,7 +48,10 @@ class PasswordRepository(
             BlockchainManager.computeHash("${it.previousHash}|${it.contentHash}|${it.action}|${it.timestamp}|${it.signature}")
         } ?: "0"
 
-        val contentHash = BlockchainManager.computeHash(entity.toString())
+        val contentHash = android.util.Base64.encodeToString(
+            com.kunjika.app.core.security.KeystoreManager.hmacVaultMetadata(entity.toString().toByteArray(Charsets.UTF_8)),
+            android.util.Base64.NO_WRAP
+        )
         val timestamp = System.currentTimeMillis()
         val signature = BlockchainManager.signBlock(previousHash, contentHash, action, timestamp)
 
@@ -235,7 +238,20 @@ class PasswordRepository(
     }
 
     suspend fun getPasswordsByDomain(domain: String): List<DecryptedPasswordItem> = withContext(Dispatchers.IO) {
-        passwordDao.getPasswordsByDomain(domain).map { it.toDecrypted() }
+        val requestedHost = canonicalHost(domain) ?: return@withContext emptyList()
+        passwordDao.getAllPasswordsSync()
+            .filter { canonicalHost(it.websiteUrl) == requestedHost }
+            .map { it.toDecrypted() }
+    }
+
+    private fun canonicalHost(value: String): String? {
+        return try {
+            val candidate = if (value.contains("://")) value else "https://$value"
+            val host = java.net.URI(candidate).host?.trimEnd('.')?.lowercase(java.util.Locale.ROOT) ?: return null
+            java.net.IDN.toASCII(host)
+        } catch (_: Exception) {
+            null
+        }
     }
 
     suspend fun savePassword(

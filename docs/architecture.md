@@ -5,13 +5,13 @@
 [![Design](https://img.shields.io/badge/pattern-Clean%20MVVM%20%2B%20Compose-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
 [![Security Core](https://img.shields.io/badge/security%20core-TEE%20%2B%20SQLCipher-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 
-Kunjika is built on a **Security-First Clean Architecture**, combining the latest Android Jetpack components with hardware-backed cryptographic primitives and zero-network privacy.
+Kunjika uses a local-first architecture with Android Keystore and encrypted local storage. Hardware backing varies by device, and Bluetooth, operating-system integrations, and the receiving computer remain in scope.
 
 ---
 
 ## 🏛️ High-Level Component Architecture
 
-The architecture ensures that sensitive credentials are **always encrypted at rest and in transit** and **physically prohibited from touching the network**.
+The architecture encrypts vault data at rest and uses authenticated encryption for Web Drop payloads in transit. The Android app removes its `INTERNET` permission; Bluetooth and other operating-system integrations are still communication channels.
 
 ```mermaid
 %%{init: {
@@ -115,7 +115,7 @@ graph TB
 ### 1. Double-Lock Encryption Flow
 Kunjika implements a two-stage encryption pipeline:
 1. **Field-Level Encryption**: Every sensitive credential field is encrypted with an individual AES-256-GCM cipher keyed by the Android KeyStore TEE master key.
-2. **Database-Level Encryption**: The encrypted payload is persisted within a 256-bit SQLCipher SQLite database, unlocked by a unique key derived via PBKDF2 (100,000 iterations) from the Master PIN.
+2. **Database-Level Encryption**: SQLCipher uses a random 256-bit passphrase wrapped by Android Keystore. The Master PIN gates the app UI; it is not the database key.
 
 ### 2. Hardware-Bound Biometric PIN Storage Flow
 To achieve instant biometric unlock without compromising PIN entropy or persisting plaintext:
@@ -170,26 +170,24 @@ sequenceDiagram
     Auth->>Auth: Unlock Vault & Derive SQLCipher Key
 ```
 
-### 3. Local Blockchain Ledger Flow
-Every mutation (Create, Update, Delete, Export) writes a signed block to the internal blockchain ledger:
-- **Payload Digest**: SHA-256 hash of the modified entity.
+### 3. Local Signed Audit Chain
+Mutations write signed entries to a local hash chain:
+- **Vault Row Digest**: HMAC-SHA-256 of the modified serialized row using a Keystore-held key.
 - **Hardware Signature**: Signed with an elliptic curve (`secp256r1`) private key residing inside the device's TEE/StrongBox.
-- **Merkle Chain Link**: Each block contains `previousBlockHash`, creating an immutable cryptographic chain that detects direct database file tampering.
+- **Signed Hash Chain**: Blocks link to the previous block and use a local Keystore signing key. This is tamper-evident for some edits, but cannot reliably detect full deletion, tail truncation, or compromise of the running app.
 
 ### 4. Environmental Integrity & Tamper Protection
 Before granting access to sensitive cryptographic operations:
 - **Root Verification**: Checks for `su` binaries across system locations, inspects `Build.TAGS` for `test-keys`, and executes a runtime `which su` probe.
 - **Emulator Verification**: Inspects build properties, brand/device markers, hardware signatures (`goldfish`, `ranchu`), and product names (`google_sdk`, `vbox86p`).
-- **Hardware KeyStore Validation**: Confirms via `KeyInfo.isInsideSecureHardware` whether the active master key is physically hosted in a TEE or StrongBox.
-- **Play Integrity API**: Verifies that the app binary is genuine and has not been repackaged or tampered with.
+- **Keystore Security Level**: Reports whether Android Keystore identifies a key as software, TEE, or StrongBox backed. This is a device-provided signal, not independent attestation.
+- **Play Integrity API**: The client can request a token. Without a backend verifying that token, the app does not have a trusted integrity verdict.
 
 ### 5. Direct Web Drop Flow (BLE GATT with Reassembly)
 Enables secure transmission of passwords to desktop browsers without network access:
-- **Proof of Work Verification**: Phone validates browser's dynamic SHA-256 PoW challenge (`< 0x0800...`).
-- **ECDH P-256 Key Exchange**: Phone scans the browser's 65-byte uncompressed public key and computes a 256-bit shared secret using HKDF-SHA256 (`"kunjika-web-drop-v1"`).
-- **Visual SAS Code**: Both devices independently compute and display a 6-digit TOTP confirmation code for visual comparison.
-- **Biometric Gate**: User authorizes the transfer via `BiometricPrompt` (`BIOMETRIC_STRONG`).
-- **BLE GATT Chunking & Retries**: The phone acts as a peripheral GATT server advertising Service `e9a30001-c852-4e08-9bfa-87bb0f592658`, streaming chunked AES-256-GCM ciphertext with sequence numbering and notification retries to ensure reliable transmission without packet loss.
+- **Ephemeral ECDH and HKDF**: Both sides derive transcript-bound keys from ephemeral P-256 keys, the session ID, and both public keys.
+- **Pairing confirmation**: After biometric authorization, both screens show a six-digit comparison code. The browser requires a confirmation click before the phone can release the credential.
+- **Per-session BLE service**: A random service UUID is advertised only after biometric approval; the phone sends AES-256-GCM ciphertext over BLE.
 - **Audit Log**: An `EXPORT_BLE` block is appended to the local blockchain ledger.
 
 ---
@@ -204,9 +202,9 @@ Enables secure transmission of passwords to desktop browsers without network acc
 | **UI Toolkit** | Jetpack Compose (BOM) | `2025.02.00` | Declarative UI with Material 3 |
 | **Navigation** | Navigation Compose | `2.8.7` | Type-safe in-app navigation |
 | **Database** | Room + SQLCipher | `2.8.4` / `4.6.1` | Local SQLite database with 256-bit AES encryption |
-| **Biometrics** | AndroidX Biometric | `1.2.0-alpha05` | Hardware biometric authentication & `CryptoObject` |
+| **Biometrics** | AndroidX Biometric | `1.1.0` | Biometric authentication & `CryptoObject` |
 | **Security Integrity** | Google Play Integrity | `1.6.0` | Application attestation and tamper protection |
 | **Preferences** | Jetpack DataStore | `1.1.2` | Encrypted key-value storage |
 | **Camera & Barcode** | CameraX + ML Kit Barcode | `1.4.1` / `17.3.0` | QR code scanning for offline sync |
 | **Bluetooth** | Android Bluetooth Low Energy | API 35 Native | BLE GATT Peripheral server for Web Drop |
-| **Desktop Companion**| HTML5 / Vanilla JS / WebCrypto | Native | Client-side RAM-only Web Drop receiver |
+| **Desktop Companion**| HTML5 / Vanilla JS / WebCrypto | Native | Browser receiver with best-effort memory cleanup |

@@ -1,7 +1,7 @@
 <div align="center">
   <img src="images/app_icon_512.png" alt="Kunjika Logo" width="128" style="border-radius: 28px; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);" />
   <h1>Kunjika User Guide & Quickstart</h1>
-  <p><em>Zero-Network, Cryptographically Hardened Sovereign Password Vault for Android</em></p>
+  <p><em>Local-first encrypted password vault for Android</em></p>
 </div>
 
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
@@ -20,10 +20,10 @@ Welcome to **Kunjika**! If you are new to the app, this guide will help you unde
 
 Most password managers (like Chrome, LastPass, or 1Password) save your passwords on their cloud servers over the internet. If their servers ever get breached, your logins could be leaked.
 
-**Kunjika is 100% offline.** 
-- It does **not** have internet permission. The Android operating system ensures the app cannot connect to Wi-Fi, cellular networks, or cloud servers.
+**Kunjika has no Android internet permission.**
+- The app cannot make ordinary internet connections, but it can share data through Bluetooth, QR, clipboard, Android Autofill, and user-controlled exports.
 - Outbound data transfer occurs strictly under your explicit, biometric-authorized control via local channels: **Direct Web Drop** (Bluetooth BLE to your PC) or **Encrypted QR** (phone-to-phone).
-- Your passwords are encrypted directly by your phone's physical security chip (Hardware TEE / StrongBox).
+- Android Keystore protects key material; hardware backing depends on the device and must not be assumed.
 - **You** own the keys. No accounts to create, no monthly subscriptions, and zero tracking.
 
 ---
@@ -35,17 +35,17 @@ When you open Kunjika for the first time, getting set up takes less than a minut
 | 1. Welcome Screen | 2. Master PIN & Biometrics |
 | :---: | :---: |
 | ![Welcome Screen](images/screenshot_phone_01.png) | ![Unlock Screen](images/screenshot_phone_02.png) |
-| *Zero-network guarantee confirmation* | *Create your Master PIN and enable Fingerprint* |
+| *Local storage overview* | *Create a Master PIN and enable biometrics* |
 
 ### Step 1: Review Onboarding
 Swipe through the quick onboarding screens explaining how Kunjika keeps your credentials safe offline.
 
 ### Step 2: Set Your Master PIN
-- Pick a memorable 4 to 8-digit **Master PIN**. 
+- Pick a memorable **Master PIN of at least 6 digits**.
 - Confirm your PIN.
 
 > [!WARNING]
-> **Keep your Master PIN safe!** Because Kunjika does not connect to any servers, there is no "Forgot Password" button. Nobody—not even the app developers—can recover your vault if you lose your Master PIN.
+> **Keep your Master PIN safe.** It gates app access but is not the database encryption key. An encrypted export or printed database passphrase may help with recovery; the printed passphrase alone does not restore entries on a different phone.
 
 ### Step 3: Enable Biometrics (Fingerprint / Face Unlock)
 - Tap **Unlock with Biometrics** to link your fingerprint or face recognition.
@@ -123,7 +123,7 @@ Store your logins, usernames, passwords, and sensitive notes safely.
 #### How to find and use a saved password:
 - Use the **Search bar** at the top to type the name of the service.
 - Tap the account card to open the **Details Dialog**.
-- Tap the **Copy Password** button. For your privacy, the password is copied and your clipboard will automatically clear after a short timeout.
+- Tap **Copy Password** only when ready to paste it. Clipboard history, keyboard apps, or other software may read or retain copied values; Kunjika does not automatically clear the clipboard.
 
 ---
 
@@ -160,8 +160,8 @@ sequenceDiagram
     Note over PC,Phone: Both screens display matching 6-digit code (e.g. 544 655)
     User->>Phone: Touches fingerprint sensor to approve
     Phone->>PC: Securely beams encrypted password
-    PC->>PC: Decrypts in RAM & copies to laptop clipboard
-    Note over PC: Shreds password from memory & clipboard in 30 seconds!
+    PC->>PC: Decrypts and displays masked credential
+    Note over PC: Close view to clear displayed fields (best-effort; memory is not guaranteed erased)
 ```
 
 #### Step-by-Step Instructions:
@@ -169,10 +169,10 @@ sequenceDiagram
    👉 **[https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)**
 2. On your phone, open Kunjika, tap the account you want to use, and tap **⚡ Web Drop**.
 3. Point your phone camera at your computer screen to scan the QR code.
-4. Verify that the **6-digit Pairing Code** shown on your phone matches the code on your laptop screen.
-5. Touch your phone's fingerprint sensor to approve.
-6. **Done!** The password is automatically copied to your computer's clipboard. Just press `Ctrl+V` (or `Cmd+V` on Mac) to log in!
-7. After 30 seconds, the companion page automatically wipes the password from both your browser memory and clipboard for maximum safety.
+4. Authenticate on the phone to start Bluetooth pairing.
+5. Compare the **6-digit Pairing Code** on both screens. Confirm on the browser, then approve sending on the phone.
+6. The password appears masked in the browser. Reveal or copy it only when needed; copied text may be retained by clipboard history or other software.
+7. Close the transfer view to clear visible fields. JavaScript cannot guarantee that browser memory or clipboard history is erased.
 
 ---
 
@@ -183,11 +183,11 @@ Bought a new phone or want to share a Wi-Fi or family password with another devi
 1. On **Phone A** (Sender):
    - Open the credential in your Vault.
    - Tap **Share via QR**.
-   - Kunjika will encrypt the item with AES-256 and display a secure QR code along with a temporary **6-digit Transfer Code**.
+   - Kunjika will encrypt the item with AES-256-GCM and display a QR code and temporary **16-digit Transfer Code** separately.
 2. On **Phone B** (Receiver):
    - Open Kunjika, go to Vault, and tap **Scan QR Import**.
    - Scan the QR code displayed on Phone A.
-   - Enter the 6-digit Transfer Code to decrypt.
+   - Enter the 16-digit Transfer Code to decrypt. Older QR transfer formats are no longer accepted because their short codes were vulnerable to offline guessing.
 3. The account is instantly imported into Phone B's vault!
 
 ---
@@ -202,19 +202,19 @@ Tap the **🛡️ Security** tab to audit your passwords and device health:
   - **Aging Passwords**: Reminds you to rotate passwords that haven't been updated in over a year.
 - **Device Environment Audit**:
   - Verifies that your phone is not running unauthorized root modifications or malicious malware debuggers.
-  - Confirms hardware key attestation (confirming encryption keys are safely held in physical silicon).
+  - Reports whether Android confirms hardware-backed Keystore protection; this varies by device and is not remote key attestation.
 
 ---
 
-### Use Case 7: Backing Up with an Emergency Recovery Kit
+### Use Case 7: Printing the Local Database Passphrase
 
-Because Kunjika is 100% offline, **you** are in control of your backups.
+Kunjika has no Android internet permission, so **you** choose where exported backups are stored.
 
 1. Go to the **⚙️ Settings** tab.
-2. Tap **Emergency Recovery Kit**.
+2. Tap **Print Local Database Passphrase**.
 3. Authenticate with your fingerprint or Master PIN.
-4. Kunjika generates an encrypted, formatted backup document.
-5. You can print this out and store it in a physical safe, or save an encrypted backup file to an external USB drive.
+4. Kunjika generates an unencrypted PDF containing the local SQLCipher passphrase. Store it securely.
+5. This PDF does not restore entries to a new device because field encryption keys stay in Android Keystore. For migration, create an encrypted vault export and protect it with a strong passphrase.
 
 ---
 
@@ -248,10 +248,10 @@ To ensure comprehensive test coverage across every feature of Kunjika, follow th
 
 | Phase | Days | Focus Area | What to Test & Verify |
 | :--- | :---: | :--- | :--- |
-| **Phase 1** | **Days 1–2** | **Installation & Biometric Onboarding** | • Join via the Google Play Closed Test opt-in link.<br>• Install Kunjika from the Play Store on your Android device.<br>• Complete onboarding screens and verify zero-network guarantee.<br>• Set a 4–8 digit **Master PIN** and link **Biometrics (Fingerprint / Face)**.<br>• Test locking and unlocking the app 3–4 times using both PIN and Biometrics. |
+| **Phase 1** | **Days 1–2** | **Installation & Biometric Onboarding** | • Join via the Google Play Closed Test opt-in link.<br>• Install Kunjika from the Play Store on your Android device.<br>• Complete onboarding and review local storage and transfer boundaries.<br>• Set a **Master PIN of at least 6 digits** and link biometrics.<br>• Test locking and unlocking the app 3–4 times using both PIN and biometrics. |
 | **Phase 2** | **Days 3–5** | **Password Generation & Vault Operations** | • Explore all 4 generation styles in the **Generator** tab: Random Passwords, Diceware Passphrases, Numeric PINs, and TOTP Secrets.<br>• Observe the real-time **Entropy & Crack Time Indicator**.<br>• Verify that newly generated items appear in the **Generation History** card.<br>• Add 4–5 sample accounts to the **Vault** across different categories (*Personal*, *Work*, *Finance*, *Social*).<br>• Test the Vault search bar and category filter chips. |
-| **Phase 3** | **Days 6–8** | **2FA TOTP Authenticator & Android Autofill** | • Add a 2FA secret key to an account (or test key `JBSWY3DPEHPK3PXP`).<br>• Verify the rotating 6-digit code and the smooth 30-second countdown ring.<br>• Go to **⚙️ Settings > Autofill Service** and set Kunjika as your Android default.<br>• Open a browser (e.g. Chrome) or app login screen, tap a password field, and verify that Kunjika prompts biometric unlock and auto-fills your credentials. |
-| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Offline Sharing** | • On a desktop computer (Chrome, Edge, Brave, Opera), open [Web Drop](https://dwinsi.github.io/kunjika/web-companion/).<br>• On your phone, tap **Web Drop** on any vault item and scan the computer screen's QR code.<br>• Verify that the 6-digit pairing code matches, authenticate with fingerprint, and check that the credential copies to your computer clipboard.<br>• Verify the 30-second memory and clipboard auto-wipe on the PC.<br>• *(Optional)* Test Phone-to-Phone encrypted QR transfer if you have access to a second device. |
+| **Phase 3** | **Days 6–8** | **2FA TOTP Authenticator & Android Autofill** | • Add a 2FA secret key to an account (or test key `JBSWY3DPEHPK3PXP`).<br>• Verify the rotating 6-digit code.<br>• Go to **⚙️ Settings > Autofill Service** and set Kunjika as your Android default.<br>• Unlock Kunjika first. Autofill uses exact saved web host matching and is unavailable while the vault is locked. |
+| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Offline Sharing** | • Use a trusted computer and browser; the hosted companion page is mutable and cannot protect a compromised receiver.<br>• Scan the QR. Authenticate on the phone to start pairing, compare the six-digit codes, confirm on the browser, and approve on the phone.<br>• The browser does not automatically copy the password. Clipboard history may retain anything you copy.<br>• Close the view for best-effort display cleanup; memory erasure is not guaranteed.<br>• *(Optional)* Test phone-to-phone encrypted QR transfer. |
 | **Phase 5** | **Days 12–13** | **Security Audits, Themes & Emergency Backups** | • Open the **🛡️ Security** tab: verify weak/reused password checks, root detection status, and hardware key attestation.<br>• Go to **Settings** and toggle between **Obsidian Gold** and **Platinum Silver** themes.<br>• Test auto-lock timeout behavior by switching between apps or letting the screen turn off.<br>• Generate an **Emergency Recovery Kit** in Settings and inspect the exported offline document. |
 | **Phase 6** | **Day 14+** | **Google Play Store Feedback & Continuous Opt-In** | • Open Kunjika's listing in the **Google Play Store** app.<br>• Tap **Leave feedback for developer** to share your testing experience.<br>• **Keep Kunjika installed** until the developer announces official public launch! |
 
@@ -271,11 +271,11 @@ Try executing these specific scenarios to help uncover edge cases and stress-tes
 * Open Android's Recent Apps / App Switcher view.
 * **Expected Result**: Android blocks screenshot capture (or displays a security warning) and blanks the preview card in the app switcher, preventing malware from capturing passwords.
 
-#### 3. ⏱️ Clipboard Auto-Wipe Verification
+#### 3. ⏱️ Clipboard Clearing Check
 * Copy a password or TOTP code from the Vault.
-* Paste it into a text note, then wait 30–45 seconds.
+* Paste it into a text note and wait 30–45 seconds.
 * Try pasting again.
-* **Expected Result**: The clipboard should be automatically cleared to prevent background apps from reading your sensitive credentials.
+* **Expected Result**: Kunjika marks copied secrets as sensitive where supported, but does not clear the clipboard. Other apps or clipboard history may retain copied content.
 
 #### 4. 🔒 Rate Limiting & Master PIN Protection
 * Lock Kunjika and intentionally enter an incorrect PIN several times.
@@ -323,13 +323,13 @@ While you don't need to spend hours in the app, opening it daily or every other 
 **No, never.** Kunjika does not even have the Android Internet permission (`android.permission.INTERNET`) declared in its manifest. Even if someone tried to add tracking code, the Android operating system would physically block any network request.
 
 ### Q: What happens if I forget my Master PIN?
-Because Kunjika is a zero-knowledge, sovereign vault, your Master PIN is the cryptographic key that decrypts your database. No one can reset it for you. We strongly advise printing an **Emergency Recovery Kit** from the Settings tab when you first set up the app.
+The Master PIN is an app access gate, not the SQLCipher key. The recovery PDF contains the local database passphrase but is unencrypted and does not include the Keystore field-encryption keys; use an encrypted `.kunjika` export to migrate entries to another phone.
 
 ### Q: Why can't I take screenshots inside the app?
-Kunjika enables Android's `FLAG_SECURE` protection throughout the app. This prevents spyware, malware, or background apps from capturing your screen, and keeps your sensitive information hidden when you view recent apps in Android's task switcher.
+Kunjika enables Android's `FLAG_SECURE` to block ordinary screenshots and hide the app preview in recents. It cannot prevent a compromised OS, accessibility malware, external cameras, or every capture method.
 
 ### Q: What happens if I lose my phone, upgrade to a new phone, or replace a damaged device?
-Kunjika's **`.kunjika` portable backup files** are encrypted with your custom **Backup Passphrase** using industry-standard **AES-256-GCM + PBKDF2**. When you restore your `.kunjika` backup on a new or replacement phone, Kunjika decrypts the backup using your passphrase and automatically re-encrypts all entries with the new device's physical Android Keystore hardware chip (`TEE/HSM`), ensuring seamless cross-device migration without decryption errors.
+Kunjika's **`.kunjika` portable backup files** are encrypted with your custom **Backup Passphrase** using **AES-256-GCM + PBKDF2**. On import, the app decrypts the export and encrypts entries using that phone's Android Keystore. Hardware backing depends on the device.
 
 ### Q: How do I save my `.kunjika` backup file to a USB flash drive, SD card, or local folder?
 Go to **Settings → Encrypted Offline Backup → Save File**. Kunjika uses Android's official Storage Access Framework (SAF) file picker, allowing you to choose any storage destination—such as a USB-C flash drive, external SD card, or local download folder—completely offline without Kunjika ever needing internet permission.
@@ -338,7 +338,7 @@ Go to **Settings → Encrypted Offline Backup → Save File**. Kunjika uses Andr
 Kunjika automatically tracks changes to your vault. Whenever you add or edit 5 or more credentials, a discreet **"Backup Recommended"** banner chip appears at the top of your Vault screen to remind you to export a fresh backup before you forget.
 
 ### Q: Why does opening the Vault require BOTH my fingerprint AND Master PIN?
-For maximum security, Kunjika's Vault implements **True Dual-Factor Authentication (2FA)** at unlock. **Step 1** requires your physical **Fingerprint / Biometric scan**, and **Step 2** requires your **Master PIN**. Even if someone shoulder-surfs your PIN or tries to use your fingerprint while you sleep, neither factor alone can unlock your vault.
+Kunjika supports Master PIN and configured biometric unlock. These are app-level access controls; the Master PIN is not combined with the database key, and a compromised/rooted device can bypass app-level controls.
 
 ### Q: What are "High-Security Entries" and how do they protect my sensitive accounts?
 You can mark critical accounts (like Banking, Crypto Wallets, or Primary Email) as **"High Security"**. Even when your vault is unlocked, viewing, revealing, or copying a High-Security password or 2FA code requires an additional **Biometric Step-Up re-verification**, preventing an attacker who snatched an unlocked phone from accessing your most valuable credentials.

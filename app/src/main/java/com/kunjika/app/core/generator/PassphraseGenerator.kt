@@ -3,7 +3,7 @@ package com.kunjika.app.core.generator
 import java.security.SecureRandom
 
 data class PassphraseConfig(
-    val wordCount: Int = 4,
+    val wordCount: Int = 6,
     val separator: String = "-",
     val capitalize: Boolean = true,
     val includeNumber: Boolean = true

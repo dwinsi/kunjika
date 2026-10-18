@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kunjika Web Companion | 100% Offline Vault Bridge</title>
-    <meta name="description" content="100% Offline, Zero-Internet Password Transfer between Kunjika Android and Desktop Web Browser using Web Bluetooth, TOTP SAS, and Proof of Work.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none';">
+    <title>Kunjika Web Companion | Local Vault Transfer</title>
+    <meta name="description" content="Local browser companion for direct Bluetooth transfer. Use only with a trusted computer and browser.">
     <style>
         :root {
             /* ==========================================================
@@ -825,38 +823,6 @@
                 0 2px 10px rgba(245, 158, 11, 0.3);
         }
 
-        /* Auto-wipe Countdown Progress Bar */
-        .wipe-bar-container {
-            margin-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .wipe-bar {
-            height: 5px;
-            background: var(--bg-surface-variant);
-            border-radius: 999px;
-            overflow: hidden;
-            border: 1px solid var(--border-outline-variant);
-        }
-
-        .wipe-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--tertiary) 100%);
-            width: 100%;
-            border-radius: 999px;
-            box-shadow: 0 0 10px var(--primary-glow);
-            transition: width 1s linear;
-        }
-
-        .wipe-notice {
-            font-size: 0.80rem;
-            color: var(--text-muted);
-            text-align: right;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
         .action-row {
             display: flex;
             justify-content: flex-end;
@@ -971,7 +937,7 @@
             <div class="header-top-row">
                 <div class="logo-badge">
                     <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    Offline Vault Bridge
+                    Local Vault Bridge
                 </div>
                 <!-- Glossy Theme Switcher -->
                 <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Light / Dark Theme" title="Toggle Light / Dark Theme">
@@ -980,7 +946,7 @@
                 </button>
             </div>
             <h1>Kunjika Web Drop</h1>
-            <p class="subtitle">Zero-Network, Hardware-Signed Password Transfer</p>
+            <p class="subtitle">Direct Bluetooth transfer. This hosted page is mutable and is not independently authenticated. Use only with a trusted computer and browser.</p>
         </header>
 
         <!-- Main Glass Card -->
@@ -1023,6 +989,9 @@
                 <div style="font-size: 0.80rem; color: var(--text-secondary); margin-top: 6px;">
                     Verify this code matches your phone screen before proceeding.
                 </div>
+                <button id="confirm-pairing-btn" class="ble-btn" type="button" style="display:none; margin-top:12px;">
+                    I compared the codes — confirm
+                </button>
             </div>
 
             <!-- Credential Details View (Shown once decrypted) -->
@@ -1062,31 +1031,24 @@
                     </div>
                 </div>
 
-                <!-- Wipe Progress -->
-                <div class="wipe-bar-container">
-                    <div class="wipe-bar">
-                        <div id="clipboard-progress" class="wipe-bar-fill"></div>
-                    </div>
-                    <span id="clipboard-notice" class="wipe-notice">Clipboard auto-clears in 30s</span>
-                </div>
-
                 <div class="action-row">
-                    <button id="btn-reset-session" class="secondary-btn">Close & Wipe Memory</button>
+                    <button id="btn-reset-session" class="secondary-btn">Close transfer view</button>
                 </div>
             </div>
         </main>
 
         <!-- Security Footer Highlights -->
         <footer class="security-footer">
-            <span class="sec-item">🛡️ Zero Internet</span>
-            <span class="sec-item">⚡ Proof of Work</span>
-            <span class="sec-item">🔐 Hardware ECDH P-256</span>
-            <span class="sec-item">⏳ RAM-Only Auto-Wipe</span>
+            <span class="sec-item">🛡️ No cloud relay during transfer</span>
+            <span class="sec-item">⚡ One-minute QR expiry</span>
+            <span class="sec-item">🔐 Ephemeral ECDH + HKDF</span>
+            <span class="sec-item">🧹 Best-effort memory cleanup</span>
+            <span class="sec-item">⚠️ Hosted page authenticity is not verified</span>
         </footer>
     </div>
 
     <!-- Glossy Toast Notification -->
-    <div id="toast" class="toast">Password copied to clipboard!</div>
+    <div id="toast" class="toast"></div>
 
     <!-- Core Scripts -->
     <script src="qr-generator.js"></script>

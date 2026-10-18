@@ -7,8 +7,6 @@ class WebCompanionApp {
     constructor() {
         this.sessionTimer = null;
         this.sessionTimeRemaining = 60;
-        this.clipboardTimer = null;
-        this.clipboardTimeRemaining = 30;
         this.currentPassword = null;
         this.currentPayload = null;
         this.lastQrPayloadStr = null;
@@ -37,10 +35,9 @@ class WebCompanionApp {
         this.itemPassword = document.getElementById("item-password");
         this.togglePasswordBtn = document.getElementById("toggle-password-btn");
         this.copyPasswordBtn = document.getElementById("copy-password-btn");
+        this.confirmPairingBtn = document.getElementById("confirm-pairing-btn");
         this.itemUrl = document.getElementById("item-url");
         this.itemNotes = document.getElementById("item-notes");
-        this.clipboardProgress = document.getElementById("clipboard-progress");
-        this.clipboardNotice = document.getElementById("clipboard-notice");
 
         // Theme elements
         this.themeToggleBtn = document.getElementById("theme-toggle");
@@ -122,7 +119,16 @@ class WebCompanionApp {
         this.copyPasswordBtn.addEventListener("click", async () => {
             if (this.currentPassword) {
                 await navigator.clipboard.writeText(this.currentPassword);
-                this.showToast("Password re-copied to clipboard!");
+                this.showToast("Copied. Clipboard history or other apps may retain it.");
+            }
+        });
+        this.confirmPairingBtn.addEventListener("click", async () => {
+            try {
+                await window.kunjikaBle.confirmPairing();
+                this.confirmPairingBtn.textContent = "Code confirmed on this laptop";
+                this.confirmPairingBtn.disabled = true;
+            } catch (e) {
+                this.showToast("Could not confirm pairing. Disconnect and retry.");
             }
         });
 
@@ -148,6 +154,20 @@ class WebCompanionApp {
         // Setup BLE incoming payload listener
         window.kunjikaBle.onTransferComplete = (fullPayload) => {
             this.processReceivedPayload(fullPayload);
+        };
+        window.kunjikaBle.onHandshake = async (phonePublicKey) => {
+            try {
+                await window.webDropCrypto.deriveSharedSecret(window.webDropCrypto.buf2hex(phonePublicKey));
+                const code = await window.webDropCrypto.computePairingCode();
+                this.totpCodeEl.textContent = `${code.slice(0, 3)} ${code.slice(3)}`;
+                this.totpCard.style.display = "block";
+                this.confirmPairingBtn.style.display = "inline-flex";
+                this.showToast("Compare this code with your phone before approving the transfer.");
+            } catch (error) {
+                this.statusBadge.textContent = "Pairing failed";
+                this.statusBadge.className = "status-badge error";
+                window.kunjikaBle.disconnect();
+            }
         };
     }
 
@@ -199,22 +219,19 @@ class WebCompanionApp {
         this.sessionTimeRemaining = 60;
         this.updateTimerDisplay();
 
-        this.statusBadge.textContent = "Generating PoW & Keys...";
+        this.statusBadge.textContent = "Generating session keys...";
         this.statusBadge.className = "status-badge busy";
 
         try {
             // 1. Generate Ephemeral ECDH Key
             const session = await window.webDropCrypto.generateEphemeralKeyPair();
 
-            // 2. Solve Micro Proof of Work locally (Zero Gas)
-            const pow = await window.webDropCrypto.solveProofOfWork(4);
-
             // 3. Construct QR payload
             const payloadObj = {
-                v: 1,
+                v: 2,
                 sid: session.sessionId,
                 pk: session.publicKeyHex,
-                nonce: pow.nonce,
+                svc: session.serviceUuid,
                 t: session.timestamp
             };
             const payloadStr = JSON.stringify(payloadObj);
@@ -259,7 +276,7 @@ class WebCompanionApp {
         }
 
         try {
-            await window.kunjikaBle.connect(window.webDropCrypto.sessionId);
+            await window.kunjikaBle.connect(window.webDropCrypto.serviceUuid);
         } catch (err) {
             console.warn("BLE connect outcome:", err);
             if (err.name !== "NotFoundError") {
@@ -278,24 +295,12 @@ class WebCompanionApp {
 
             // 1. Extract Phone's uncompressed P-256 public key (first 65 bytes)
             const phonePubKeyBytes = fullPayload.slice(0, 65);
-            const phonePubKeyHex = window.webDropCrypto.buf2hex(phonePubKeyBytes);
 
             // 2. Extract Encrypted Payload (remaining bytes: IV 12B + CipherText)
             const encryptedBytes = fullPayload.slice(65);
 
-            // 3. Derive Shared Secret via ECDH
-            await window.webDropCrypto.deriveSharedSecret(phonePubKeyHex);
-
-            // 4. Compute TOTP SAS verification code
-            try {
-                const totpCode = await window.webDropCrypto.computeTotpVerificationCode();
-                this.totpCodeEl.textContent = `${totpCode.slice(0, 3)} ${totpCode.slice(3)}`;
-                this.totpCard.style.display = "block";
-            } catch (e) {
-                console.warn("TOTP SAS computation note:", e);
-            }
-
-            // 5. Decrypt using derived shared key
+            if (!window.webDropCrypto.sessionKey) throw new Error("Pairing handshake did not complete");
+            // The pairing code must be compared on both devices before the phone approves sending.
             const credential = await window.webDropCrypto.decryptPayload(encryptedBytes);
             this.currentPassword = credential.password;
             this.currentPayload = credential;
@@ -326,16 +331,11 @@ class WebCompanionApp {
             this.credentialCard.style.display = "block";
             clearInterval(this.sessionTimer);
 
-            // Auto copy password to clipboard!
-            await navigator.clipboard.writeText(credential.password);
-            this.showToast("Password copied to clipboard!");
-
             // Send BLE Ack
             await window.kunjikaBle.sendAcknowledgment();
             window.kunjikaBle.disconnect();
 
-            // Start 30s auto-clear clipboard countdown
-            this.startClipboardWipeTimer();
+            this.showToast("Credential received. Reveal or copy only when needed; clipboard history may retain copies.");
 
         } catch (error) {
             console.error("Decryption failed:", error);
@@ -344,36 +344,23 @@ class WebCompanionApp {
         }
     }
 
-    startClipboardWipeTimer() {
-        clearInterval(this.clipboardTimer);
-        this.clipboardTimeRemaining = 30;
-
-        this.clipboardTimer = setInterval(async () => {
-            this.clipboardTimeRemaining--;
-            const progress = (this.clipboardTimeRemaining / 30) * 100;
-            this.clipboardProgress.style.width = `${progress}%`;
-            this.clipboardNotice.textContent = `Clipboard auto-clears in ${this.clipboardTimeRemaining}s`;
-
-            if (this.clipboardTimeRemaining <= 0) {
-                clearInterval(this.clipboardTimer);
-                try {
-                    await navigator.clipboard.writeText("");
-                    this.showToast("Clipboard wiped for security.");
-                } catch (e) {
-                    console.warn("Could not wipe clipboard automatically:", e);
-                }
-                this.resetToScanner();
-            }
-        }, 1000);
-    }
-
     resetToScanner() {
-        clearInterval(this.clipboardTimer);
         this.currentPassword = null;
         this.currentPayload = null;
         window.webDropCrypto.wipe();
+        this.itemTitle.textContent = "";
+        this.itemUsername.textContent = "";
+        this.itemPassword.textContent = "";
+        this.itemUrl.textContent = "";
+        this.itemNotes.textContent = "";
+        this.itemPassword.dataset.masked = "true";
+        this.itemUrl.parentElement.style.display = "none";
+        this.itemNotes.parentElement.style.display = "none";
         this.credentialCard.style.display = "none";
         this.totpCard.style.display = "none";
+        this.confirmPairingBtn.style.display = "none";
+        this.confirmPairingBtn.disabled = false;
+        this.confirmPairingBtn.textContent = "I compared the codes — confirm";
         this.qrSection.style.display = "flex";
         this.startNewSession();
     }

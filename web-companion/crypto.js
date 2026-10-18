@@ -1,6 +1,6 @@
 /**
  * Kunjika Web Companion - Cryptographic Core
- * 100% Offline Client-side Proof of Work, Ephemeral ECDH (P-256), TOTP 6-Digit Derivation, and AES-256-GCM.
+ * Ephemeral ECDH (P-256), HKDF-SHA-256, pairing code, and AES-256-GCM.
  */
 
 class WebDropCrypto {
@@ -8,9 +8,9 @@ class WebDropCrypto {
         this.keyPair = null;
         this.rawPublicKeyHex = null;
         this.sessionId = null;
-        this.powNonce = null;
+        this.serviceUuid = null;
         this.timestamp = null;
-        this.sharedSecretKey = null;
+        this.sessionKey = null;
     }
 
     /**
@@ -31,41 +31,17 @@ class WebDropCrypto {
         this.rawPublicKeyHex = this.buf2hex(exported);
         this.sessionId = this.generateRandomHex(16);
         this.timestamp = Math.floor(Date.now() / 1000);
+        const uuidBytes = new Uint8Array(16);
+        window.crypto.getRandomValues(uuidBytes);
+        uuidBytes[6] = (uuidBytes[6] & 0x0f) | 0x40;
+        uuidBytes[8] = (uuidBytes[8] & 0x3f) | 0x80;
+        this.serviceUuid = [...uuidBytes].map((b, i) => `${[4, 6, 8, 10].includes(i) ? "-" : ""}${b.toString(16).padStart(2, "0")}`).join("").replace(/^-/, "");
         return {
             sessionId: this.sessionId,
             publicKeyHex: this.rawPublicKeyHex,
-            timestamp: this.timestamp
+            timestamp: this.timestamp,
+            serviceUuid: this.serviceUuid
         };
-    }
-
-    /**
-     * Solves a micro Proof of Work (PoW) locally.
-     * Computes SHA-256(sessionId + timestamp + nonce) until hash starts with target leading zeroes (e.g. 4 hex chars = 16 bits).
-     * Takes ~150-300ms on modern CPU. Zero server dependency, zero network.
-     */
-    async solveProofOfWork(difficultyChars = 4) {
-        const prefix = "0".repeat(difficultyChars);
-        const base = `${this.sessionId}:${this.timestamp}:`;
-        let nonce = 0;
-        const encoder = new TextEncoder();
-
-        while (true) {
-            const data = encoder.encode(base + nonce);
-            const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
-            const hashHex = this.buf2hex(hashBuffer);
-            if (hashHex.startsWith(prefix)) {
-                this.powNonce = nonce.toString();
-                return {
-                    nonce: this.powNonce,
-                    hash: hashHex
-                };
-            }
-            nonce++;
-            // Yield every 5000 iterations so the UI doesn't freeze
-            if (nonce % 5000 === 0) {
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-        }
     }
 
     /**
@@ -94,42 +70,26 @@ class WebDropCrypto {
             256
         );
 
-        this.sharedSecretBits = derivedBits;
-
-        this.sharedSecretKey = await window.crypto.subtle.importKey(
-            "raw",
-            derivedBits,
-            "AES-GCM",
-            false,
-            ["decrypt"]
+        const transcript = new TextEncoder().encode(`kunjika-web-drop-v2|${this.sessionId}|${this.rawPublicKeyHex}|${phonePublicKeyHex}`);
+        const salt = await window.crypto.subtle.digest("SHA-256", transcript);
+        const ikm = await window.crypto.subtle.importKey("raw", derivedBits, "HKDF", false, ["deriveKey"]);
+        this.sessionKey = await window.crypto.subtle.deriveKey(
+            { name: "HKDF", hash: "SHA-256", salt, info: new TextEncoder().encode("kunjika-web-drop-v2/aes-gcm") },
+            ikm, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
         );
-
+        this.pairingCodeKey = await window.crypto.subtle.deriveKey(
+            { name: "HKDF", hash: "SHA-256", salt, info: new TextEncoder().encode("kunjika-web-drop-v2/pairing-code") },
+            ikm, { name: "HMAC", hash: "SHA-256", length: 256 }, false, ["sign"]
+        );
         return derivedBits;
     }
 
     /**
-     * Derives the TOTP-style 6-Digit Short Authentication String (SAS).
-     * Code = Truncate6(HMAC-SHA256(sharedSecret, floor(timestamp / 30)))
+     * Derives a six-digit short authentication string for transcript comparison.
      */
-    async computeTotpVerificationCode() {
-        if (!this.sharedSecretBits) throw new Error("Shared secret not derived");
-
-        const hmacKey = await window.crypto.subtle.importKey(
-            "raw",
-            this.sharedSecretBits,
-            { name: "HMAC", hash: "SHA-256" },
-            false,
-            ["sign"]
-        );
-
-        // 30-second time bucket
-        const timeBucket = Math.floor(Date.now() / 1000 / 30);
-        const timeBuffer = new ArrayBuffer(8);
-        const timeView = new DataView(timeBuffer);
-        // Put timeBucket as 64-bit big endian integer
-        timeView.setBigUint64(0, BigInt(timeBucket), false);
-
-        const signature = await window.crypto.subtle.sign("HMAC", hmacKey, timeBuffer);
+    async computePairingCode() {
+        if (!this.pairingCodeKey) throw new Error("Session key not derived");
+        const signature = await window.crypto.subtle.sign("HMAC", this.pairingCodeKey, new TextEncoder().encode("kunjika-web-drop-v2/pairing-code"));
         const sigBytes = new Uint8Array(signature);
 
         // Dynamic truncation (RFC 6238 / RFC 4226)
@@ -149,7 +109,7 @@ class WebDropCrypto {
      * Expected format: IV (12 bytes) + CipherText with 16-byte auth tag.
      */
     async decryptPayload(encryptedBytes) {
-        if (!this.sharedSecretKey) throw new Error("No shared secret key available");
+        if (!this.sessionKey) throw new Error("No session key available");
 
         const iv = encryptedBytes.slice(0, 12);
         const cipherText = encryptedBytes.slice(12);
@@ -160,7 +120,7 @@ class WebDropCrypto {
                 iv: iv,
                 tagLength: 128
             },
-            this.sharedSecretKey,
+            this.sessionKey,
             cipherText
         );
 
@@ -170,15 +130,16 @@ class WebDropCrypto {
     }
 
     /**
-     * Securely zero-out keys and secrets from RAM.
+     * Drop references to session material. JavaScript/browser memory is not guaranteed to be zeroed.
      */
     wipe() {
         this.keyPair = null;
-        this.sharedSecretBits = null;
-        this.sharedSecretKey = null;
+        this.sessionKey = null;
+        this.pairingCodeKey = null;
         this.rawPublicKeyHex = null;
         this.sessionId = null;
-        this.powNonce = null;
+        this.serviceUuid = null;
+        this.timestamp = null;
     }
 
     // --- Helper Utilities ---

@@ -8,13 +8,13 @@
 **Effective Date: August 26, 2026**  
 **Last Updated: September 17, 2026 (v1.1.2)**
 
-Kunjika is an offline-first, sovereign password manager engineered on a **Zero-Network, Zero-Trust** model. We believe that your credentials belong solely to you, and our application is architected to guarantee that your data never leaves your device over the internet or cloud.
+Kunjika is a local-first password manager. The Android app removes the `INTERNET` permission and does not operate cloud accounts or sync servers. Bluetooth, QR transfers, operating-system integrations, and any receiving device are explicit local data-sharing paths.
 
 ---
 
 ### 1. No Data Collection or Telemetry
 Kunjika **does not collect, transmit, log, or share** any personal information, passwords, financial data, or usage metrics.
-- **Zero Network Permissions**: The application does not declare or request the `android.permission.INTERNET` permission in its manifest. Data is physically incapable of transmitting over the internet or reaching any remote servers (local peer-to-peer sharing occurs exclusively under explicit biometric authorization via Bluetooth Web Drop or Encrypted QR).
+- **No Android Internet Permission**: The application manifest removes `android.permission.INTERNET`. The app can still share data over Bluetooth, QR, clipboard, and Android intents; those paths require user care.
 - **No Analytics or Trackers**: We include zero third-party analytics libraries, tracking SDKs, or crash reporting telemetry.
 - **No Cloud Synchronization**: Kunjika does not operate cloud servers, synchronization relays, or user accounts. All vault data resides exclusively in local, hardware-encrypted storage on your physical device.
 
@@ -22,11 +22,11 @@ Kunjika **does not collect, transmit, log, or share** any personal information, 
 
 ### 2. Cryptographic Protection of Your Data
 All information handled by Kunjika is shielded by multi-layered, hardware-backed encryption:
-- **At Rest (Double-Lock Architecture)**: Every credential field is encrypted with AES-256-GCM using keys generated inside your device's hardware Trusted Execution Environment (TEE) or StrongBox Keymaster. The resulting ciphertext is stored within a SQLCipher database encrypted with a key derived from your Master PIN via PBKDF2 (100,000 iterations).
+- **At Rest**: Selected credential fields use AES-256-GCM with Android Keystore keys, and the database uses SQLCipher with a random passphrase wrapped by Android Keystore. Keystore hardware backing varies by device. The Master PIN is an app access gate, not the SQLCipher key.
 - **Biometric Protection**: Biometric unlock uses hardware-level cryptographic key wrapping via `BiometricPrompt.CryptoObject`. Your Master PIN is encrypted directly by the KeyStore; plaintext is never persisted in storage.
 - **In Transit (Offline Sync & Web Drop)**:
-  - **Phone-to-Phone QR Sync**: Encrypted using AES-256-GCM with keys derived via PBKDF2 (100,000 iterations) from a one-time random 6-digit Transfer Code.
-  - **Phone-to-PC Web Drop**: Encrypted using AES-256-GCM with keys derived from ephemeral ECDH P-256 key agreement over Web Bluetooth (BLE GATT), guarded by client-side Proof of Work, a visual 6-digit Short Authentication String (SAS), and biometric authorization.
+  - **Phone-to-Phone QR Sync**: Encrypted using AES-256-GCM with a PBKDF2-derived key and a random 16-digit transfer code. The app displays the QR and code in separate views. Protect both from photographs and observers.
+  - **Phone-to-PC Web Drop**: AES-256-GCM keys are derived through transcript-bound HKDF-SHA-256 from ephemeral P-256 ECDH over BLE. The user must compare a six-digit code on both screens and approve the transfer. Use only a trusted browser and computer.
 
 ---
 

@@ -2,7 +2,7 @@
 ## Official Promotional, Positioning & Educational Guide
 
 > **"Your Passwords Belong to You. Not to Cloud Servers."**  
-> *A 100% Offline, Hardware-Hardened Credential Vault & Cross-Device Authenticator for Android 15+ (API 35).*
+> *A local-first Credential Vault & Authenticator for Android.*
 
 ---
 
@@ -14,9 +14,9 @@ Over the past few years, the tech world has learned a harsh lesson: **centralize
 
 Meanwhile, traditional offline password managers (like KeePass) suffer from outdated user interfaces, painful synchronization workflows, and one glaring daily annoyance: **manually typing 30-character high-entropy passwords (`k8#Q!v9$L2z*M...`) from a smartphone screen onto a computer keyboard.**
 
-**Kunjika solves both dilemmas once and for all.**
+**Kunjika addresses these needs with local encrypted storage and user-controlled sharing.**
 
-Kunjika is a 100% offline, sovereign Android password manager and 2FA authenticator that locks your secrets inside your phone’s physical silicon chips (**Hardware TEE / StrongBox**) with **Double-Lock Encryption**. It requests **ZERO network permissions** (`android.permission.INTERNET` is physically omitted from code), ensuring the app has zero network access and never transmits your data to remote servers. And with its revolutionary **Kunjika Web Drop**, it lets you beam credentials to your laptop or desktop browser in 2 seconds via **Web Bluetooth**—with zero internet, zero cloud servers, and zero software installation required on your computer.
+Kunjika is an Android password manager and TOTP authenticator with local encrypted storage. The Android app removes the `INTERNET` permission and has no cloud sync service. Android Keystore backing depends on the device. Bluetooth, QR, and clipboard are data-sharing paths. Web Drop sends a selected credential to a browser over Bluetooth after biometric authorization and a user-compared pairing code; use only a trusted computer and browser.
 
 ---
 
@@ -24,7 +24,7 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 ### 1. The Cloud Vulnerability Crisis
 - **The Problem:** Cloud password managers advertise "zero-knowledge encryption," yet their servers hold your encrypted vault files, email addresses, IP access logs, and website URLs. If their cloud infrastructure is compromised, attackers can copy your entire vault offline and subject it to specialized GPU brute-force clusters.
-- **The Kunjika Solution:** Kunjika operates completely offline. It contains no tracking SDKs, no analytics, no account registration, and zero network code. Your data physically cannot leave your phone over the web (local device-to-device transfers occur strictly under your biometric control via Bluetooth Web Drop or Encrypted QR).
+- **The Kunjika Solution:** Kunjika has no cloud accounts or sync service and removes Android's `INTERNET` permission. It can share data locally through Bluetooth and QR when you initiate a transfer.
 
 ### 2. The Subscription Tax on Security
 - **The Problem:** Leading commercial password managers charge $3 to $5 every single month just to autofill passwords across devices or store two-factor authentication codes. If you cancel your subscription, your access is throttled or locked down.
@@ -32,7 +32,7 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 ### 3. The Cross-Device Typing Nightmare
 - **The Problem:** With offline password managers, logging into a website on your desktop or work laptop requires manually reading a long, complex password from your phone screen and typing each symbol, number, and uppercase letter one by one on your physical keyboard. Users get frustrated and downgrade to weak passwords like `Summer2024!`.
-- **The Kunjika Solution:** **Kunjika Web Drop**. Open the free companion web page in Chrome, Edge, Brave, or Opera, scan the pairing QR code with your phone camera, tap your fingerprint, and your password is instantly decrypted into your computer's RAM and copied to your clipboard—with an automatic 30-second memory and clipboard wipe.
+- **The Kunjika Solution:** **Kunjika Web Drop** transfers a selected password over Bluetooth. Compare the pairing codes before approving. The browser does not copy automatically; clipboard history may retain any value you copy, and browser memory cleanup is best-effort.
 
 ### 4. App Fragmentation (Passwords vs 2FA Authenticator)
 - **The Problem:** Users juggle one app for passwords (e.g., Chrome or 1Password) and a second separate app for 2FA verification codes (e.g., Google Authenticator). If either is lost or de-synced, logins break.
@@ -44,14 +44,14 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 | What You Can Achieve | How Kunjika Delivers It | Everyday User Impact |
 | :--- | :--- | :--- |
-| **Complete Digital Sovereignty** | Hardware-backed KeyStore TEE + SQLCipher double encryption with PBKDF2 (100,000 iterations). | You hold the only key in existence. Even if someone physically steals your phone, your database cannot be decrypted without your Master PIN. |
-| **Zero Cloud Exposure & No Telemetry** | No `android.permission.INTERNET` declared in `AndroidManifest.xml`. | Complete immunity from cloud database breaches, data brokers, telemetry harvesting, or server outages. |
-| **Instant PC Logins in 2 Seconds** | Web Bluetooth GATT transmission protected by ephemeral ECDH P-256 key exchange & client-side Proof-of-Work. | Log into your computer or work laptop with high-entropy passwords effortlessly without typing a single character. |
+| **Local Data Storage** | SQLCipher with a random passphrase wrapped by Android Keystore; hardware backing varies by device. | No Kunjika cloud vault or sync service. A compromised or rooted device remains a risk. |
+| **No Android Internet Permission** | The app manifest removes `android.permission.INTERNET`; Bluetooth and QR remain supported. | No app internet socket access; local transfers still share data with nearby devices. |
+| **Web Drop** | BLE payload uses ephemeral ECDH, transcript-bound HKDF, and AES-GCM. | Transfer only to a trusted computer; the browser must see the decrypted password. |
 | **Consolidated 2FA & Password Management** | Built-in TOTP authenticator engine generating standard 6-digit rolling codes. | Ditch standalone authenticator apps; all your credentials and secondary factors live securely in one sovereign place. |
-| **Peer-to-Peer Device Migrations** | Encrypted QR Code phone-to-phone data transfer with single-use 6-digit PIN. | Switch to a new phone or share a home Wi-Fi password with a family member without using cloud sync, email, or messaging apps. |
-| **Provable Tamper Resistance** | On-device, hardware-signed (`secp256r1` ECDSA) local blockchain audit log. | Any unauthorized modification, file corruption, or database tampering is immediately caught and alerted. |
+| **Phone-to-Phone Transfer** | AES-GCM encrypted QR payload protected by a random 16-digit code and PBKDF2. | Keep the QR and code separate; do not share both in a photo. |
+| **Local Audit Chain** | A Keystore-signed hash chain records events. | Detects some edits; it is not an immutable blockchain and cannot guarantee detection of deletion or app compromise. |
 | **Effortless Mobile Experience** | Native Android Autofill service integrated with biometric fingerprint / face unwrap. | Log into apps like banking, social media, and shopping with a single tap of your finger. |
-| **Disaster Recovery Preparedness** | One-click encrypted, printable Emergency Recovery Kit with automatic cache shredding. | Peace of mind that your family or trusted contacts can recover critical accounts in emergencies via a secure physical safe copy. |
+| **Backup and Recovery** | Encrypted vault exports use AES-GCM and PBKDF2. The local database passphrase PDF is unencrypted and is not a cross-device restore. | Keep encrypted exports and a strong, unique passphrase in a separate safe place. |
 
 ---
 
@@ -63,34 +63,34 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 [ Laptop Browser (Chrome/Edge/Brave) ]                     [ Kunjika Mobile App ]
                  │                                                    │
     1. Generates Ephemeral ECDH Key (P-256)                           │
-    2. Computes Client-Side Proof of Work                             │
+    2. Creates one-time session and random BLE service                │
     3. Displays Dynamic Pairing QR Code                               │
                  │                                                    │
                  │ <─────────── 4. Scan QR Code with Phone ───────────┤
                  │                                                    │
-                 │                          5. Verifies PoW Challenge │
+                 │                          5. Creates ephemeral session │
                  │                          6. Derives HKDF Shared Key│
                  │                          7. Displays 6-Digit Code  │
-                 │                          8. Advertises via BLE GATT│
+                 │                          8. Displays phone code    │
                  │                                                    │
     9. Visual Confirmation:                                           │
        Both screens show matching code (e.g., "544 655")              │
                  │                                                    │
-                 │                          10. User Touches Fingerprint
-                 │                          11. AES-256-GCM Encrypts  │
-                 │                          12. Hardware signs block  │
+                 │                          10. Biometric authorizes BLE
+                 │                          11. User compares code    │
+                 │                          12. AES-GCM encrypts data │
                  │                                                    │
                  │ <──────── 13. Transmits BLE Data Chunks ───────────┤
                  │                                                    │
    14. Decrypts payload directly into RAM                             │
-   15. Copies password to computer clipboard                          │
-   16. Auto-shreds browser memory & clipboard in 30 seconds!          │
+   15. Shows masked password; copy is user initiated                   │
+   16. Closing clears visible fields best-effort                       │
 ```
 
 ### Why Users Love It:
 1. **Zero software to install** on your laptop—it runs in standard modern web browsers.
-2. **Works completely offline**—your phone and computer can both be in Airplane mode.
-3. **No clipboard lingering**—the 30-second auto-wipe protects against unauthorized snooping on shared or work computers.
+2. **Local transfer**—Bluetooth transfers data directly between the phone and browser; the web page itself must first be available on the laptop.
+3. **Clipboard caution**—the companion does not auto-copy or clear clipboard content. Clipboard history and software on the receiving computer may retain copied credentials.
 
 ---
 
@@ -106,11 +106,11 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 ### 3. The Privacy & Security Advocate
 - **Goal:** Adheres to zero-trust principles. Dislikes big-tech telemetry, closed-source security claims, and cloud sync risks.
-- **Why Kunjika:** Open-source (MIT), zero internet permissions, hardware-backed Android KeyStore TEE, local blockchain audit log, and root/emulator tamper defenses.
+- **Why Kunjika:** Open-source (MIT), no Android internet permission, Android Keystore protection (hardware backing varies), and local audit checks. Root checks are best-effort and do not stop a compromised OS.
 
 ### 4. The Crypto Trader & Web3 Enthusiast
 - **Goal:** Needs a dedicated, offline repository for seed phrases, private notes, exchange credentials, and 2FA keys.
-- **Why Kunjika:** Completely offline, protected against screenshots by Android `FLAG_SECURE`, double-lock AES-256 encryption, and printable emergency recovery kits.
+- **Why Kunjika:** Local encrypted storage, Android `FLAG_SECURE` screenshot protection, and encrypted portable exports. The printed database passphrase is unencrypted and is not a cross-device restore.
 
 ---
 
@@ -118,7 +118,7 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 | Feature | 🏰 Kunjika | 🔴 LastPass | 🛡️ 1Password | 🟦 Bitwarden | 🌐 Chrome Autofill | 🗝️ KeePass |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Network Permission** | **🚫 0% (100% Offline)** | 100% Cloud | 100% Cloud | 100% Cloud | 100% Cloud | Offline |
+| **Network Permission** | No Android `INTERNET` permission; local sharing still available | Varies | Varies | Varies | Varies | Varies |
 | **Subscription Cost** | **Free ($0 Forever)** | $36/year | $36–$60/year | $10–$40/year | Free | Free |
 | **Cross-Device PC Sync** | **⚡ Direct Offline Web Drop** | Cloud Server | Cloud Server | Cloud Server | Google Account | Manual USB/Sync |
 | **Built-In 2FA Authenticator** | **✅ Yes (Included)** | Paid Only | Paid Only | Paid Only | ❌ No | Plugin Required |
@@ -131,16 +131,14 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 
 ## ❓ Frequently Asked Questions (FAQ)
 
-#### Q1: If Kunjika is 100% offline, what happens if I lose or break my phone?
-> **Answer:** Because Kunjika has no cloud servers, nobody else holds your passwords. That is why Kunjika includes two easy, sovereign backup tools:
-> 1. **Emergency Recovery Kit:** Generates an encrypted, printable backup you can store in your safe or safety deposit box.
-> 2. **Encrypted Vault Export:** Export an encrypted backup file to an external USB flash drive or physical storage.
+#### Q1: If I lose or break my phone, how do I restore?
+> **Answer:** Use an encrypted vault export created before the loss. Protect it with a strong, unique passphrase. The local database passphrase PDF alone cannot restore field-encrypted entries on a new device.
 
 #### Q2: How does Web Drop work if there is no internet?
-> **Answer:** Web Drop uses **Web Bluetooth Low Energy (BLE)** directly between your phone and your computer browser. Bluetooth is a localized radio connection, not the internet. Data travels strictly through the air across a few feet directly between the two devices.
+> **Answer:** Web Drop uses Bluetooth Low Energy between your phone and the browser. The Android app has no internet permission, but the hosted companion page is mutable and a compromised receiving computer can read the credential.
 
 #### Q3: Is my Master PIN stored on the phone?
-> **Answer:** No plaintext PIN is ever stored. Your Master PIN is encrypted inside the phone's physical security chip (Android KeyStore TEE/StrongBox). When you touch your fingerprint, the hardware chip safely unwraps the decryption key.
+> **Answer:** The app stores a PBKDF2 hash of the Master PIN. When biometric unlock is enabled, a Keystore key protects a saved PIN for convenience. The Master PIN gates app access; it is not the database key. Hardware backing varies by device.
 
 #### Q4: What makes Kunjika's generator different from basic generators?
 > **Answer:** Kunjika gives you 4 distinct generation modes powered by cryptographically secure pseudo-random number generators (`SecureRandom`):
@@ -155,18 +153,18 @@ Kunjika is a 100% offline, sovereign Android password manager and 2FA authentica
 ## 📢 Promotional Copy Snippets (Ready to Share)
 
 ### 🏷️ 1-Line Tagline
-> *"Kunjika is the 100% offline, hardware-hardened Android vault that locks your passwords in physical silicon and beams them to your laptop in 2 seconds with zero internet."*
+> *"Kunjika is a local-first Android vault with encrypted storage and direct Bluetooth transfer to a trusted computer."*
 
 ### 📱 100-Word Elevator Pitch
-> *Tired of cloud password manager breaches and recurring subscription fees? Meet Kunjika, the sovereign Android password vault and 2FA authenticator with zero internet permissions. Engineered with Android 15+ hardware-backed KeyStore encryption and SQLCipher double-lock security, Kunjika keeps your credentials strictly under your control. Need to log in on your laptop? Kunjika Web Drop beams your password directly to your desktop browser via Web Bluetooth in 2 seconds—without Wi-Fi, without cloud servers, and with an automatic 30-second clipboard shredder. 100% free, private, and open source.*
+> *Kunjika is a local-first Android password vault and TOTP authenticator. The app removes Android's INTERNET permission and stores vault data in SQLCipher with Android Keystore protection. Web Drop can transfer a selected credential over Bluetooth after pairing-code comparison and phone approval. Use only with a trusted receiving computer; clipboard and memory cleanup are best-effort.*
 
 ### 🐦 Social Media Launch Thread (X / LinkedIn / Mastodon)
 > **1/5** Cloud password managers keep getting breached, and they charge you $36/year for the privilege. We built a better way: Meet **Kunjika** 🏰  
 > 
 > **2/5** 🚫 Zero Network: `android.permission.INTERNET` is not even in the code. The app operates strictly offline, removing remote cloud attack surfaces entirely.  
 > 
-> **3/5** ⚡ Web Drop: The biggest complaint about offline vaults is typing 30-char passwords onto your laptop. Web Drop beams credentials to your PC browser over Bluetooth in 2s with zero internet and a 30s auto-wipe!  
+> **3/5** ⚡ Web Drop: Web Drop transfers a selected credential to a browser over Bluetooth after biometric approval and a user-compared pairing code. Use only a trusted computer; clipboard and browser memory cleanup are best-effort.
 > 
-> **4/5** 🔐 Double-Lock Crypto: Encrypted by your phone’s physical security chip (TEE) + SQLCipher + hardware-signed local blockchain audit ledger.  
+> **4/5** 🔐 Encrypted Local Vault: SQLCipher and Android Keystore protect local data. Hardware backing varies by device; the local audit chain has limits and does not protect against a compromised device.
 > 
 > **5/5** 100% Free & Open Source (MIT). Join our 14-Day Play Store Closed Beta today: https://dwinsi.github.io/kunjika/

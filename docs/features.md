@@ -5,7 +5,7 @@
 [![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
 [![Sync](https://img.shields.io/badge/sync-Offline%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
 
-Kunjika combines zero-network, cryptographically hardened offline security with a modern, ultra-premium user interface engineered for Android 15+ (API 35) styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
+Kunjika combines local encrypted storage and offline transfer options with a modern interface. Bluetooth and receiving-device security remain part of the user's security boundary.
 
 ---
 
@@ -33,7 +33,7 @@ Kunjika features an intelligent, multi-mode cryptographic generator designed for
 ---
 
 ### 2. The Secure Vault
-- **Double-Lock Encryption**: Every entry is encrypted individually with an AES-256-GCM key from the hardware TEE before entering the SQLCipher database.
+- **Encrypted Storage**: SQLCipher encrypts the database. Password and TOTP-secret fields also use AES-GCM with Android Keystore keys; metadata is protected by the database encryption, not separately field-encrypted.
 - **Built-In TOTP Authenticator**: Integrated two-factor authenticator displaying animated circular countdown timers without needing external apps like Google Authenticator.
 - **Categorization & Filtering**: Organize credentials by **Personal**, **Work**, **Finance**, and **Social** with instant search, favorite pinning, and credential strength indicators.
 - **Encrypted Secure Notes**: Attach encrypted metadata, recovery keys, and notes to any vault entry.
@@ -81,21 +81,20 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> **Encrypted QR Sequence**: Sensitive credentials are never exposed in plaintext within the QR code. The payload is encrypted with AES-256-GCM using a PBKDF2-derived key (100,000 iterations) bound to a random 6-digit code.
+> **Encrypted QR Sequence**: The payload is encrypted with AES-256-GCM using PBKDF2-HMAC-SHA-256 and a random 16-digit transfer code. The QR and code are shown in separate views; do not photograph or share both.
 
 ---
 
 ### 4. Direct Web Drop (Phone-to-PC Wireless Sync)
 Eliminates manual typing of 32+ character high-entropy passwords on desktop and laptop computers without cloud accounts or relays.
 
-- **Zero Internet Requirement**: Completely offline. The [Web Companion](https://dwinsi.github.io/kunjika/web-companion/) executes locally inside browser RAM with zero server communication.
-- **Client-Side Proof of Work (PoW)**: Browser solves an ephemeral SHA-256 PoW challenge (`< 0x0800...`), auto-refreshing every 60 seconds to prevent replay attacks.
-- **Ephemeral ECDH P-256 Key Exchange**: Browser generates an in-memory EC P-256 keypair; the phone scans the 65-byte uncompressed public key and computes a shared secret via HKDF-SHA256 (`"kunjika-web-drop-v1"`).
-- **Visual Short Authentication String (SAS)**: Both devices derive and display a matching 6-digit TOTP verification code. The user visually confirms parity before authorizing transmission.
-- **Hardware-Backed Biometric Gate**: Android `BiometricPrompt` (`BIOMETRIC_STRONG`) is required to authorize the BLE transfer.
-- **Direct Web Bluetooth (BLE GATT) with Retry Logic**: Phone operates as a GATT peripheral server (`e9a30001-c852-4e08-9bfa-87bb0f592658`), streaming chunked AES-256-GCM ciphertext with sequence numbering and notification retries.
-- **RAM-Only Auto-Wipe**: Browser decrypts into volatile memory, copies to clipboard upon user interaction, and automatically wipes RAM and OS clipboard after a 30-second countdown.
-- **Tamper-Evident Audit Trail**: Every Web Drop operation automatically appends an `EXPORT_BLE` block to the local hardware-signed blockchain ledger.
+- **No cloud relay during transfer**: Once loaded, the companion communicates directly with the phone over Bluetooth. The page itself is hosted remotely; use a trusted copy, computer, and browser.
+- **Ephemeral ECDH P-256 and HKDF-SHA-256**: The session key is derived from both public keys and a one-minute session ID.
+- **Pairing code confirmation**: Biometric approval starts BLE advertising. Compare the six-digit codes on both screens, confirm on the browser, then approve sending on the phone.
+- **Per-session BLE service UUID**: The phone advertises a random service UUID only after biometric approval.
+- **No automatic clipboard copy**: The browser displays the password masked and copies only after a user action. Clipboard history may retain copied content.
+- **Best-effort memory cleanup**: Closing the view clears visible fields and drops references; JavaScript cannot guarantee memory erasure.
+- **Tamper-evident audit trail**: Web Drop writes an event to a local signed hash chain, with the limits described in the security guide.
 
 ```mermaid
 %%{init: {
@@ -127,20 +126,20 @@ sequenceDiagram
     participant Phone as 📱 Kunjika App (Android)
     participant BLE as 📡 Web Bluetooth (GATT)
 
-    Browser->>Browser: Compute SHA-256 PoW (< 0x0800...)
     Browser->>Browser: Generate Ephemeral P-256 ECDH Keypair
-    Browser->>Browser: Render Dynamic QR (Session ID + PubKey + Nonce)
+    Browser->>Browser: Render One-minute QR (Session ID + PubKey + BLE Service UUID)
     Phone->>Browser: Scan QR with CameraX
-    Phone->>Phone: Verify PoW & Compute Shared Secret (HKDF)
-    Phone->>Phone: Calculate 6-Digit SAS Code (TOTP)
-    Phone->>Browser: Visual SAS Code Comparison (Both screens display code)
-    Phone->>Phone: User Biometric Verification (Fingerprint/Face)
-    Phone->>BLE: Start GATT Server (Advertising Service e9a30001)
+    Phone->>Phone: Validate session; derive transcript-bound HKDF keys
+    Phone->>Phone: User biometric approval before BLE advertising
+    Phone->>BLE: Start GATT server with per-session UUID
     Browser->>BLE: Connect & Subscribe to Characteristic e9a30002
+    BLE->>Browser: Phone public key; derive and display pairing code
+    User->>Browser: Compare codes and confirm on browser
+    User->>Phone: Compare codes and approve send
     Phone->>BLE: Stream Chunked AES-256-GCM Ciphertext (with Retries)
-    Browser->>Browser: Decrypt in RAM (WebCrypto) & Display Masked Password
+    Browser->>Browser: Decrypt with WebCrypto & Display Masked Password
     Phone->>Phone: Record EXPORT_BLE Block in Local Blockchain
-    Browser->>Browser: 30-Second Countdown -> Auto-Wipe Memory & Clipboard
+    User->>Browser: Close transfer view for best-effort visible-field cleanup
 ```
 
 ---
@@ -151,9 +150,9 @@ The Security Audit suite provides proactive threat detection and integrity analy
 - **Vulnerability Scanner**: Identifies weak passwords, reused credentials, old credentials (>90 days), and missing 2FA configurations.
 - **Real-Time Root Detection**: Deep checks for `su` binaries across system paths (`/sbin/su`, `/system/xbin/su`, `/data/local/su`), `test-keys` OS builds, and execution probe verification.
 - **Emulator Environment Detection**: Heuristic detection of emulated virtual machines (goldfish/ranchu hardware, generic build props, QEMU signatures).
-- **Hardware KeyStore Attestation**: Verifies whether cryptographic master keys are protected inside physical hardware (TEE/StrongBox) via `KeyInfo.isInsideSecureHardware`.
-- **Google Play Integrity API**: Interactive on-device attestation tester to verify application package integrity, signature validity, and licensing state.
-- **Blockchain Integrity Verification**: One-tap validation of the entire cryptographic chain to detect direct database tampering or byte-level manipulation.
+- **Keystore Security Level**: Reports Android's declared security level (software, TEE, or StrongBox when available); this is not independent attestation.
+- **Google Play Integrity API**: The client can request a token; a trusted verdict requires a backend to verify it.
+- **Signed Audit Chain**: One-tap chain validation detects some changes but cannot reliably detect complete deletion, tail truncation, or app compromise.
 
 ---
 
@@ -174,17 +173,17 @@ The Security Audit suite provides proactive threat detection and integrity analy
 - **Biometric-Backed PIN Storage**: Hardware-bound encryption for the Master PIN using KeyStore TEE ciphers via `BiometricPrompt.CryptoObject`, providing zero-friction instant biometric unlock.
 - **Native Android Autofill**: Integrated Autofill framework support for autofilling apps and websites.
 - **Screen Capture Protection**: App-wide `FLAG_SECURE` blocks screenshots, screen mirroring, and system app switcher previews.
-- **Emergency Recovery Kit**: Generate a printable, encrypted PDF backup with automatic cache shredding.
+- **Local Database Passphrase PDF**: Generate an unencrypted copy of the local SQLCipher passphrase. It does not restore field-encrypted entries on a new device; use an encrypted vault export for migration.
 
 ---
 
 ## 📋 Feature Roadmap
 - [x] TOTP Authenticator & Generator
 - [x] Persistent Generation History
-- [x] Local Blockchain Audit Ledger
+- [x] Local signed audit chain
 - [x] Encrypted QR Sync (Phone-to-Phone)
-- [x] Direct Web Drop (Web Bluetooth + Proof of Work Companion)
-- [x] PBKDF2 PIN Hashing (100,000 iterations)
+- [x] Direct Web Drop (Web Bluetooth + transcript-based pairing confirmation)
+- [x] PBKDF2 PIN Hashing (600,000 iterations for newly set PINs)
 - [x] Biometric-Backed PIN Storage (TEE unwrap)
 - [x] Google Play Integrity API Integration
 - [x] Obsidian Gold & Platinum Dual-Theme System

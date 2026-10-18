@@ -1,6 +1,7 @@
 package com.kunjika.app.core.security
 
 import android.os.Build
+import android.security.keystore.KeyProperties
 import android.security.keystore.KeyInfo
 import java.io.File
 import java.security.KeyStore
@@ -90,7 +91,13 @@ object SecurityManager {
             val key = entry?.secretKey ?: return false
             val factory = SecretKeyFactory.getInstance(key.algorithm, "AndroidKeyStore")
             val keyInfo = factory.getKeySpec(key, KeyInfo::class.java) as KeyInfo
-            keyInfo.isInsideSecureHardware
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                keyInfo.securityLevel == KeyProperties.SECURITY_LEVEL_TRUSTED_ENVIRONMENT ||
+                    keyInfo.securityLevel == KeyProperties.SECURITY_LEVEL_STRONGBOX
+            } else {
+                @Suppress("DEPRECATION")
+                keyInfo.isInsideSecureHardware
+            }
         } catch (e: Exception) {
             false
         }

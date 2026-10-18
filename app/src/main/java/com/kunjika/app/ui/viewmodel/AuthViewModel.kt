@@ -4,6 +4,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kunjika.app.core.security.BiometricKeyManager
+import com.kunjika.app.core.security.VaultSession
 import com.kunjika.app.data.preferences.UserPreferences
 import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +43,7 @@ class AuthViewModel(
     private var lastBackgroundTimestamp: Long = 0L
 
     init {
+        VaultSession.isUnlocked = false
         checkInitialStatus()
     }
 
@@ -71,20 +73,21 @@ class AuthViewModel(
     }
 
     fun setupMasterPin(pin: String) {
-        if (pin.length < 4) {
-            _errorMessage.value = "PIN must be at least 4 digits"
+        if (pin.length < 6) {
+            _errorMessage.value = "PIN must be at least 6 digits"
             return
         }
         viewModelScope.launch {
             userPreferences.setMasterPin(pin)
             passwordRepository?.recordPinCreateBlock()
             _errorMessage.value = null
+            VaultSession.markUnlocked()
             _authState.value = AuthState.Authenticated
         }
     }
 
     suspend fun verifyMasterPin(pin: String): Boolean {
-        return userPreferences.verifyMasterPin(pin)
+        return userPreferences.verifyPinMode(pin) == UserPreferences.PinMode.MASTER
     }
 
     fun unlockWithPin(pin: String) {
@@ -94,11 +97,13 @@ class AuthViewModel(
                 UserPreferences.PinMode.MASTER -> {
                     _isDecoyMode.value = false
                     _errorMessage.value = null
+                    VaultSession.markUnlocked()
                     _authState.value = AuthState.Authenticated
                 }
                 UserPreferences.PinMode.DURESS -> {
                     _isDecoyMode.value = true
                     _errorMessage.value = null
+                    VaultSession.markUnlocked()
                     _authState.value = AuthState.Authenticated
                 }
                 UserPreferences.PinMode.INVALID -> {
@@ -109,8 +114,8 @@ class AuthViewModel(
     }
 
     fun setDuressPin(pin: String) {
-        if (pin.length < 4) {
-            _errorMessage.value = "Duress PIN must be at least 4 digits"
+        if (pin.length < 6) {
+            _errorMessage.value = "Duress PIN must be at least 6 digits"
             return
         }
         viewModelScope.launch {
@@ -132,6 +137,7 @@ class AuthViewModel(
                 val unwrappedPin = userPreferences.decryptPinWithBiometric(cipher)
                 if (unwrappedPin != null && userPreferences.verifyMasterPin(unwrappedPin)) {
                     _errorMessage.value = null
+                    VaultSession.markUnlocked()
                     _authState.value = AuthState.Authenticated
                 } else {
                     _errorMessage.value = "Biometric hardware key unwrapping failed"
@@ -141,6 +147,7 @@ class AuthViewModel(
                     userPreferences.saveBiometricEncryptedPin(currentPin, cipher)
                 }
                 _errorMessage.value = null
+                VaultSession.markUnlocked()
                 _authState.value = AuthState.Authenticated
             }
         }
@@ -161,6 +168,7 @@ class AuthViewModel(
     }
 
     fun lock() {
+        VaultSession.isUnlocked = false
         viewModelScope.launch {
             val isPinSet = userPreferences.isMasterPinSet.first()
             if (isPinSet) {
@@ -171,6 +179,7 @@ class AuthViewModel(
 
     fun onAppBackgrounded() {
         lastBackgroundTimestamp = System.currentTimeMillis()
+        VaultSession.markBackgrounded()
         viewModelScope.launch {
             if (userPreferences.lockOnExit.first()) {
                 lock()
@@ -186,7 +195,11 @@ class AuthViewModel(
                     val elapsedSec = (System.currentTimeMillis() - lastBackgroundTimestamp) / 1000
                     if (elapsedSec >= timeoutSec) {
                         lock()
+                    } else {
+                        VaultSession.markForegrounded()
                     }
+                } else {
+                    VaultSession.markForegrounded()
                 }
             }
         }

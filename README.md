@@ -1,6 +1,6 @@
 # 🏰 Kunjika
 
-### *A 100% Offline, Cryptographically Hardened Password Vault & Generator for Android*
+### *A Local-First Encrypted Password Vault & Generator for Android*
 
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
@@ -16,8 +16,8 @@
 Most password managers store your passwords on a company's cloud server. If that company is hacked, your digital life is exposed.
 
 **Kunjika is fundamentally different.** It acts like a hardware-secured digital vault that lives **strictly on your phone**.
-- **No Cloud. No Accounts. No Internet Permission.** The app cannot communicate over the internet because the operating system physically blocks it from doing so.
-- **Zero Knowledge & 100% Sovereign**: You are the only person who holds the key. Your data never leaves your device unless you physically transfer it yourself.
+- **No Cloud. No Accounts. No Internet Permission.** The Android app has no ordinary internet access; local sharing features still transfer selected data over Bluetooth, QR, clipboard, Autofill, or exports.
+- **Local-first storage**: Vault data is encrypted on-device. Sharing or copying a credential moves it into the security boundary of the receiving device or app.
 
 > 📖 **New to Kunjika? Check out our visual [User Guide & Step-by-Step Walkthrough](docs/user-guide.md)** with screenshots and everyday use cases!  
 > 🧪 **Participating in Closed Beta? Open the interactive [14-Day Play Store Testing Portal](https://dwinsi.github.io/kunjika/testing.html)** to track your daily testing missions and review instructions!
@@ -28,14 +28,14 @@ Most password managers store your passwords on a company's cloud server. If that
 
 | Feature | What It Does | Why It Matters to You |
 | :--- | :--- | :--- |
-| **🚫 100% Offline (Zero-Network)** | The app has **zero internet permission** in its code. | With zero network permissions, credentials cannot be leaked online or intercepted remotely. |
-| **🔐 Double-Lock Protection** | Every item is encrypted twice: first by your phone's physical security chip, then inside an encrypted database. | Even if someone steals your phone and extracts the database file, it is unreadable gibberish without your Master PIN. |
+| **🚫 No Android Internet Permission** | The app has no `INTERNET` permission. | Ordinary internet connections are unavailable. Local transfer and clipboard features still share data with other devices or apps. |
+| **🔐 Encrypted Local Vault** | SQLCipher uses a random passphrase wrapped by Android Keystore; hardware backing varies by device. | Protects copied database files. The Master PIN is an app access gate, not the database encryption key; root or app-process compromise can bypass it. |
 | **🎯 4-in-1 Smart Generator** | Generates strong passwords, multi-word passphrases (like `correct-horse-battery-staple`), numeric PINs, or 2FA secrets. | You never have to invent or reuse passwords again, and newly generated items are saved in an instant history list. |
 | **⏰ Built-In 2FA Authenticator** | Generates rotating 6-digit two-factor codes with animated countdown timers. | No need for a separate app like Google Authenticator; your logins and 2FA codes live securely in one place. |
 | **⚡ Web Drop (Send to PC)** | Beam passwords from your phone to your computer browser using Bluetooth & QR code. | No typing 30-character passwords on your PC keyboard, no cables, and no cloud relays. |
 | **📱 Phone-to-Phone QR Transfer** | Move credentials between two phones by scanning a secure, encrypted QR code. | Transfer passwords to a new phone without using cloud backups, cables, or Wi-Fi. |
-| **💎 Instant Biometric Unlock** | Unlock your vault instantly using your Fingerprint or Face. | Your Master PIN is securely unlocked by the phone's hardware chip without ever sitting unprotected in memory. |
-| **🛡️ Tamper-Proof Audit Ledger** | A private digital ledger signs and timestamps every vault change (create, edit, delete). | Alerts you immediately if anyone or any malicious app attempts to alter your database behind your back. |
+| **💎 Biometric Unlock** | Use a supported biometric to authorize convenient unlock. | The PIN exists in app memory during use; device compromise can expose it. |
+| **🛡️ Local Audit Chain** | A local HMAC-protected chain records vault changes. | Can help detect some edits; it is not immutable and cannot reliably detect full deletion or rollback. |
 | **🔍 Phone Health & Vault Audit** | Scans your vault for weak or repeated passwords, and checks your phone for root or tampering. | Keeps your digital security hygiene at 100% and warns you if your operating system environment is unsafe. |
 | **🎨 Obsidian Gold & Platinum Themes** | Built with high-contrast dark and light modes, 3D specular reflections, and frosted glass components. | A refined, ergonomic interface designed for clarity and aesthetic focus. |
 
@@ -99,7 +99,7 @@ sequenceDiagram
 1. **Choose Type**: Pick between standard passwords, readable multi-word passphrases, numeric PINs, or 2FA authenticator keys.
 2. **Generate**: The app uses hardware-grade randomness and estimates how many centuries it would take a supercomputer to crack it.
 3. **History Logging**: The item is logged in your local generation history so you don't lose it if you accidentally navigate away.
-4. **Hardware Encryption**: When saved, the sensitive fields are locked with a key stored in your phone's physical security chip.
+4. **Keystore Encryption**: When saved, sensitive fields are encrypted with a key protected by Android Keystore; hardware backing varies by device.
 5. **Database Storage**: The encrypted record is committed to the encrypted database, and a digital signature is recorded in your audit log.
 
 ---
@@ -139,27 +139,30 @@ sequenceDiagram
     participant BLE as 📡 Web Bluetooth (Direct Link)
 
     User->>PC: Open Web Companion (Offline HTML)
-    PC->>PC: Solve Proof-of-Work & Generate Ephemeral Key
+    PC->>PC: Generate an ephemeral ECDH key and session ID
     PC->>PC: Display dynamic QR Code on computer screen
     User->>Phone: Open Credential -> Tap "Send to PC"
     Phone->>PC: Scan QR Code using phone camera (Reads PC's Public Key)
-    Phone->>Phone: Compute shared encryption key & 6-digit verification code
     Phone->>User: Prompt for Fingerprint / Face authentication
     User->>Phone: Biometric approved
+    Phone->>BLE: Start advertising and establish ECDH session
+    PC->>User: Display transcript-derived 6-digit comparison code
+    User->>PC: Confirm matching code
+    User->>Phone: Approve sending
     Phone->>BLE: Connect directly to PC over Bluetooth Low Energy
     Phone->>BLE: Stream encrypted password (AES-256-GCM)
     BLE->>PC: Deliver encrypted payload
     PC->>PC: Decrypt directly into volatile RAM
-    PC->>User: Display 6-digit code (must match phone) & Auto-Copy password
-    Note over PC: 30-Second Countdown starts -> Auto-wipes RAM & Clipboard
+    PC->>User: Display password for explicit reveal or copy
+    Note over PC: Closing clears visible fields best-effort; JS memory erasure is not guaranteed
 ```
 
 1. **Open Web Companion**: On your computer browser, open the [Web Companion](https://dwinsi.github.io/kunjika/web-companion/). It runs entirely in your browser's local memory.
 2. **Scan the Screen**: On your phone, tap "Send to PC" and scan the QR code displayed on your monitor.
 3. **Hardware Biometric Gate**: Approve the transfer on your phone with your fingerprint or face.
 4. **Direct Bluetooth Stream**: The phone encrypts the password and sends it directly to your computer's Bluetooth antenna (range: 1–2 meters). Zero internet or cloud servers involved.
-5. **Visual Code Check**: Both screens show matching 6-digit codes so you know no eavesdropper intercepted the signal.
-6. **Auto-Wipe**: The password is auto-copied to your PC's clipboard. After 30 seconds, the browser wipes its memory and clears your clipboard automatically.
+5. **Visual Code Check**: Compare the transcript-derived six-digit codes on both screens before confirming in the browser and approving the send on the phone. This helps detect session substitution but does not authenticate the hosted page itself.
+6. **Copy only when needed**: The companion does not auto-copy. Clipboard history and host software can retain anything copied; closing the view only clears visible fields on a best-effort basis.
 
 ---
 
@@ -197,22 +200,22 @@ sequenceDiagram
     participant NewPhone as 📲 Receiving Phone
 
     User->>OldPhone: Select Item -> Tap "Export / Sync via QR"
-    OldPhone->>OldPhone: Generate random 6-digit transfer code
-    OldPhone->>OldPhone: Encrypt item with PBKDF2 (100,000 passes) + AES-GCM
-    OldPhone->>OldPhone: Display encrypted QR code + 6-digit transfer code
+    OldPhone->>OldPhone: Generate random 16-digit transfer code
+    OldPhone->>OldPhone: Encrypt item with PBKDF2 (600,000 passes) + AES-GCM
+    OldPhone->>OldPhone: Display encrypted QR and code in separate views
     User->>NewPhone: Open Kunjika -> Tap "Scan QR Sync"
     NewPhone->>OldPhone: Point camera and scan QR Code
-    NewPhone->>User: Prompt to enter the 6-digit transfer code
-    User->>NewPhone: Enters matching 6-digit code
+    NewPhone->>User: Prompt to enter the 16-digit transfer code
+    User->>NewPhone: Enters matching 16-digit code
     NewPhone->>NewPhone: Decrypts payload, verifies data integrity
     NewPhone->>NewPhone: Saves item into new encrypted vault
     NewPhone-->>User: "Credential Successfully Imported!"
 ```
 
 1. **Select Item**: Choose any credential to transfer on your current phone.
-2. **Dynamic Encryption**: The phone encrypts the credential using a temporary 6-digit code and creates an encrypted QR pattern on the screen.
+2. **Dynamic Encryption**: The phone encrypts the credential using a random 16-digit code and creates an encrypted QR pattern. The QR and code appear separately; do not capture both together.
 3. **Scan with New Phone**: Open Kunjika on your new phone and point the camera at the first screen.
-4. **Enter Code**: Type the 6-digit transfer code.
+4. **Enter Code**: Type the 16-digit transfer code.
 5. **Instant Import**: The new phone validates the integrity of the data and securely adds it to your new vault.
 
 ---
@@ -343,11 +346,11 @@ graph TB
 | :--- | :--- | :--- | :--- |
 | **1. Presentation** | **Compose UI & Glossy Theme** | Renders all screens, high-contrast dark/light themes, 3D specular shine reflections, and interactive dialogs. | Jetpack Compose, Material 3, custom glossy canvas modifiers. |
 | **2. Controller** | **ViewModels** | Coordinates user actions, handles input validation, and ensures data is passed cleanly to the cryptographic engine. | Android Architecture Components, StateFlow, Coroutines. |
-| **3. Security Core** | **`KeystoreManager`** | Generates and manages the Master Encryption Key inside your phone's dedicated physical security chip. | Android KeyStore, Hardware-backed TEE / StrongBox Keymaster. |
+| **3. Security Core** | **`KeystoreManager`** | Generates and manages the Master Encryption Key in Android Keystore. | Android Keystore; hardware backing varies by device. |
 | **3. Security Core** | **`BiometricKeyManager`** | Connects your fingerprint or face scan directly to cryptographic ciphers so your PIN is unlocked without storing plaintext. | `BiometricPrompt.CryptoObject`, AES-256-GCM. |
-| **3. Security Core** | **`BlockchainManager`** | Records every vault modification into a cryptographically linked, hardware-signed digital ledger to detect database tampering. | Elliptic Curve (`secp256r1`) ECDSA digital signatures, SHA-256 hashing. |
-| **3. Security Core** | **`WebDropCrypto` & `BLE`** | Enables direct, wireless password sharing to desktop browsers with zero cloud relays. | Web Bluetooth GATT server, Ephemeral ECDH P-256, Proof of Work. |
-| **3. Security Core** | **`QrEncryptionManager`** | Encrypts phone-to-phone data transfer packages into scannable QR codes bound to one-time PINs. | PBKDF2 (100,000 iterations), AES-256-GCM. |
+| **3. Security Core** | **`BlockchainManager`** | Records vault modifications in a local signed audit chain with known deletion and rollback limitations. | Elliptic Curve (`secp256r1`) signatures and HMAC digests. |
+| **3. Security Core** | **`WebDropCrypto` & `BLE`** | Enables direct, wireless password sharing to desktop browsers with zero cloud relays. | Web Bluetooth GATT server, ephemeral ECDH P-256, HKDF-SHA-256, AES-GCM. |
+| **3. Security Core** | **`QrEncryptionManager`** | Encrypts phone-to-phone data transfer packages into scannable QR codes. | PBKDF2-HMAC-SHA-256 (600,000 iterations), AES-256-GCM, random 16-digit code. |
 | **3. Security Core** | **`PlayIntegrity` & `Security`** | Continuously evaluates device environment to ensure the app is running safely. | Root detection heuristics, emulator checks, Google Play Integrity API. |
 | **4. Storage** | **SQLCipher Database** | Stores your encrypted credentials, URLs, and notes on flash memory with cryptographically hardened 256-bit encryption. | SQLCipher SQLite engine, AES-256-CBC with HMAC-SHA512. |
 | **4. Storage** | **Encrypted DataStore** | Stores application configuration, theme choices, and salt values securely. | AndroidX DataStore with hardware-encrypted preferences. |
@@ -358,11 +361,11 @@ graph TB
 
 | Security Feature | Standard Cloud Password Managers | Kunjika Sovereign Vault |
 | :--- | :---: | :---: |
-| **Network Exposure** | ⚠️ Connects to cloud servers over internet | 🛡️ **100% Offline (Zero Internet Permission)** |
-| **Data Storage Location** | ⚠️ Third-party cloud servers | 🛡️ **Only inside your device's secure hardware** |
-| **Phone-to-PC Sharing** | ⚠️ Syncs through remote cloud database | 🛡️ **Direct, offline Bluetooth + Optical QR** |
-| **Database Encryption** | Single-layer encryption | 🛡️ **Double-Lock (TEE Hardware Key + SQLCipher)** |
-| **Tamper Detection** | Basic server logs | 🛡️ **Hardware-signed local blockchain ledger** |
+| **Network Exposure** | Cloud connectivity varies | Android app has no `INTERNET` permission; local sharing paths remain |
+| **Data Storage Location** | Cloud or local, depending on product | Encrypted local database; Keystore hardware backing varies |
+| **Phone-to-PC Sharing** | Product-dependent | Direct Bluetooth transfer after user confirmation; receiving computer is trusted |
+| **Database Encryption** | Product-dependent | SQLCipher passphrase wrapped by Android Keystore; Master PIN gates the UI |
+| **Tamper Detection** | Product-dependent | Local signed audit chain detects some edits; cannot assure deletion or rollback detection |
 | **Account Creation** | Requires Email, Password, Subscription | 🛡️ **Zero account, zero personal data collected** |
 | **Screen Leak Protection** | Often optional or partial | 🛡️ **System-wide `FLAG_SECURE` blocks screenshots & recordings** |
 

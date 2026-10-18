@@ -12,13 +12,15 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 object BackupManager {
-    private const val ITERATIONS = 65536
+    private const val ITERATIONS = 600000
+    private const val LEGACY_ITERATIONS = 65536
     private const val KEY_LENGTH = 256
     private const val SALT_LENGTH = 16
     private const val IV_LENGTH = 12
     private const val GCM_TAG_LENGTH = 128
 
     fun exportEncryptedBackup(passwords: List<DecryptedPasswordItem>, backupPassphrase: String): String {
+        require(backupPassphrase.length >= 12) { "Backup passphrase must be at least 12 characters" }
         val rootJson = JSONObject()
         rootJson.put("version", 2)
         rootJson.put("exportedAt", System.currentTimeMillis())
@@ -50,16 +52,22 @@ object BackupManager {
         val salt = ByteArray(SALT_LENGTH).also { SecureRandom().nextBytes(it) }
         val iv = ByteArray(IV_LENGTH).also { SecureRandom().nextBytes(it) }
 
-        val spec = PBEKeySpec(backupPassphrase.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+        val passwordChars = backupPassphrase.toCharArray()
+        val spec = PBEKeySpec(passwordChars, salt, ITERATIONS, KEY_LENGTH)
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val keyBytes = factory.generateSecret(spec).encoded
+        val keyBytes = try { factory.generateSecret(spec).encoded } finally {
+            spec.clearPassword()
+            passwordChars.fill('\u0000')
+        }
         val secretKey = SecretKeySpec(keyBytes, "AES")
 
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH, iv))
+        cipher.updateAAD(backupAad(ITERATIONS, salt, iv))
         val cipherBytes = cipher.doFinal(plainJson.toByteArray(Charsets.UTF_8))
 
         val exportPayload = JSONObject().apply {
+            put("kdfIterations", ITERATIONS)
             put("salt", Base64.encodeToString(salt, Base64.NO_WRAP))
             put("iv", Base64.encodeToString(iv, Base64.NO_WRAP))
             put("data", Base64.encodeToString(cipherBytes, Base64.NO_WRAP))
@@ -73,14 +81,21 @@ object BackupManager {
         val salt = Base64.decode(root.getString("salt"), Base64.NO_WRAP)
         val iv = Base64.decode(root.getString("iv"), Base64.NO_WRAP)
         val cipherBytes = Base64.decode(root.getString("data"), Base64.NO_WRAP)
+        val iterations = if (root.has("kdfIterations")) root.getInt("kdfIterations") else LEGACY_ITERATIONS
+        require(iterations in LEGACY_ITERATIONS..ITERATIONS) { "Unsupported KDF work factor" }
 
-        val spec = PBEKeySpec(backupPassphrase.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+        val passwordChars = backupPassphrase.toCharArray()
+        val spec = PBEKeySpec(passwordChars, salt, iterations, KEY_LENGTH)
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val keyBytes = factory.generateSecret(spec).encoded
+        val keyBytes = try { factory.generateSecret(spec).encoded } finally {
+            spec.clearPassword()
+            passwordChars.fill('\u0000')
+        }
         val secretKey = SecretKeySpec(keyBytes, "AES")
 
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH, iv))
+        if (root.has("kdfIterations")) cipher.updateAAD(backupAad(iterations, salt, iv))
         val decryptedBytes = cipher.doFinal(cipherBytes)
         val decryptedJson = String(decryptedBytes, Charsets.UTF_8)
 
@@ -112,4 +127,7 @@ object BackupManager {
 
         return list
     }
+
+    private fun backupAad(iterations: Int, salt: ByteArray, iv: ByteArray): ByteArray =
+        "KunjikaBackupV2|$iterations|${Base64.encodeToString(salt, Base64.NO_WRAP)}|${Base64.encodeToString(iv, Base64.NO_WRAP)}".toByteArray(Charsets.UTF_8)
 }

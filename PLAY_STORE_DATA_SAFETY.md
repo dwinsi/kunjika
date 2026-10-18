@@ -11,16 +11,16 @@ When publishing Kunjika (v1.1.2), use the following information for the Google P
 
 ### 1. Data Collection and Security
 - **Does your app collect or share any of the required user data types?** -> **No**. (Zero data collected, transmitted, or shared).
-- **Is all user data encrypted in transit?** -> **Yes**. All local transmissions (both Phone-to-Phone QR Sync and Phone-to-PC Web Bluetooth Drop) are end-to-end encrypted using authenticated **AES-256-GCM** with ephemeral ECDH / PBKDF2 keys.
+- **Is all user data encrypted in transit?** -> **Yes for the app's QR and Web Drop payloads**. QR uses AES-GCM with a random 16-digit code and PBKDF2; Web Drop uses AES-GCM with ephemeral ECDH and transcript-bound HKDF.
 - **Do you provide a way for users to request that their data is deleted?** -> **Yes**. Uninstalling the app or using "Clear Data" permanently destroys all hardware keys and encrypted databases.
-- **Does the app connect to the internet?** -> **No**. The app does not request or hold `android.permission.INTERNET`. Data physically cannot leave the device over any network or cloud (local peer-to-peer transfers are strictly user-initiated via Bluetooth or QR).
+- **Does the app connect to the internet?** -> The Android manifest removes `android.permission.INTERNET`. The app supports user-initiated Bluetooth and QR transfers, which can share data with nearby devices.
 
 ---
 
 ### 2. Data Types
 Kunjika processes data strictly locally on the user's device. **None** is collected, uploaded to any server, or shared with third parties:
 - **Personal Info**: Usernames, passwords, notes, and URLs stored exclusively in the encrypted local vault.
-- **App Activity**: Local blockchain audit ledger stored exclusively on the device.
+- **App Activity**: Local signed audit chain stored on the device.
 
 ---
 

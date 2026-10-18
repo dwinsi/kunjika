@@ -29,11 +29,13 @@ class KunjikaBlePeripheral(
     private val context: Context,
     private val onConnected: () -> Unit,
     private val onTransferSuccess: () -> Unit,
-    private val onError: (String) -> Unit
+    private val onError: (String) -> Unit,
+    private val phonePublicKey: ByteArray,
+    private val onPairingConfirmed: () -> Unit,
+    private val serviceUuid: UUID
 ) {
     companion object {
         private const val TAG = "KunjikaBle"
-        val SERVICE_UUID: UUID = UUID.fromString("e9a30001-9c3f-4e89-9a2d-7d81a9c41b80")
         val CHAR_HANDSHAKE_UUID: UUID = UUID.fromString("e9a30002-9c3f-4e89-9a2d-7d81a9c41b80")
         val CHAR_TRANSFER_UUID: UUID = UUID.fromString("e9a30003-9c3f-4e89-9a2d-7d81a9c41b80")
         val CHAR_ACK_UUID: UUID = UUID.fromString("e9a30004-9c3f-4e89-9a2d-7d81a9c41b80")
@@ -63,6 +65,21 @@ class KunjikaBlePeripheral(
     }
 
     private val gattServerCallback = object : BluetoothGattServerCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onCharacteristicReadRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            offset: Int,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            if (characteristic.uuid != CHAR_HANDSHAKE_UUID || offset > phonePublicKey.size) {
+                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_FAILURE, offset, null)
+                return
+            }
+            val value = phonePublicKey.copyOfRange(offset, phonePublicKey.size)
+            gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+        }
+
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.d(TAG, "Device connected: ${device.address}")
@@ -92,7 +109,10 @@ class KunjikaBlePeripheral(
                 }
             }
 
-            if (characteristic.uuid == CHAR_ACK_UUID) {
+            if (characteristic.uuid == CHAR_HANDSHAKE_UUID && value?.contentEquals(byteArrayOf(0x02)) == true) {
+                onPairingConfirmed()
+            }
+            if (characteristic.uuid == CHAR_ACK_UUID && value?.contentEquals(byteArrayOf(0x01)) == true) {
                 Log.d(TAG, "Transfer ACK received from web companion!")
                 onTransferSuccess()
                 stop()
@@ -146,13 +166,13 @@ class KunjikaBlePeripheral(
         // Setup GATT Server
         try {
             gattServer = bluetoothManager?.openGattServer(context, gattServerCallback)
-            val service = BluetoothGattService(SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY)
+            val service = BluetoothGattService(serviceUuid, BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
             val handshakeChar = BluetoothGattCharacteristic(
                 CHAR_HANDSHAKE_UUID,
-                BluetoothGattCharacteristic.PROPERTY_WRITE,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
-            )
+                BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_WRITE,
+                BluetoothGattCharacteristic.PERMISSION_READ or BluetoothGattCharacteristic.PERMISSION_WRITE
+            ).apply { value = phonePublicKey }
 
             transferCharacteristic = BluetoothGattCharacteristic(
                 CHAR_TRANSFER_UUID,
@@ -187,12 +207,12 @@ class KunjikaBlePeripheral(
                 .build()
 
             val data = AdvertiseData.Builder()
-                .setIncludeDeviceName(true)
-                .addServiceUuid(ParcelUuid(SERVICE_UUID))
+                .setIncludeDeviceName(false)
+                .addServiceUuid(ParcelUuid(serviceUuid))
                 .build()
 
             val scanResponse = AdvertiseData.Builder()
-                .setIncludeDeviceName(true)
+                .setIncludeDeviceName(false)
                 .build()
 
             advertiser?.startAdvertising(settings, data, scanResponse, advertiseCallback)
@@ -222,6 +242,10 @@ class KunjikaBlePeripheral(
         val chunkSize = 16
         val totalChunks = ((payload.size + chunkSize - 1) / chunkSize)
         val totalLength = payload.size
+        if (totalLength !in 1..4080 || totalChunks !in 1..255) {
+            onError("Credential packet exceeds the supported BLE transfer size.")
+            return false
+        }
 
         for (i in 0 until totalChunks) {
             val start = i * chunkSize

@@ -6,7 +6,7 @@
 [![Network](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 [![Audit](https://img.shields.io/badge/tamper%20defense-Blockchain%20Ledger-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](security.md)
 
-Kunjika is engineered with zero-network, cryptographically hardened primitives for local data protection. Operating on a **Zero-Network, Zero-Trust** model, it guarantees that credentials never touch the internet and are protected by hardware-backed cryptographic primitives.
+Kunjika is designed for local-first use. The Android manifest removes the app's `INTERNET` permission, but Bluetooth, operating-system services, clipboard integrations, backups, and a receiving computer remain part of the security boundary. Keystore hardware backing depends on the device and is not guaranteed everywhere.
 
 ---
 
@@ -38,9 +38,10 @@ graph LR
     K1 --> E1
     E1 --> C[Field Ciphertext]
     C --> E2[SQLCipher DB]
-    subgraph RP ["Passphrase Derivation"]
-        PIN[Master PIN] --> PBKDF2[PBKDF2 100,000 iter]
-        PBKDF2 --> K2[Database Key]
+    subgraph RP ["Database Key Protection"]
+        RAND[Random 256-bit passphrase] --> WRAP[Keystore AES-GCM wrapping]
+        K1 --> WRAP
+        WRAP --> K2[SQLCipher passphrase]
     end
     K2 --> E2
     E2 --> D[(Encrypted SQLite File on Disk)]
@@ -52,7 +53,7 @@ graph LR
 
     class P,C,E1,E2 gold;
     class K1 emerald;
-    class PIN,PBKDF2,K2 indigo;
+    class RAND,K2,WRAP indigo;
     class D storage;
 
     style KS fill:#052e25,stroke:#34D399,stroke-width:2px,color:#A7F3D0
@@ -60,16 +61,17 @@ graph LR
 ```
 
 > [!NOTE]
-> **Double-Lock Protection**: Even if an attacker gains raw root access to the device and dumps the SQLite database file, the contents remain encrypted at the field level with a hardware-backed key that physically cannot be exported from the device's TEE or StrongBox.
+> **At-rest protection**: SQLCipher uses a random passphrase wrapped by Android Keystore, while selected fields use a Keystore key. Root access or code execution as the app can invoke these keys and bypass the app PIN; hardware backing varies by device.
 
 ### 1. Hardware Security Module (Android KeyStore)
-All cryptographic keys are generated inside the device's **Trusted Execution Environment (TEE)** or dedicated **StrongBox Keymaster**:
+Cryptographic keys are generated in Android Keystore. Hardware backing is device-dependent and is reported only when the platform confirms TEE or StrongBox:
 - **Master Encryption Key**: AES-256-GCM key used for field-level credential encryption.
 - **Identity Key**: Elliptic curve (`secp256r1`) key used for signing blockchain ledger blocks.
-- **Biometric Key**: AES-256 key initialized with `setUserAuthenticationRequired(true)`.
+- **Biometric Key**: AES-256 key initialized with `setUserAuthenticationRequired(true)` when biometric unlock is configured.
 
 ### 2. Database Protection (SQLCipher)
-- **PIN-Derived Database Passphrase**: The database encryption key is derived from the user's Master PIN combined with a per-device salt using **PBKDF2WithHmacSHA256** (100,000 iterations).
+- **Random Database Passphrase**: SQLCipher uses a random 256-bit passphrase stored wrapped by Android Keystore. The Master PIN is an app access gate, not the database key.
+- **PIN Verification**: Newly set PINs use PBKDF2-HMAC-SHA-256 at 600,000 iterations with exponential app-level delays after failures. Root access can bypass the app and reset app data; existing PINs shorter than six digits should be changed.
 - **No Static Keys**: There are no hardcoded or static decryption keys anywhere in the application code.
 
 ---
@@ -78,16 +80,16 @@ All cryptographic keys are generated inside the device's **Trusted Execution Env
 
 To provide frictionless biometric unlock without weakening the Master PIN or persisting plaintext credentials in storage or RAM:
 
-1. **Hardware-Guarded Cipher**: When biometrics are enabled, an AES-256-GCM key is generated in the Android KeyStore requiring biometric authentication for each use (`setUserAuthenticationRequired(true)`).
+1. **Authentication-Gated Cipher**: When biometrics are enabled, an AES-256-GCM key is generated in Android Keystore requiring biometric authorization for its use (`setUserAuthenticationRequired(true)`). Hardware backing depends on the device.
 2. **Cryptographic Wrapping**: Upon successful initial PIN entry and biometric verification, the Master PIN is encrypted using the authenticated `BiometricPrompt.CryptoObject` cipher.
 3. **Persisting Encrypted Payload**: The resulting ciphertext and initialization vector (IV) are persisted in `UserPreferences`. Plaintext is cleared from memory.
 4. **Biometric Unwrapping**: On subsequent app launches, a biometric prompt authorizes the KeyStore cipher to decrypt the stored PIN directly into volatile memory for database unlocking. If biometrics are modified or removed at the OS level, the KeyStore key is automatically invalidated by Android.
 
 ---
 
-## 🧱 Local Blockchain Audit Log
+## 🧱 Local Signed Audit Chain
 
-To prevent offline modification attacks—where an attacker with physical or root access alters entries directly in the SQLite database file—Kunjika maintains a cryptographically signed blockchain ledger.
+Kunjika maintains a locally signed hash chain intended to make some edits detectable. It is not an immutable blockchain and cannot reliably detect full ledger deletion, tail truncation, or an attacker controlling the app and its signing environment.
 
 ```mermaid
 %%{init: {
@@ -131,9 +133,9 @@ graph RL
     style Block fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
 ```
 
-- **Content Hash**: `SHA-256` of the serialized transaction data.
-- **Hardware Signature**: Signed with the device's private EC key (`secp256r1`) residing in the hardware TEE.
-- **Cryptographic Chain**: Each block points to the previous block's SHA-256 hash. Any manual alteration of past database records breaks the cryptographic chain and triggers an immediate audit alert.
+- **Vault Record Digest**: HMAC-SHA-256 of serialized vault row data with a Keystore-held key to resist offline guessing from ledger-only copies. Other audit event digests are not password hashes.
+- **Device Keystore Signature**: Signed with a private EC key (`secp256r1`) in Android Keystore; hardware backing varies by device.
+- **Cryptographic Chain**: Each block points to the previous block's SHA-256 hash. This can detect some edits, but cannot reliably detect full ledger deletion, tail truncation, or rollback.
 
 ---
 
@@ -152,11 +154,11 @@ Heuristic scanning flags emulated environments to prevent dynamic analysis in au
 - Inspects hardware configuration strings for `goldfish` and `ranchu` emulation architectures.
 - Identifies virtualized manufacturers such as `Genymotion`.
 
-### 3. KeyStore Hardware Attestation
-- Uses `KeyInfo.isInsideSecureHardware` via `SecretKeyFactory` to verify whether the active encryption keys are physically backed by hardware (TEE/StrongBox) rather than a software fallback.
+### 3. KeyStore Security Level
+- Reports Android's key security level (software, TEE, or StrongBox where available). This is device-reported information, not independent key attestation.
 
 ### 4. Google Play Integrity API
-- Verifies app binary integrity and authentic signing certificates to prevent distribution of repackaged or trojanized APKs.
+- The app can request an integrity token. Without backend verification, it does not provide the app with a trusted integrity verdict.
 
 ---
 
@@ -181,27 +183,26 @@ Web Drop enables wireless credential transfer to desktop/laptop browsers without
   }
 }}%%
 graph TD
-    subgraph Browser ["💻 Web Companion (RAM Only)"]
-        POW[Compute SHA-256 PoW] --> B_KP[Generate Ephemeral P-256 Keypair]
-        B_KP --> QR[Display Dynamic QR Code]
-        B_SAS[Compute 6-Digit Visual SAS]
-        B_DEC[AES-256-GCM Decrypt in RAM]
-        WIPE[30s Clipboard & Memory Auto-Wipe]
+    subgraph Browser ["💻 Web Companion (best-effort memory cleanup)"]
+        B_KP[Generate Ephemeral P-256 Keypair] --> QR[Display One-minute QR]
+        B_SAS[Derive transcript comparison code]
+        B_DEC[AES-256-GCM Decrypt]
+        WIPE[Clear visible fields on close]
     end
 
     subgraph Phone ["📱 Kunjika Android App"]
-        CAM[Scan QR Code via CameraX] --> P_POW[Verify PoW & Extract Public Key]
-        P_POW --> P_KP[Generate Ephemeral P-256 Keypair]
+        CAM[Scan QR Code via CameraX] --> P_KP[Validate session & Generate P-256 Key]
         P_KP --> ECDH[Derive Shared Secret via HKDF]
         ECDH --> P_SAS[Compute 6-Digit Visual SAS]
         P_SAS --> BIO{Biometric Authorization}
-        BIO -->|Success| P_ENC[AES-256-GCM Encrypt Payload]
+        BIO -->|Success| P_ADV[Advertise session BLE service]
+        P_ADV --> P_ENC[AES-256-GCM Encrypt after code confirmation]
         P_ENC --> BLE_TX[BLE GATT Server Stream with Retries]
         P_ENC --> LEDGER[Record EXPORT_BLE in Blockchain]
     end
 
     QR -.->|Visual Scan| CAM
-    P_SAS <===>|User Confirms Visual Parity| B_SAS
+    P_SAS <===>|Compare on both screens before send| B_SAS
     BLE_TX ==>|Web Bluetooth GATT Chunks| B_DEC
     B_DEC --> WIPE
 
@@ -209,8 +210,8 @@ graph TD
     classDef phoneNode fill:#131A26,stroke:#F59E0B,stroke-width:1.5px,color:#FDE68A;
     classDef greenNode fill:#064E3B,stroke:#34D399,stroke-width:1.5px,color:#A7F3D0;
 
-    class POW,B_KP,QR,B_SAS,B_DEC,WIPE browserNode;
-    class CAM,P_POW,P_KP,ECDH,P_SAS,BIO,P_ENC,BLE_TX,LEDGER phoneNode;
+    class B_KP,QR,B_SAS,B_DEC,WIPE browserNode;
+    class CAM,P_KP,ECDH,P_SAS,BIO,P_ADV,P_ENC,BLE_TX,LEDGER phoneNode;
     class BIO greenNode;
 
     style Browser fill:#151238,stroke:#818CF8,stroke-width:2px,color:#C7D2FE
@@ -218,24 +219,21 @@ graph TD
 ```
 
 ### Cryptographic Guarantees:
-1. **Client-Side Proof of Work (PoW)**:
-   - Browser computes `SHA-256(SessionID + Nonce) < 0x0800...` before displaying the session QR code.
-   - Sessions expire after 60 seconds, eliminating replay attacks.
+1. **Short-lived QR sessions**:
+   - The phone enforces a 60-second time window and remembers recently consumed session IDs while its process remains alive. This does not authenticate the companion page.
 2. **Ephemeral ECDH P-256 Key Agreement**:
    - Both devices generate single-use EC P-256 keypairs.
    - Android parses the browser's 65-byte uncompressed public key (`0x04 || X || Y`) and computes the Diffie-Hellman shared secret.
-   - Keys are derived via **HKDF-SHA256** with domain separation context `"kunjika-web-drop-v1"`.
+   - HKDF-SHA-256 derives separate encryption and pairing-code keys, bound to the session ID and both public keys.
 3. **Visual Short Authentication String (SAS)**:
-   - To defeat Man-in-the-Middle (MitM) attacks over Bluetooth, both devices derive a 6-digit TOTP code from the shared secret.
-   - User visually verifies code parity across both screens before touching the biometric sensor.
+   - Both devices derive a six-digit comparison code from the session transcript. After biometric authorization, the user compares both screens and confirms on the browser before approving the send on the phone.
 4. **Hardware Biometric Authorization**:
    - Android `BiometricPrompt` (`BIOMETRIC_STRONG`) must succeed before BLE advertising begins.
 5. **BLE GATT Transfer with Reliable Chunking**:
-   - Phone acts as a GATT peripheral server advertising Service `e9a30001-c852-4e08-9bfa-87bb0f592658`.
+   - Phone advertises a per-session random GATT service UUID only after biometric approval.
    - Transmits AES-256-GCM ciphertext in sequence-numbered chunks with notification retries for error-free delivery.
-6. **RAM-Only Auto-Wipe**:
-   - The Web Companion operates strictly in browser memory (no `localStorage`, cookies, or `IndexedDB`).
-   - A 30-second countdown wipes decrypted credentials from RAM and shreds the OS clipboard.
+6. **Best-effort cleanup**:
+   - The browser does not automatically copy passwords. Closing the transfer view clears visible credential fields and drops references, but JavaScript cannot guarantee memory erasure or delete operating-system clipboard history.
 7. **Blockchain Audit Trail**:
    - Every Web Drop transaction commits an `EXPORT_BLE` block into the local ledger.
 
@@ -243,4 +241,4 @@ graph TD
 
 ## 📑 Backup Security & Cache Purging
 - **Encrypted Vault Backups**: Password-protected vault exports encrypted with AES-256-GCM using PBKDF2 key derivation.
-- **Cache Shredding**: Generated PDF Recovery Kits are automatically overwritten and purged from device cache immediately after sharing to leave zero filesystem footprint.
+- **Recovery kit cleanup**: The generated PDF is deleted from app cache after a delay. Deletion does not guarantee physical erasure on flash storage; protect the PDF and delete exported copies yourself.

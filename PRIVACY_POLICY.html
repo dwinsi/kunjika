@@ -96,7 +96,7 @@
         <h1>Privacy Policy for Kunjika</h1>
         <p><strong>Effective Date: August 26, 2026</strong></p>
 
-        <p>Kunjika is a 100% offline password manager. We believe that your data belongs solely to you, and our application is designed to ensure it never leaves your device over the internet or cloud. Any outbound data transfer occurs exclusively under your explicit, local control via direct Bluetooth (Web Drop) or Encrypted QR sync after biometric confirmation.</p>
+        <p>Kunjika is a local-first password manager. The Android app removes the INTERNET permission and does not operate cloud sync servers. Bluetooth, QR, clipboard, operating-system integrations, and receiving devices remain local data-sharing paths that require your care.</p>
 
         <div class="highlight">
             Kunjika does not collect, transmit, or share any personal information, passwords, or usage statistics over any network.
@@ -104,7 +104,7 @@
 
         <h2>1. No Data Collection</h2>
         <ul>
-            <li><strong>Zero Network Permissions</strong>: The application does not request the <code>INTERNET</code> permission. The Android operating system restricts network socket creation, ensuring no data is transmitted over the web.</li>
+            <li><strong>No Android Internet Permission</strong>: The app manifest removes the <code>INTERNET</code> permission. The app can still share data over Bluetooth and QR, and copied data may be retained by clipboard integrations.</li>
             <li><strong>No Analytics</strong>: We do not use any third-party analytics, tracking libraries, or crash reporting services that require internet access.</li>
             <li><strong>No Cloud Storage</strong>: We do not provide cloud synchronization. Your data remains in the encrypted local database on your device.</li>
         </ul>

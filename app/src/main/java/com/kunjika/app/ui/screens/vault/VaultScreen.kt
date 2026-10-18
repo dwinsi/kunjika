@@ -141,7 +141,7 @@ fun VaultScreen(
                         id = "vault_sync",
                         targetKey = "vault_sync_fab",
                         title = "Offline QR Sync",
-                        description = "Import or transfer vault entries using encrypted zero-network QR payloads."
+                        description = "Import or transfer vault entries using encrypted offline QR payloads."
                     ),
                     TourStep(
                         id = "vault_add",
@@ -510,9 +510,8 @@ fun VaultScreen(
                                 label = item.title,
                                 text = item.plaintextPassword,
                                 isSensitive = true,
-                                autoClearSeconds = 30L
                             )
-                            Toast.makeText(context, "${item.title} password copied (auto-clears in 30s)", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "${item.title} password copied. Clipboard history may retain it.", Toast.LENGTH_SHORT).show()
                         }
                     }
                     item { Spacer(modifier = Modifier.height(80.dp)) }
@@ -588,13 +587,13 @@ fun VaultScreen(
             title = { Text("Enter Transfer Code") },
             text = {
                 Column {
-                    Text("The sender's screen is displaying a 6-digit code. Please enter it here to decrypt the vault entry.", style = MaterialTheme.typography.bodySmall)
+                    Text("Enter the sender's 16-digit transfer code to decrypt the entry. Keep it separate from the QR image.", style = MaterialTheme.typography.bodySmall)
                     Spacer(modifier = Modifier.height(16.dp))
                     CustomTextField(
                         value = transferCodeInput,
-                        onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) transferCodeInput = it },
-                        label = "6-Digit Code",
-                        placeholder = "000000",
+                        onValueChange = { if (it.length <= 16 && it.all { c -> c.isDigit() }) transferCodeInput = it },
+                        label = "16-Digit Code",
+                        placeholder = "0000000000000000",
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                             keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                         )
@@ -618,7 +617,7 @@ fun VaultScreen(
                             }
                         }
                     },
-                    enabled = transferCodeInput.length == 6
+                    enabled = transferCodeInput.length == 16
                 ) {
                     Text("Decrypt & Import")
                 }

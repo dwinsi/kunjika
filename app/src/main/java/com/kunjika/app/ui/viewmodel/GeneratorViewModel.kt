@@ -37,7 +37,7 @@ data class GeneratorUiState(
     val includeSymbols: Boolean = true,
     val excludeAmbiguous: Boolean = true,
     // Passphrase config
-    val wordCount: Int = 4,
+    val wordCount: Int = 6,
     val separator: String = "-",
     val capitalize: Boolean = true,
     val includeNumberInPassphrase: Boolean = true,

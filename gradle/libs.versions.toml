@@ -1,7 +1,7 @@
 [versions]
 agp = "9.4.1"
-kotlin = "2.4.20"
-ksp = "2.3.6"
+kotlin = "2.4.21"
+ksp = "2.3.12"
 
 # App Versioning
 appVersionCode = "17"
@@ -15,7 +15,7 @@ composeBom = "2026.09.00"
 navigationCompose = "2.10.2"
 room = "2.8.5"
 sqlcipher = "4.19.1"
-biometric = "1.2.0-alpha05"
+biometric = "1.1.0"
 securityCrypto = "1.1.0"
 playIntegrity = "1.6.0"
 datastorePreferences = "1.2.1"
@@ -50,7 +50,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version = "2.4.0" }
+sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version = "2.7.1" }
 
 # Security & Biometrics
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }

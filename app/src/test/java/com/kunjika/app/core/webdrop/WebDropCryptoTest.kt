@@ -6,7 +6,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.KeyAgreement
 import javax.crypto.spec.GCMParameterSpec
@@ -15,24 +14,10 @@ import javax.crypto.spec.SecretKeySpec
 class WebDropCryptoTest {
 
     @Test
-    fun `proof of work verification succeeds for valid hash and fails for invalid`() {
-        val sessionId = "test_session_123"
-        val timestamp = 1700000000L
-        
-        // Find a valid nonce with difficulty 2 for fast test
-        var validNonce = 0
-        while (true) {
-            val base = "$sessionId:$timestamp:$validNonce"
-            val digest = MessageDigest.getInstance("SHA-256").digest(base.toByteArray(Charsets.UTF_8))
-            val hex = digest.joinToString("") { "%02x".format(it) }
-            if (hex.startsWith("00")) {
-                break
-            }
-            validNonce++
-        }
-
-        assertTrue(WebDropCrypto.verifyProofOfWork(sessionId, timestamp, validNonce.toString(), difficulty = 2))
-        assertFalse(WebDropCrypto.verifyProofOfWork(sessionId, timestamp, (validNonce + 1).toString(), difficulty = 4))
+    fun `session ids are one use within the running process`() {
+        val sessionId = "1234567890abcdef1234567890abcdef"
+        assertTrue(WebDropCrypto.consumeSessionId(sessionId))
+        assertFalse(WebDropCrypto.consumeSessionId(sessionId))
     }
 
     @Test
@@ -73,12 +58,13 @@ class WebDropCryptoTest {
     }
 
     @Test
-    fun `totp 6-digit confirmation codes match exactly on both sides`() {
+    fun `transcript-derived pairing codes are stable six digit values`() {
         val sharedSecret = ByteArray(32) { (it + 1).toByte() }
-        val timestamp = 1700000000L
-
-        val code1 = WebDropCrypto.computeTotpCode(sharedSecret, timestamp)
-        val code2 = WebDropCrypto.computeTotpCode(sharedSecret, timestamp)
+        val browserPublic = ByteArray(65) { (it + 1).toByte() }
+        val phonePublic = ByteArray(65) { (it + 2).toByte() }
+        val codeKey = WebDropCrypto.derivePairingCodeKey(sharedSecret, "test-session", browserPublic, phonePublic)
+        val code1 = WebDropCrypto.computePairingCode(codeKey)
+        val code2 = WebDropCrypto.computePairingCode(codeKey)
 
         assertEquals(code1, code2)
         assertEquals(6, code1.length)
@@ -86,11 +72,11 @@ class WebDropCryptoTest {
     }
 
     @Test
-    fun `aes gcm payload encryption decrypts cleanly with shared secret`() {
-        val sharedSecret = ByteArray(32) { 42.toByte() }
+    fun `aes gcm payload encryption uses derived session key`() {
+        val sessionKey = ByteArray(32) { 42.toByte() }
         val payload = """{"title":"GitHub","password":"SecretPassword123!"}"""
 
-        val encryptedBytes = WebDropCrypto.encryptPayload(payload, sharedSecret)
+        val encryptedBytes = WebDropCrypto.encryptPayload(payload, sessionKey)
         assertTrue(encryptedBytes.size > 28) // 12-byte IV + ciphertext + 16-byte auth tag
 
         // Decrypt
@@ -98,7 +84,7 @@ class WebDropCryptoTest {
         val cipherText = encryptedBytes.copyOfRange(12, encryptedBytes.size)
 
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(sharedSecret, "AES"), GCMParameterSpec(128, iv))
+        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(sessionKey, "AES"), GCMParameterSpec(128, iv))
         val decryptedBytes = cipher.doFinal(cipherText)
         val decryptedString = String(decryptedBytes, Charsets.UTF_8)
 

@@ -16,9 +16,12 @@ import android.view.autofill.AutofillId
 import android.view.autofill.AutofillValue
 import android.widget.RemoteViews
 import com.kunjika.app.R
+import com.kunjika.app.core.security.VaultSession
 import com.kunjika.app.data.local.AppDatabase
 import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
+import com.kunjika.app.data.preferences.UserPreferences
 
 class KunjikaAutofillService : AutofillService() {
 
@@ -27,6 +30,11 @@ class KunjikaAutofillService : AutofillService() {
         cancellationSignal: CancellationSignal,
         callback: FillCallback
     ) {
+        val preferences = UserPreferences(applicationContext)
+        if (!VaultSession.isFresh(runBlocking { preferences.autoLockTimeoutSec.first() })) {
+            callback.onSuccess(null)
+            return
+        }
         val contexts = request.fillContexts
         val structure = contexts[contexts.size - 1].structure
 

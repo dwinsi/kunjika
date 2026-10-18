@@ -141,8 +141,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             val hint = userPreferences.pinHint.first()
             val passphrase = userPreferences.getOrCreateDatabasePassphrase()
-            val recoveryKey = android.util.Base64.encodeToString(passphrase, android.util.Base64.NO_WRAP)
-                .take(16).uppercase() // 16 char short recovery code for convenience
+            val recoveryKey = String(passphrase, Charsets.UTF_8)
 
             RecoveryPdfManager.generateRecoveryKit(
                 context = context,

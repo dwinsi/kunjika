@@ -38,6 +38,21 @@ object KeystoreManager {
         }
     }
 
+    /** HMAC key used to keep low-entropy vault metadata out of offline hash dictionaries. */
+    fun hmacVaultMetadata(data: ByteArray): ByteArray {
+        val alias = "KunjikaLedgerHmacKey"
+        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+        if (!keyStore.containsAlias(alias)) {
+            val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_HMAC_SHA256, ANDROID_KEYSTORE)
+            generator.init(KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY)
+                .setDigests(KeyProperties.DIGEST_SHA256).build())
+            generator.generateKey()
+        }
+        val mac = javax.crypto.Mac.getInstance("HmacSHA256")
+        mac.init((keyStore.getEntry(alias, null) as KeyStore.SecretKeyEntry).secretKey)
+        return mac.doFinal(data)
+    }
+
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
         val entry = keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry

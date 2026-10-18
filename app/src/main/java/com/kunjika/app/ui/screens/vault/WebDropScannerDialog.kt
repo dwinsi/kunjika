@@ -99,7 +99,10 @@ fun WebDropScannerDialog(
     var state by remember { mutableStateOf(WebDropState.REQUESTING_PERMISSIONS) }
     var errorMessage by remember { mutableStateOf("") }
     var totpVerificationCode by remember { mutableStateOf("") }
-    var sharedSecret by remember { mutableStateOf<ByteArray?>(null) }
+    var sessionKey by remember { mutableStateOf<ByteArray?>(null) }
+    var pairingCodeKey by remember { mutableStateOf<ByteArray?>(null) }
+    var pairingAuthorized by remember { mutableStateOf(false) }
+    var browserConfirmedCode by remember { mutableStateOf(false) }
     var phonePublicKeyBytes by remember { mutableStateOf<ByteArray?>(null) }
     var blePeripheral by remember { mutableStateOf<KunjikaBlePeripheral?>(null) }
     var isBleConnected by remember { mutableStateOf(false) }
@@ -178,6 +181,9 @@ fun WebDropScannerDialog(
                 blePeripheral?.stop()
             } catch (_: Exception) {
             }
+            sessionKey?.fill(0)
+            pairingCodeKey?.fill(0)
+            phonePublicKeyBytes?.fill(0)
         }
     }
 
@@ -191,16 +197,14 @@ fun WebDropScannerDialog(
             return
         }
 
-        // 1. Verify Proof of Work
-        val isPowValid = WebDropCrypto.verifyProofOfWork(payload.sid, payload.t, payload.nonce)
-        if (!isPowValid) {
-            errorMessage = "Proof-of-work verification failed. Unauthenticated session."
+        if (payload.v != 2 || payload.sid.length != 32 || !WebDropCrypto.consumeSessionId(payload.sid)) {
+            errorMessage = "Unsupported or invalid pairing QR. Refresh the companion page."
             state = WebDropState.ERROR
             return
         }
 
         // 2. Verify Time Window (prevent replay)
-        val isTimeValid = WebDropCrypto.verifyTimeWindow(payload.t)
+        val isTimeValid = WebDropCrypto.verifyTimeWindow(payload.t, 60)
         if (!isTimeValid) {
             errorMessage = "QR Code session has expired. Please refresh the web page."
             state = WebDropState.ERROR
@@ -208,6 +212,8 @@ fun WebDropScannerDialog(
         }
 
         try {
+            val serviceUuid = java.util.UUID.fromString(payload.svc)
+            require(serviceUuid.toString() == payload.svc.lowercase())
             // Check if Bluetooth is turned on safely
             val btManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
             val btAdapter = btManager?.adapter
@@ -220,11 +226,15 @@ fun WebDropScannerDialog(
             val webPublicKey = WebDropCrypto.parseUncompressedP256PublicKey(payload.pk)
             val phoneKeyPair = WebDropCrypto.generateEphemeralKeyPair()
             val secret = WebDropCrypto.deriveSharedSecret(phoneKeyPair.private, webPublicKey)
-            sharedSecret = secret
             phonePublicKeyBytes = WebDropCrypto.exportUncompressedPublicKeyBytes(phoneKeyPair.public)
+            val webPublicKeyBytes = WebDropCrypto.hexToBytes(payload.pk)
+            val pubBytes = phonePublicKeyBytes!!
+            sessionKey = WebDropCrypto.deriveSessionKey(secret, payload.sid, webPublicKeyBytes, pubBytes)
+            pairingCodeKey = WebDropCrypto.derivePairingCodeKey(secret, payload.sid, webPublicKeyBytes, pubBytes)
+            secret.fill(0)
 
-            // 4. Compute 6-digit TOTP confirmation code
-            val code = WebDropCrypto.computeTotpCode(secret, payload.t)
+            // This short code is for comparison only. It is never used as an encryption key.
+            val code = WebDropCrypto.computePairingCode(pairingCodeKey!!)
             totpVerificationCode = "${code.take(3)} ${code.takeLast(3)}"
 
             // 5. Start BLE Peripheral Advertising
@@ -261,9 +271,11 @@ fun WebDropScannerDialog(
                 onError = { err ->
                     errorMessage = err
                     state = WebDropState.ERROR
-                }
+                },
+                phonePublicKey = pubBytes,
+                onPairingConfirmed = { browserConfirmedCode = true },
+                serviceUuid = serviceUuid
             )
-            peripheral.start()
             blePeripheral = peripheral
             state = WebDropState.CONFIRMING_PAIRING
 
@@ -273,37 +285,25 @@ fun WebDropScannerDialog(
         }
     }
 
-    fun triggerBiometricAndSend() {
-        val secret = sharedSecret
+    fun sendAfterPairingConfirmation() {
+        val key = sessionKey
         val peripheral = blePeripheral
 
-        if (secret == null || peripheral == null) {
+        if (key == null || peripheral == null || !isBleConnected || !pairingAuthorized || !browserConfirmedCode) {
             errorMessage = "Session expired or invalid"
             state = WebDropState.ERROR
             return
         }
-
-        val activity = context.findActivity()
-        val performSend = {
             state = WebDropState.TRANSFERRING
             scope.launch(Dispatchers.IO) {
-                // Wait up to 5 seconds if laptop BLE connection is pending
-                var attempts = 0
-                while (!isBleConnected && attempts < 50) {
-                    delay(100)
-                    attempts++
-                }
-
                 val payloadMap = mapOf(
                     "title" to item.title,
                     "username" to item.username,
                     "password" to item.plaintextPassword,
-                    "websiteUrl" to item.websiteUrl,
-                    "notes" to item.notes,
-                    "totpSecret" to item.totpSecret
+                    "websiteUrl" to item.websiteUrl
                 )
                 val json = Gson().toJson(payloadMap)
-                val encryptedBytes = WebDropCrypto.encryptPayload(json, secret)
+                val encryptedBytes = WebDropCrypto.encryptPayload(json, key)
                 
                 // Prepend Phone's 65-byte uncompressed public key for Web Companion ECDH derivation
                 val pubKeyBytes = phonePublicKeyBytes ?: ByteArray(0)
@@ -319,20 +319,35 @@ fun WebDropScannerDialog(
                     }
                 }
             }
-        }
+    }
 
+    fun beginPairingWithBiometric() {
+        val peripheral = blePeripheral
+        if (peripheral == null) {
+            errorMessage = "Pairing session is unavailable. Scan a new QR code."
+            state = WebDropState.ERROR
+            return
+        }
+        val activity = context.findActivity()
         if (activity != null && BiometricAuthManager.canAuthenticate(context)) {
             BiometricAuthManager.promptBiometric(
                 activity = activity,
                 title = "Authorize Password Export",
-                subtitle = "Send '${item.title}' to paired laptop", negativeButtonText = "Cancel",
-                onSuccess = { performSend() },
+                subtitle = "Start a secure pairing for '${item.title}'", negativeButtonText = "Cancel",
+                onSuccess = {
+                    pairingAuthorized = true
+                    if (!peripheral.start()) {
+                        errorMessage = "Could not start Bluetooth pairing."
+                        state = WebDropState.ERROR
+                    }
+                },
                 onError = { err ->
                     Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                 }
             )
         } else {
-            performSend()
+            errorMessage = "Biometric authentication is required to start a Web Drop session."
+            state = WebDropState.ERROR
         }
     }
 
@@ -469,10 +484,11 @@ fun WebDropScannerDialog(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = if (isBleConnected) {
-                                    "Code verified. Tap below to authorize transfer."
-                                } else {
-                                    "On your laptop screen, click 'Pair Bluetooth (BLE)' to connect."
+                                text = when {
+                                    !pairingAuthorized -> "Authorize with biometrics to start Bluetooth pairing."
+                                    isBleConnected && !browserConfirmedCode -> "Compare this code with the laptop, then confirm on the laptop first."
+                                    isBleConnected -> "The laptop confirmed the matching code. Approve to send."
+                                    else -> "On your laptop screen, choose Pair Bluetooth (BLE)."
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 textAlign = TextAlign.Center,
@@ -482,7 +498,10 @@ fun WebDropScannerDialog(
                             Spacer(modifier = Modifier.height(18.dp))
 
                             Button(
-                                onClick = { triggerBiometricAndSend() },
+                                onClick = {
+                                    if (!pairingAuthorized) beginPairingWithBiometric()
+                                    else if (isBleConnected && browserConfirmedCode) sendAfterPairingConfirmation()
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -496,7 +515,11 @@ fun WebDropScannerDialog(
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Authorize & Send", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                                Text(
+                                    if (!pairingAuthorized) "Authorize Pairing" else if (isBleConnected && browserConfirmedCode) "Codes Match — Send" else "Waiting for Laptop Confirmation",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }

@@ -3,6 +3,7 @@ package com.kunjika.app
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.view.View
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -47,6 +48,12 @@ class MainActivity : FragmentActivity() {
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE,
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            window.decorView.filterTouchesWhenObscured = true
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            window.decorView.setAccessibilityDataSensitive(View.ACCESSIBILITY_DATA_SENSITIVE_YES)
+        }
 
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = PasswordRepository(database.passwordDao(), database.blockDao())

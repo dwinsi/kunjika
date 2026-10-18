@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Architecture](https://img.shields.io/badge/architecture-Security--First%20Clean-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
-[![Security](https://img.shields.io/badge/security-100%25%20Offline-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Security](https://img.shields.io/badge/security-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 
 Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentation provides a comprehensive guide to Kunjika's security architecture, cryptographic protocols, user interface systems, and feature sets styled in the signature **Obsidian Gold & Midnight Indigo** aesthetic.
 
@@ -26,9 +26,9 @@ Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentat
 6. **[📋 Release Notes](../RELEASE_NOTES.md)**
    - Detailed version-by-version change log from v1.0.0 up to the current v1.1.2 release.
 7. **[🌐 Web Companion](https://dwinsi.github.io/kunjika/web-companion/)**
-   - Zero-install, client-side web companion for receiving credentials over Web Bluetooth with automatic memory and clipboard wipe.
+   - Browser companion for direct Bluetooth transfer. It does not auto-copy passwords; cleanup is best-effort and the receiving computer must be trusted.
 8. **[🔒 Privacy Policy](../PRIVACY_POLICY.md)**
-   - Sovereign zero-network privacy policy and offline data rights.
+   - Local data handling and permissions disclosure.
 9. **[📊 Play Store Data Safety](../PLAY_STORE_DATA_SAFETY.md)**
    - Official Google Play data safety disclosures and permission specifications.
 
@@ -42,5 +42,5 @@ All architecture and protocol diagrams throughout this documentation are rendere
 
 ---
 
-## 🔒 The Sovereign Security Promise
-Kunjika is designed to be **100% offline**. Because Kunjika does not declare the `android.permission.INTERNET` permission, passwords, master keys, and personal metadata physically cannot transmit over the network or reach cloud servers. External transfers occur strictly via user-authorized, biometric-gated local channels (such as Direct Web Drop over Bluetooth or Encrypted QR sync).
+## 🔒 Security Boundaries
+The Android app does not declare `android.permission.INTERNET`, so it cannot make ordinary internet connections. It can still share selected data through Bluetooth, QR, clipboard, Autofill, and exports. Web Drop's hosted companion is mutable and the receiving computer must be trusted.
