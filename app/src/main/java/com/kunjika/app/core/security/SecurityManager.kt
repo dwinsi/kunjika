@@ -7,6 +7,7 @@ import java.io.File
 import java.security.KeyStore
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
+import java.util.concurrent.TimeUnit
 
 object SecurityManager {
 
@@ -50,12 +51,13 @@ object SecurityManager {
         var process: Process? = null
         return try {
             process = Runtime.getRuntime().exec(arrayOf("/system/xbin/which", "su"))
+            if (!process.waitFor(1, TimeUnit.SECONDS)) return false
             val reader = process.inputStream.bufferedReader()
             reader.readLine() != null
         } catch (t: Throwable) {
             false
         } finally {
-            process?.destroy()
+            process?.destroyForcibly()
         }
     }
 

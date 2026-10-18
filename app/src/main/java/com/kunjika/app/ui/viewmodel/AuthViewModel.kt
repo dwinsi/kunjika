@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.crypto.Cipher
 
 sealed class AuthState {
@@ -153,17 +154,22 @@ class AuthViewModel(
         }
     }
 
-    fun getBiometricCryptoObject(): BiometricPrompt.CryptoObject? {
-        return try {
-            val iv = runBlocking { userPreferences.getBiometricIv() }
-            val cipher = if (iv != null) {
-                BiometricKeyManager.getDecryptionCipher(iv)
-            } else {
-                BiometricKeyManager.getEncryptionCipher()
+    fun prepareBiometricCryptoObject(onReady: (BiometricPrompt.CryptoObject?) -> Unit) {
+        viewModelScope.launch {
+            val cryptoObject = withContext(Dispatchers.IO) {
+                try {
+                    val iv = userPreferences.getBiometricIv()
+                    val cipher = if (iv != null) {
+                        BiometricKeyManager.getDecryptionCipher(iv)
+                    } else {
+                        BiometricKeyManager.getEncryptionCipher()
+                    }
+                    BiometricPrompt.CryptoObject(cipher)
+                } catch (_: Exception) {
+                    null
+                }
             }
-            BiometricPrompt.CryptoObject(cipher)
-        } catch (_: Exception) {
-            null
+            onReady(cryptoObject)
         }
     }
 

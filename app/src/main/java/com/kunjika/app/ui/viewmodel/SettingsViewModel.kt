@@ -65,13 +65,18 @@ class SettingsViewModel(
     val isDuressPinSet: StateFlow<Boolean> = userPreferences.isDuressPinSet
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    val securityStatus = MutableStateFlow(
-        SecurityStatus(
-            isRooted = SecurityManager.isDeviceRooted(),
-            isEmulator = SecurityManager.isRunningOnEmulator(),
-            isHardwareBacked = SecurityManager.isKeyHardwareBacked("KunjikaMasterSecretKey")
-        )
-    ).asStateFlow()
+    private val _securityStatus = MutableStateFlow(SecurityStatus())
+    val securityStatus = _securityStatus.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            _securityStatus.value = SecurityStatus(
+                isRooted = SecurityManager.isDeviceRooted(),
+                isEmulator = SecurityManager.isRunningOnEmulator(),
+                isHardwareBacked = SecurityManager.isKeyHardwareBacked("KunjikaMasterSecretKey")
+            )
+        }
+    }
 
     private val _backupStatus = MutableStateFlow<String?>(null)
     val backupStatus: StateFlow<String?> = _backupStatus.asStateFlow()
@@ -180,7 +185,9 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 val items = passwordRepository.getAllPasswords().first()
-                val exportJson = BackupManager.exportEncryptedBackup(items, passphrase)
+                val exportJson = withContext(Dispatchers.Default) {
+                    BackupManager.exportEncryptedBackup(items, passphrase)
+                }
                 passwordRepository.recordExportBackupBlock("JSON_STRING", items.size)
                 userPreferences.resetBackupTracker()
                 _backupStatus.value = "Backup generated successfully (${items.size} items)"
@@ -194,7 +201,9 @@ class SettingsViewModel(
     fun importEncryptedBackup(backupJson: String, passphrase: String) {
         viewModelScope.launch {
             try {
-                val items = BackupManager.importEncryptedBackup(backupJson, passphrase)
+                val items = withContext(Dispatchers.Default) {
+                    BackupManager.importEncryptedBackup(backupJson, passphrase)
+                }
                 passwordRepository.importBackupItems(items)
                 _backupStatus.value = "Imported ${items.size} passwords successfully"
             } catch (e: Exception) {
@@ -207,7 +216,9 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 val items = passwordRepository.getAllPasswords().first()
-                val exportJson = BackupManager.exportEncryptedBackup(items, passphrase)
+                val exportJson = withContext(Dispatchers.Default) {
+                    BackupManager.exportEncryptedBackup(items, passphrase)
+                }
 
                 withContext(Dispatchers.IO) {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
@@ -232,7 +243,9 @@ class SettingsViewModel(
                     }
                 } ?: throw Exception("Could not read file")
 
-                val items = BackupManager.importEncryptedBackup(importJson, passphrase)
+                val items = withContext(Dispatchers.Default) {
+                    BackupManager.importEncryptedBackup(importJson, passphrase)
+                }
                 passwordRepository.importBackupItems(items)
                 _backupStatus.value = "Imported ${items.size} passwords from file"
             } catch (e: Exception) {

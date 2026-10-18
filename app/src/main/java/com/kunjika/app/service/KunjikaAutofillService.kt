@@ -19,55 +19,65 @@ import com.kunjika.app.R
 import com.kunjika.app.core.security.VaultSession
 import com.kunjika.app.data.local.AppDatabase
 import com.kunjika.app.data.repository.PasswordRepository
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.first
 import com.kunjika.app.data.preferences.UserPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class KunjikaAutofillService : AutofillService() {
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onFillRequest(
         request: FillRequest,
         cancellationSignal: CancellationSignal,
         callback: FillCallback
     ) {
-        val preferences = UserPreferences(applicationContext)
-        if (!VaultSession.isFresh(runBlocking { preferences.autoLockTimeoutSec.first() })) {
-            callback.onSuccess(null)
-            return
-        }
-        val contexts = request.fillContexts
-        val structure = contexts[contexts.size - 1].structure
+        serviceScope.launch {
+            if (cancellationSignal.isCanceled) return@launch
+            val preferences = UserPreferences(applicationContext)
+            if (!VaultSession.isFresh(preferences.autoLockTimeoutSec.first())) {
+                callback.onSuccess(null)
+                return@launch
+            }
+            val contexts = request.fillContexts
+            if (contexts.isEmpty()) {
+                callback.onSuccess(null)
+                return@launch
+            }
+            val structure = contexts[contexts.size - 1].structure
 
-        val parsedStructure = parseStructure(structure)
+            val parsedStructure = parseStructure(structure)
         
         // If we can't find any fields to fill, just return
-        if (parsedStructure.usernameId == null && parsedStructure.passwordId == null) {
-            callback.onSuccess(null)
-            return
-        }
+            if (parsedStructure.usernameId == null && parsedStructure.passwordId == null) {
+                callback.onSuccess(null)
+                return@launch
+            }
 
         // Search for matching credentials in the vault
-        val searchKey = parsedStructure.domain ?: ""
-        val database = AppDatabase.getDatabase(applicationContext)
-        val repository = PasswordRepository(database.passwordDao(), database.blockDao())
+            val searchKey = parsedStructure.domain ?: ""
+            val database = AppDatabase.getDatabase(applicationContext)
+            val repository = PasswordRepository(database.passwordDao(), database.blockDao())
         
-        val matches = runBlocking {
+            val matches =
             if (searchKey.isNotEmpty()) {
                 repository.getPasswordsByDomain(searchKey)
             } else {
                 emptyList()
             }
-        }
 
-        if (matches.isEmpty()) {
-            callback.onSuccess(null)
-            return
-        }
+            if (cancellationSignal.isCanceled || matches.isEmpty()) {
+                callback.onSuccess(null)
+                return@launch
+            }
 
-        val responseBuilder = FillResponse.Builder()
+            val responseBuilder = FillResponse.Builder()
 
         // Create a dataset for each match
-        matches.forEach { item ->
+            matches.forEach { item ->
             val presentation = RemoteViews(packageName, R.layout.autofill_dataset_item).apply {
                 setTextViewText(R.id.title, item.title)
                 setTextViewText(R.id.username, item.username)
@@ -107,15 +117,21 @@ class KunjikaAutofillService : AutofillService() {
                 }
             }
 
-            responseBuilder.addDataset(datasetBuilder.build())
-        }
+                responseBuilder.addDataset(datasetBuilder.build())
+            }
 
-        callback.onSuccess(responseBuilder.build())
+            callback.onSuccess(responseBuilder.build())
+        }
     }
 
     override fun onSaveRequest(request: SaveRequest, callback: SaveCallback) {
         // Optional: Implement logic to capture and save new passwords detected on other screens
         callback.onSuccess()
+    }
+
+    override fun onDestroy() {
+        serviceScope.cancel()
+        super.onDestroy()
     }
 
     private fun parseStructure(structure: AssistStructure): ParsedStructure {

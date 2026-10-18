@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +50,6 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.kunjika.app.core.security.BiometricAuthManager
 import com.kunjika.app.core.security.findActivity
-import com.kunjika.app.core.security.SecurityManager
 import com.kunjika.app.ui.components.AntiMoireBackground
 import com.kunjika.app.ui.components.CustomTextField
 import com.kunjika.app.ui.components.GlossyButton
@@ -63,7 +61,7 @@ import com.kunjika.app.ui.viewmodel.AuthState
 import com.kunjika.app.ui.viewmodel.AuthViewModel
 
 @Composable
-fun AuthScreen(authViewModel: AuthViewModel) {
+fun AuthScreen(authViewModel: AuthViewModel, isRooted: Boolean) {
     val authState by authViewModel.authState.collectAsState()
     val errorMessage by authViewModel.errorMessage.collectAsState()
     val isBiometricEnabled by authViewModel.isBiometricEnabled.collectAsState()
@@ -74,19 +72,21 @@ fun AuthScreen(authViewModel: AuthViewModel) {
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
     var isConfirmStep by remember { mutableStateOf(false) }
-
     val isSetup = authState == AuthState.SetupRequired
 
     fun triggerBiometric() {
         val activity = context.findActivity()
         if (!isSetup && isBiometricEnabled && activity != null && BiometricAuthManager.canAuthenticate(context)) {
-            val cryptoObject = authViewModel.getBiometricCryptoObject()
-            BiometricAuthManager.promptBiometric(
-                activity = activity,
-                cryptoObject = cryptoObject,
-                onSuccess = { result -> authViewModel.unlockWithBiometrics(result) },
-                onError = { /* fallback to PIN */ }
-            )
+            authViewModel.prepareBiometricCryptoObject { cryptoObject ->
+                if (cryptoObject != null) {
+                    BiometricAuthManager.promptBiometric(
+                        activity = activity,
+                        cryptoObject = cryptoObject,
+                        onSuccess = { result -> authViewModel.unlockWithBiometrics(result) },
+                        onError = { /* fallback to PIN */ }
+                    )
+                }
+            }
         }
     }
 
@@ -126,7 +126,6 @@ fun AuthScreen(authViewModel: AuthViewModel) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val isRooted = remember { SecurityManager.isDeviceRooted() }
                 if (isRooted) {
                     Row(
                         modifier = Modifier

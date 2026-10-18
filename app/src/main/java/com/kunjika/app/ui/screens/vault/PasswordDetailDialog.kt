@@ -54,6 +54,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.kunjika.app.core.generator.PasswordStrengthEvaluator
 import com.kunjika.app.ui.components.AntiMoireBackground
 import com.kunjika.app.ui.components.AntiMoireText
@@ -507,11 +509,13 @@ fun QrCodeDisplayDialog(
 ) {
     var showTransferCode by remember { mutableStateOf(false) }
     val transferCode = remember { QrEncryptionManager.generateTransferCode() }
-    val payload = remember(item, transferCode) { 
-        val json = QrSyncPayload.fromDecryptedItem(item).toJson()
-        QrEncryptionManager.encrypt(json, transferCode)
+    val qrBitmap by produceState<android.graphics.Bitmap?>(null, item, transferCode) {
+        value = withContext(Dispatchers.Default) {
+            val json = QrSyncPayload.fromDecryptedItem(item).toJson()
+            val payload = QrEncryptionManager.encrypt(json, transferCode)
+            QrManager.generateQrCode(payload)
+        }
     }
-    val qrBitmap = remember(payload) { QrManager.generateQrCode(payload) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -555,7 +559,9 @@ fun QrCodeDisplayDialog(
                     )
                     TextButton(onClick = { showTransferCode = false }) { Text("Back to QR") }
                 } else {
-                    qrBitmap?.let {
+                    if (qrBitmap == null) {
+                        androidx.compose.material3.CircularProgressIndicator()
+                    } else qrBitmap?.let {
                         androidx.compose.foundation.Image(
                             bitmap = it.asImageBitmap(),
                             contentDescription = "Encrypted transfer QR code",

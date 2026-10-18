@@ -14,6 +14,8 @@ import com.kunjika.app.core.security.KeystoreManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
@@ -328,7 +330,7 @@ class UserPreferences(private val context: Context) {
         }
     }
 
-    private fun verifyStoredPin(pin: String, salt: ByteArray, stored: String): Boolean {
+    private suspend fun verifyStoredPin(pin: String, salt: ByteArray, stored: String): Boolean {
         val legacy = !stored.startsWith("v2:")
         val expected = if (legacy) stored else stored.removePrefix("v2:")
         val iterations = if (legacy) LEGACY_PIN_ITERATIONS else ITERATIONS
@@ -341,11 +343,19 @@ class UserPreferences(private val context: Context) {
         context.dataStore.edit { it[key] = upgraded }
     }
 
-    private fun hashPin(pin: String, salt: ByteArray, iterations: Int = ITERATIONS): String {
-        val spec = PBEKeySpec(pin.toCharArray(), salt, iterations, KEY_LENGTH)
-        val factory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
-        val hash = factory.generateSecret(spec).encoded
-        return hash.joinToString("") { "%02x".format(it) }
+    private suspend fun hashPin(pin: String, salt: ByteArray, iterations: Int = ITERATIONS): String =
+        withContext(Dispatchers.Default) {
+            val pinChars = pin.toCharArray()
+            val spec = PBEKeySpec(pinChars, salt, iterations, KEY_LENGTH)
+            try {
+                val hash = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM).generateSecret(spec).encoded
+                hash.joinToString("") { "%02x".format(it) }
+            } finally {
+                spec.clearPassword()
+                pinChars.fill('\u0000')
+            }
+        }
+
     }
 
     private fun generateSalt(): ByteArray {

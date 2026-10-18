@@ -60,6 +60,7 @@ fun MainNavigation(
 ) {
     val authState by authViewModel.authState.collectAsState()
     val isDecoyMode by authViewModel.isDecoyMode.collectAsState()
+    val securityStatus by settingsViewModel.securityStatus.collectAsState()
     var selectedTab by remember(initialTab) { mutableStateOf(initialTab) }
     var showAuditLog by remember { mutableStateOf(false) }
 
@@ -75,7 +76,7 @@ fun MainNavigation(
             OnboardingScreen(onFinished = { authViewModel.completeOnboarding() })
         }
         AuthState.SetupRequired, AuthState.Locked -> {
-            AuthScreen(authViewModel = authViewModel)
+            AuthScreen(authViewModel = authViewModel, isRooted = securityStatus.isRooted)
         }
         AuthState.Authenticated -> {
             Scaffold(
@@ -145,6 +146,7 @@ fun MainNavigation(
                             } else {
                                 SecurityAuditScreen(
                                     vaultViewModel = vaultViewModel,
+                                    securityStatus = securityStatus,
                                     onViewAuditLog = { showAuditLog = true }
                                 )
                             }

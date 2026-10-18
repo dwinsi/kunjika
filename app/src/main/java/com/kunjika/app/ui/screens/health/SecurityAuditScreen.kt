@@ -62,7 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kunjika.app.core.security.SecurityManager
 import com.kunjika.app.data.repository.DecryptedPasswordItem
 import com.kunjika.app.ui.screens.vault.AddEditPasswordDialog
 import com.kunjika.app.ui.theme.StrengthFair
@@ -72,9 +71,10 @@ import com.kunjika.app.ui.theme.StrengthVeryWeak
 import com.kunjika.app.ui.components.glossyBorder
 import com.kunjika.app.ui.theme.StrengthWeak
 import com.kunjika.app.ui.viewmodel.VaultViewModel
+import com.kunjika.app.ui.viewmodel.SecurityStatus
 
 @Composable
-fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Unit) {
+fun SecurityAuditScreen(vaultViewModel: VaultViewModel, securityStatus: SecurityStatus, onViewAuditLog: () -> Unit) {
     val auditSummary by vaultViewModel.auditSummary.collectAsState()
     val isChainValid by vaultViewModel.isChainValid.collectAsState()
 
@@ -217,9 +217,9 @@ fun SecurityAuditScreen(vaultViewModel: VaultViewModel, onViewAuditLog: () -> Un
         Spacer(modifier = Modifier.height(16.dp))
 
         // Device Security Environment Card
-        val isRooted = remember { SecurityManager.isDeviceRooted() }
-        val isEmulator = remember { SecurityManager.isRunningOnEmulator() }
-        val isHardwareBacked = remember { SecurityManager.isKeyHardwareBacked("KunjikaMasterSecretKey") }
+        val isRooted = securityStatus.isRooted
+        val isEmulator = securityStatus.isEmulator
+        val isHardwareBacked = securityStatus.isHardwareBacked
 
         GlossyCard(
             modifier = Modifier.fillMaxWidth(),
