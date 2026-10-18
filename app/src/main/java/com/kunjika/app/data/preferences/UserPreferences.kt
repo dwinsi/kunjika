@@ -356,8 +356,6 @@ class UserPreferences(private val context: Context) {
             }
         }
 
-    }
-
     private fun generateSalt(): ByteArray {
         val salt = ByteArray(16)
         SecureRandom().nextBytes(salt)
