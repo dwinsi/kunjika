@@ -1,51 +1,50 @@
-# 🏰 Kunjika
+#  Kunjika
 
 ### *A Local-First Encrypted Password Vault & Generator for Android*
 
 [![Google Play](https://img.shields.io/badge/Google_Play-Install%20App-34D399?style=flat-square&labelColor=064E3B&color=34D399&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.kunjika.app)
 [![Project Website](https://img.shields.io/badge/Project%20Website-GitHub%20Pages-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B&logo=githubpages&logoColor=white)](https://dwinsi.github.io/kunjika/)
-[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
-[![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
+[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-Android%208%2B%20(API%2026)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
-[![Security](https://img.shields.io/badge/network-100%25%20Offline-34D399?style=flat-square&labelColor=064E3B&color=34D399)](docs/security.md)
-[![Web Companion](https://img.shields.io/badge/Web%20Drop-Offline%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
+[![Security](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](docs/security.md)
+[![Web Companion](https://img.shields.io/badge/Web%20Drop-Bluetooth%20PC%20Transfer-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
 [![License](https://img.shields.io/badge/license-MIT-FBBF24?style=flat-square&labelColor=07090E&color=FBBF24)](LICENSE)
 
 ---
 
-## 💡 What is Kunjika?
+##  What is Kunjika?
 
-Most password managers store your passwords on a company's cloud server. If that company is hacked, your digital life is exposed.
-
-**Kunjika is fundamentally different.** It acts like a hardware-secured digital vault that lives **strictly on your phone**.
-- **No Cloud. No Accounts. No Internet Permission.** The Android app has no ordinary internet access; local sharing features still transfer selected data over Bluetooth, QR, clipboard, Autofill, or exports.
+Kunjika is a local-first password manager and authenticator for Android. Its encrypted vault is stored on your device, with no Kunjika account or cloud sync required.
+- **No Kunjika account or cloud sync.** The Android app manifest removes the `INTERNET` permission. It can still share selected data through Bluetooth, QR, clipboard, Autofill, and exports; the optional Play Integrity request is made through Google Play services.
 - **Local-first storage**: Vault data is encrypted on-device. Sharing or copying a credential moves it into the security boundary of the receiving device or app.
 
-> 🌐 **Explore the interactive [Kunjika Project Website](https://dwinsi.github.io/kunjika/)** for an in-depth feature tour, high-resolution screenshots, plain-language privacy breakdown, setup guide, live password generator demo, and community support!  
-> 📲 **Install on Android:** [Get Kunjika on Google Play Store](https://play.google.com/store/apps/details?id=com.kunjika.app) (Requires Android 15+).  
-> 📖 **Visual Walkthrough:** Check out our [User Guide & Step-by-Step Walkthrough](docs/user-guide.md) with screenshots and everyday use cases!  
-> 🧪 **Participating in Closed Beta?** Open the interactive [14-Day Play Store Testing Portal](https://dwinsi.github.io/kunjika/testing.html) to track daily testing missions!
+>  **Explore the interactive [Kunjika Project Website](https://dwinsi.github.io/kunjika/)** for a feature tour, screenshots, privacy information, setup guide, and community support.
+>
+>  **Install on Android:** [Get Kunjika on Google Play Store](https://play.google.com/store/apps/details?id=com.kunjika.app) (Requires Android 8.0 or later).
+>
+>  **Visual Walkthrough:** Check out our [User Guide & Step-by-Step Walkthrough](docs/user-guide.md) with screenshots and everyday use cases!
 
 ---
 
-## 🌟 Key Features (In Plain English)
+##  Key Features (In Plain English)
 
 | Feature | What It Does | Why It Matters to You |
 | :--- | :--- | :--- |
-| **🚫 No Android Internet Permission** | The app has no `INTERNET` permission. | Ordinary internet connections are unavailable. Local transfer and clipboard features still share data with other devices or apps. |
-| **🔐 Encrypted Local Vault** | SQLCipher uses a random passphrase wrapped by Android Keystore; hardware backing varies by device. | Protects copied database files. The Master PIN is an app access gate, not the database encryption key; root or app-process compromise can bypass it. |
-| **🎯 4-in-1 Smart Generator** | Generates strong passwords, multi-word passphrases (like `correct-horse-battery-staple`), numeric PINs, or 2FA secrets. | You never have to invent or reuse passwords again, and newly generated items are saved in an instant history list. |
-| **⏰ Built-In 2FA Authenticator** | Generates rotating 6-digit two-factor codes with animated countdown timers. | No need for a separate app like Google Authenticator; your logins and 2FA codes live securely in one place. |
-| **⚡ Web Drop (Send to PC)** | Beam passwords from your phone to your computer browser using Bluetooth & QR code. | No typing 30-character passwords on your PC keyboard, no cables, and no cloud relays. |
-| **📱 Phone-to-Phone QR Transfer** | Move credentials between two phones by scanning a secure, encrypted QR code. | Transfer passwords to a new phone without using cloud backups, cables, or Wi-Fi. |
-| **💎 Biometric Unlock** | Use a supported biometric to authorize convenient unlock. | The PIN exists in app memory during use; device compromise can expose it. |
-| **🛡️ Local Audit Chain** | A local HMAC-protected chain records vault changes. | Can help detect some edits; it is not immutable and cannot reliably detect full deletion or rollback. |
-| **🔍 Phone Health & Vault Audit** | Scans your vault for weak or repeated passwords, and checks your phone for root or tampering. | Keeps your digital security hygiene at 100% and warns you if your operating system environment is unsafe. |
-| **🎨 Obsidian Gold & Platinum Themes** | Built with high-contrast dark and light modes, 3D specular reflections, and frosted glass components. | A refined, ergonomic interface designed for clarity and aesthetic focus. |
+| ** No Android Internet Permission** | The app has no `INTERNET` permission. | Kunjika has no direct app internet access; Google Play services may handle the optional Play Integrity request. Local transfer and clipboard features still share data with other devices or apps. |
+| ** Encrypted Local Vault** | SQLCipher uses a random passphrase wrapped by Android Keystore; hardware backing varies by device. | Protects copied database files. The Master PIN is an app access gate, not the database encryption key; root or app-process compromise can bypass it. |
+| ** Password & PIN Generator** | Generates passwords, multi-word passphrases, and numeric PINs, plus TOTP setup secrets. | Choose the format for each account and revisit generated items in local history. |
+| ** Built-In TOTP Authenticator** | Generates rotating six-digit codes for entries with a saved TOTP secret. | Keep a login and its authenticator code together, or use a separate authenticator if you prefer more separation. |
+| ** Web Drop (Send to PC)** | Beam passwords from your phone to your computer browser using Bluetooth & QR code. | No typing 30-character passwords on your PC keyboard, no cables, and no cloud relays. |
+| ** Phone-to-Phone QR Transfer** | Move credentials between two phones by scanning a secure, encrypted QR code. | Transfer passwords to a new phone without using cloud backups, cables, or Wi-Fi. |
+| ** Biometric Unlock** | Use a supported biometric to authorize convenient unlock. | The PIN exists in app memory during use; device compromise can expose it. |
+| ** Local Audit Chain** | A local HMAC-protected chain records vault changes. | Can help detect some edits; it is not immutable and cannot reliably detect full deletion or rollback. |
+| ** Vault & Device Checks** | Reviews password strength/reuse and reports selected device environment signals. | Helps you spot issues; checks are advisory and cannot guarantee device security. |
+| ** Obsidian Gold & Platinum Themes** | Choose between dark and light themes with custom Compose components. | Personalize the app's appearance. |
 
 ---
 
-## 🎯 Handled Use Cases & Step-by-Step Flow Diagrams
+##  Handled Use Cases & Step-by-Step Flow Diagrams
 
 Below are the primary use cases handled by Kunjika, illustrated with numbered step-by-step flows.
 
@@ -80,11 +79,11 @@ Below are the primary use cases handled by Kunjika, illustrated with numbered st
 }}%%
 sequenceDiagram
     autonumber
-    actor User as 👤 User
-    participant UI as 📱 Generator Screen
-    participant Engine as ⚙️ Crypto Engine
-    participant Vault as 🔐 Security Vault Core
-    participant DB as 💾 SQLCipher DB (Encrypted)
+    actor User as  User
+    participant UI as  Generator Screen
+    participant Engine as  Crypto Engine
+    participant Vault as  Security Vault Core
+    participant DB as  SQLCipher DB (Encrypted)
 
     User->>UI: Select Type (Password, Passphrase, PIN, or TOTP)
     User->>UI: Tap "Generate"
@@ -94,14 +93,14 @@ sequenceDiagram
     User->>UI: Tap "Save to Vault" (add title, username, category)
     UI->>Vault: Pass credential details
     Vault->>Vault: Encrypt sensitive fields with Hardware Key (AES-256-GCM)
-    Vault->>Vault: Record signed entry into internal blockchain ledger
+    Vault->>Vault: Record selected event in local signed audit chain
     Vault->>DB: Store encrypted record in 256-bit database
     DB-->>UI: Confirmation success
     UI-->>User: Show item saved with strength rating
 ```
 
 1. **Choose Type**: Pick between standard passwords, readable multi-word passphrases, numeric PINs, or 2FA authenticator keys.
-2. **Generate**: The app uses hardware-grade randomness and estimates how many centuries it would take a supercomputer to crack it.
+2. **Generate**: The app uses Android's `SecureRandom` and shows an estimated strength indicator. Estimates are approximate and depend on assumptions about attacker capabilities.
 3. **History Logging**: The item is logged in your local generation history so you don't lose it if you accidentally navigate away.
 4. **Keystore Encryption**: When saved, sensitive fields are encrypted with a key protected by Android Keystore; hardware backing varies by device.
 5. **Database Storage**: The encrypted record is committed to the encrypted database, and a digital signature is recorded in your audit log.
@@ -137,10 +136,10 @@ sequenceDiagram
 }}%%
 sequenceDiagram
     autonumber
-    actor User as 👤 User
-    participant PC as 💻 Web Companion (Browser)
-    participant Phone as 📱 Kunjika App
-    participant BLE as 📡 Web Bluetooth (Direct Link)
+    actor User as  User
+    participant PC as  Web Companion (Browser)
+    participant Phone as  Kunjika App
+    participant BLE as  Web Bluetooth (Direct Link)
 
     User->>PC: Open Web Companion (Offline HTML)
     PC->>PC: Generate an ephemeral ECDH key and session ID
@@ -156,7 +155,7 @@ sequenceDiagram
     Phone->>BLE: Connect directly to PC over Bluetooth Low Energy
     Phone->>BLE: Stream encrypted password (AES-256-GCM)
     BLE->>PC: Deliver encrypted payload
-    PC->>PC: Decrypt directly into volatile RAM
+    PC->>PC: Decrypt in browser runtime
     PC->>User: Display password for explicit reveal or copy
     Note over PC: Closing clears visible fields best-effort; JS memory erasure is not guaranteed
 ```
@@ -164,7 +163,7 @@ sequenceDiagram
 1. **Open Web Companion**: On your computer browser, open the [Web Companion](https://dwinsi.github.io/kunjika/web-companion/). It runs entirely in your browser's local memory.
 2. **Scan the Screen**: On your phone, tap "Send to PC" and scan the QR code displayed on your monitor.
 3. **Hardware Biometric Gate**: Approve the transfer on your phone with your fingerprint or face.
-4. **Direct Bluetooth Stream**: The phone encrypts the password and sends it directly to your computer's Bluetooth antenna (range: 1–2 meters). Zero internet or cloud servers involved.
+4. **Direct Bluetooth Stream**: Once the companion page is loaded, the phone encrypts the selected credential and sends it directly over Bluetooth. No cloud relay is used during the transfer.
 5. **Visual Code Check**: Compare the transcript-derived six-digit codes on both screens before confirming in the browser and approving the send on the phone. This helps detect session substitution but does not authenticate the hosted page itself.
 6. **Copy only when needed**: The companion does not auto-copy. Clipboard history and host software can retain anything copied; closing the view only clears visible fields on a best-effort basis.
 
@@ -199,9 +198,9 @@ sequenceDiagram
 }}%%
 sequenceDiagram
     autonumber
-    actor User as 👤 User
-    participant OldPhone as 📱 Sending Phone
-    participant NewPhone as 📲 Receiving Phone
+    actor User as  User
+    participant OldPhone as  Sending Phone
+    participant NewPhone as  Receiving Phone
 
     User->>OldPhone: Select Item -> Tap "Export / Sync via QR"
     OldPhone->>OldPhone: Generate random 16-digit transfer code
@@ -244,7 +243,7 @@ sequenceDiagram
   }
 }}%%
 graph TD
-    Start([🛡️ Security Audit Triggered]) --> Check1[1. Password Health Scan]
+    Start([ Security Audit Triggered]) --> Check1[1. Password Health Scan]
     Start --> Check2[2. Device Environment Scan]
 
     Check1 --> W1[Flag Weak / Short Passwords]
@@ -255,9 +254,9 @@ graph TD
     Check2 --> D1[Root Detection: Checks su binaries & test-keys]
     Check2 --> D2[Emulator Detection: Detects VM environments]
     Check2 --> D3[KeyStore Check: Verifies physical TEE / StrongBox]
-    Check2 --> D4[Play Integrity: Verifies app has not been modified]
+    Check2 --> D4[Play Integrity: Requests a token; no backend verifies it]
 
-    W1 & W2 & W3 & W4 & D1 & D2 & D3 & D4 --> Report[📊 Comprehensive Health Dashboard & Recommendations]
+    W1 & W2 & W3 & W4 & D1 & D2 & D3 & D4 --> Report[ Comprehensive Health Dashboard & Recommendations]
 
     classDef trigger fill:#1E1B4B,stroke:#818CF8,stroke-width:2px,color:#E0E7FF;
     classDef category fill:#131A26,stroke:#F59E0B,stroke-width:2px,color:#FDE68A;
@@ -272,7 +271,7 @@ graph TD
 
 ---
 
-## 🏗️ System Architecture & Component Breakdown
+##  System Architecture & Component Breakdown
 
 Kunjika follows **Security-First Clean Architecture**, separating user interface controls from core cryptographic operations.
 
@@ -293,7 +292,7 @@ Kunjika follows **Security-First Clean Architecture**, separating user interface
   }
 }}%%
 graph TB
-    subgraph UI ["🎨 1. Presentation Layer (Jetpack Compose)"]
+    subgraph UI [" 1. Presentation Layer (Jetpack Compose)"]
         A[Auth & Lock Screen]
         B[Vault & Credential Details]
         C[4-in-1 Generator Engine]
@@ -301,25 +300,25 @@ graph TB
         E[Web Drop QR & BLE Dialog]
     end
 
-    subgraph VM ["🧠 2. Controller Layer (ViewModels)"]
+    subgraph VM [" 2. Controller Layer (ViewModels)"]
         F[AuthViewModel]
         G[VaultViewModel]
         H[GeneratorViewModel]
         I[SettingsViewModel]
     end
 
-    subgraph Core ["🛡️ 3. Security & Cryptographic Core"]
-        J[KeystoreManager<br/><b>Hardware TEE / StrongBox</b>]
+    subgraph Core [" 3. Security & Cryptographic Core"]
+        J[KeystoreManager<br/><b>Android Keystore; hardware varies</b>]
         K[BiometricKeyManager<br/><b>BiometricPrompt CryptoObject</b>]
-        L[BlockchainManager<br/><b>Local Tamper-Proof Ledger</b>]
+        L[BlockchainManager<br/><b>Local Signed Audit Chain</b>]
         M[WebDropCrypto & BLE<br/><b>ECDH P-256 + GATT Server</b>]
-        N[QrEncryptionManager<br/><b>PBKDF2 100k + AES-GCM</b>]
+        N[QrEncryptionManager<br/><b>PBKDF2 600k + AES-GCM</b>]
         O[Security & Integrity<br/><b>Root, Emulator & Play Integrity</b>]
     end
 
-    subgraph Storage ["💾 4. Encrypted Storage Layer"]
+    subgraph Storage [" 4. Storage Layer"]
         P[(SQLCipher Database<br/><b>256-bit AES SQLite</b>)]
-        Q[(Encrypted DataStore<br/><b>Hardware-Backed Preferences</b>)]
+        Q[(DataStore Preferences)]
     end
 
     UI --> VM
@@ -351,17 +350,17 @@ graph TB
 | **1. Presentation** | **Compose UI & Glossy Theme** | Renders all screens, high-contrast dark/light themes, 3D specular shine reflections, and interactive dialogs. | Jetpack Compose, Material 3, custom glossy canvas modifiers. |
 | **2. Controller** | **ViewModels** | Coordinates user actions, handles input validation, and ensures data is passed cleanly to the cryptographic engine. | Android Architecture Components, StateFlow, Coroutines. |
 | **3. Security Core** | **`KeystoreManager`** | Generates and manages the Master Encryption Key in Android Keystore. | Android Keystore; hardware backing varies by device. |
-| **3. Security Core** | **`BiometricKeyManager`** | Connects your fingerprint or face scan directly to cryptographic ciphers so your PIN is unlocked without storing plaintext. | `BiometricPrompt.CryptoObject`, AES-256-GCM. |
+| **3. Security Core** | **`BiometricKeyManager`** | Uses biometric authorization for a Keystore cipher that protects a saved PIN. The PIN may exist temporarily in app memory during use. | `BiometricPrompt.CryptoObject`, AES-256-GCM. |
 | **3. Security Core** | **`BlockchainManager`** | Records vault modifications in a local signed audit chain with known deletion and rollback limitations. | Elliptic Curve (`secp256r1`) signatures and HMAC digests. |
 | **3. Security Core** | **`WebDropCrypto` & `BLE`** | Enables direct, wireless password sharing to desktop browsers with zero cloud relays. | Web Bluetooth GATT server, ephemeral ECDH P-256, HKDF-SHA-256, AES-GCM. |
 | **3. Security Core** | **`QrEncryptionManager`** | Encrypts phone-to-phone data transfer packages into scannable QR codes. | PBKDF2-HMAC-SHA-256 (600,000 iterations), AES-256-GCM, random 16-digit code. |
-| **3. Security Core** | **`PlayIntegrity` & `Security`** | Continuously evaluates device environment to ensure the app is running safely. | Root detection heuristics, emulator checks, Google Play Integrity API. |
+| **3. Security Core** | **`PlayIntegrity` & `Security`** | Offers user-triggered root/emulator heuristics and Play Integrity token requests. No backend validates a trusted verdict. | Best-effort local checks and Google Play Integrity API. |
 | **4. Storage** | **SQLCipher Database** | Stores your encrypted credentials, URLs, and notes on flash memory with cryptographically hardened 256-bit encryption. | SQLCipher SQLite engine, AES-256-CBC with HMAC-SHA512. |
-| **4. Storage** | **Encrypted DataStore** | Stores application configuration, theme choices, and salt values securely. | AndroidX DataStore with hardware-encrypted preferences. |
+| **4. Storage** | **DataStore** | Stores application configuration, theme choices, PIN hashes, and wrapped values. | AndroidX DataStore; sensitive values are separately protected where implemented. |
 
 ---
 
-## 🔒 Security & Privacy Comparison
+##  Security & Privacy Comparison
 
 | Security Feature | Standard Cloud Password Managers | Kunjika Sovereign Vault |
 | :--- | :---: | :---: |
@@ -370,44 +369,43 @@ graph TB
 | **Phone-to-PC Sharing** | Product-dependent | Direct Bluetooth transfer after user confirmation; receiving computer is trusted |
 | **Database Encryption** | Product-dependent | SQLCipher passphrase wrapped by Android Keystore; Master PIN gates the UI |
 | **Tamper Detection** | Product-dependent | Local signed audit chain detects some edits; cannot assure deletion or rollback detection |
-| **Account Creation** | Requires Email, Password, Subscription | 🛡️ **Zero account, zero personal data collected** |
-| **Screen Leak Protection** | Often optional or partial | 🛡️ **System-wide `FLAG_SECURE` blocks screenshots & recordings** |
+| **Account Creation** | Product-dependent | No Kunjika account required; vault is local by default |
+| **Screen Capture Mitigation** | Product-dependent | `FLAG_SECURE` blocks ordinary screenshots and recents previews; it cannot block every capture method |
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
-- **Platform**: Android 15+ (Min API 35)
-- **Language**: Kotlin 2.2.10 (100% Coroutines & Flow)
-- **UI Framework**: Jetpack Compose (BOM 2025.02.00) with Material 3 & Custom Glossy Architecture
-- **Database**: Room 2.8.4 + SQLCipher 4.6.1 (256-bit AES)
-- **Biometrics**: AndroidX Biometric 1.2.0-alpha05 (`CryptoObject`)
-- **Integrity**: Google Play Integrity API 1.6.0 + Hardware Attestation
+- **Platform**: Android 8.0+ (min API 26; target API 36)
+- **Language**: Kotlin 2.4.21
+- **UI Framework**: Jetpack Compose (BOM 2026.09.00) with Material 3
+- **Database**: Room 2.8.5 + SQLCipher 4.19.1
+- **Biometrics**: AndroidX Biometric 1.1.0 (`CryptoObject`)
+- **Integrity**: Google Play Integrity API 1.6.0; the app can request tokens, but no backend verifies a trusted verdict
 - **Web Drop Companion**: Vanilla HTML5, CSS3, Web Bluetooth API, SubtleCrypto WebCrypto API
 
 ---
 
-## 📚 Further Documentation
+##  Further Documentation
 
-- [🌐 Interactive Project Site & Online Guide](https://dwinsi.github.io/kunjika/)
-- [📖 User Guide & Quickstart (Screenshots & Use Cases)](docs/user-guide.md)
-- [🇮🇳 हिंदी मार्गदर्शिका (Hindi Guide)](https://dwinsi.github.io/kunjika/hindi.html)
-- [🏗️ Deep Architecture Overview](docs/architecture.md)
-- [🛡️ Cryptography & Threat Model](docs/security.md)
-- [✨ Complete Feature Guide](docs/features.md)
-- [📋 Release Notes & Changelog](RELEASE_NOTES.md)
-- [🌐 Web Companion Page](https://dwinsi.github.io/kunjika/web-companion/)
-- [🔒 Privacy Policy](PRIVACY_POLICY.md)
-- [📊 Play Store Data Safety](PLAY_STORE_DATA_SAFETY.md)
+- [ Interactive Project Site & Online Guide](https://dwinsi.github.io/kunjika/)
+- [ User Guide & Quickstart (Screenshots & Use Cases)](docs/user-guide.md)
+- [ हिंदी मार्गदर्शिका (Hindi Guide)](https://dwinsi.github.io/kunjika/hindi.html)
+- [ Deep Architecture Overview](docs/architecture.md)
+- [ Cryptography & Threat Model](docs/security.md)
+- [ Complete Feature Guide](docs/features.md)
+- [ Release Notes & Changelog](RELEASE_NOTES.md)
+- [ Web Companion Page](https://dwinsi.github.io/kunjika/web-companion/)
+- [ Privacy Policy](PRIVACY_POLICY.md)
+- [ Play Store Data Safety](PLAY_STORE_DATA_SAFETY.md)
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### For Users & Testers
-- **Install from Google Play**: [Google Play Store Listing](https://play.google.com/store/apps/details?id=com.kunjika.app) (Android 15+)
+- **Install from Google Play**: [Google Play Store Listing](https://play.google.com/store/apps/details?id=com.kunjika.app) (Android 8.0+)
 - **Interactive Project Website**: [https://dwinsi.github.io/kunjika/](https://dwinsi.github.io/kunjika/)
-- **14-Day Tester Portal**: [Testing Instructions & Missions](https://dwinsi.github.io/kunjika/testing.html)
 - **Web Drop Companion (PC)**: [https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)
 
 ### For Developers
@@ -417,21 +415,21 @@ graph TB
    ```
 2. Open the project in **Android Studio Ladybug (2024.2.1+)** or newer.
 3. Sync project with Gradle files.
-4. Run on a physical Android 15+ device or an API 35 emulator.
+4. Run on a physical Android 8.0+ device or a compatible emulator. Hardware-backed Keystore features vary by device.
 
 ---
 
-## 💬 Community, Support & Bug Reports
+##  Community, Support & Bug Reports
 
 Kunjika is an open-source project dedicated to local-first security and digital sovereignty.
-- 🐛 **Report a Bug**: [Open an issue on GitHub Issues](https://github.com/dwinsi/kunjika/issues) (include device model, Android version, and reproduction steps).
-- 💬 **Ask Questions & Ideas**: [Join GitHub Discussions](https://github.com/dwinsi/kunjika/discussions).
-- 🌐 **Project Site**: [https://dwinsi.github.io/kunjika/](https://dwinsi.github.io/kunjika/)
-- ✉️ **Developer Contact**: Ashwin Singh ([winsimash@gmail.com](mailto:winsimash@gmail.com) / [@dwinsi](https://github.com/dwinsi))
+-  **Report a Bug**: [Open an issue on GitHub Issues](https://github.com/dwinsi/kunjika/issues) (include device model, Android version, and reproduction steps).
+-  **Ask Questions & Ideas**: [Join GitHub Discussions](https://github.com/dwinsi/kunjika/discussions).
+-  **Project Site**: [https://dwinsi.github.io/kunjika/](https://dwinsi.github.io/kunjika/)
+-  **Developer Contact**: Ashwin Singh ([winsimash@gmail.com](mailto:winsimash@gmail.com) / [@dwinsi](https://github.com/dwinsi))
 
 ---
 
-## ⚖️ License
+##  License
 
 Kunjika is open-source software licensed under the [MIT License](LICENSE).
 

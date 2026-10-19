@@ -4,31 +4,25 @@
   <p><em>Local-first encrypted password vault for Android</em></p>
 </div>
 
-[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
-[![Security](https://img.shields.io/badge/network-100%25%20Offline-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
-[![Companion](https://img.shields.io/badge/Web%20Drop-Offline%20PC%20Sync-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
-[![Closed Testing](https://img.shields.io/badge/Play%20Store-14--Day%20Testing%20Portal-38BDF8?style=flat-square&labelColor=0C4A6E&color=38BDF8)](../testing.html)
-
-> 🧪 **Closed Beta Tester?** Open the interactive mobile-friendly checklist with progress tracking and quick copy templates:  
-> 👉 **[Launch the 14-Day Play Store Testing Portal](../testing.html)** *(Interactive day tracker, 1-minute daily missions & review guides)*
+[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Security](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Companion](https://img.shields.io/badge/Web%20Drop-Bluetooth%20PC%20Transfer-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
+>  **Install Kunjika:** [Open the Google Play listing](https://play.google.com/store/apps/details?id=com.kunjika.app)
 
 Welcome to **Kunjika**! If you are new to the app, this guide will help you understand how it works, how to set it up, and how to use all of its features in your day-to-day life.
 
 ---
 
-## 📌 What is Kunjika? (In Simple Words)
+## What is Kunjika? (In Simple Words)
 
-Most password managers (like Chrome, LastPass, or 1Password) save your passwords on their cloud servers over the internet. If their servers ever get breached, your logins could be leaked.
-
-**Kunjika has no Android internet permission.**
-- The app cannot make ordinary internet connections, but it can share data through Bluetooth, QR, clipboard, Android Autofill, and user-controlled exports.
-- Outbound data transfer occurs strictly under your explicit, biometric-authorized control via local channels: **Direct Web Drop** (Bluetooth BLE to your PC) or **Encrypted QR** (phone-to-phone).
+Kunjika is local-first: it does not require an account or provide cloud synchronization. The Android app removes the `INTERNET` permission, while selected data can still leave the vault through clipboard, Autofill, exports, QR, or Bluetooth actions you initiate.
+- Web Drop uses Bluetooth after biometric approval and pairing-code confirmation. The hosted companion page and receiving computer remain part of the trust boundary.
 - Android Keystore protects key material; hardware backing depends on the device and must not be assumed.
-- **You** own the keys. No accounts to create, no monthly subscriptions, and zero tracking.
+- No Kunjika account or cloud sync is required. The app has no analytics SDKs configured in this source; the optional Play Integrity request is handled through Google Play services.
 
 ---
 
-## 🚀 Quick Setup (First Launch)
+##  Quick Setup (First Launch)
 
 When you open Kunjika for the first time, getting set up takes less than a minute.
 
@@ -53,24 +47,24 @@ Swipe through the quick onboarding screens explaining how Kunjika keeps your cre
 
 ---
 
-## 🧭 Navigating the App (The 4 Main Tabs)
+##  Navigating the App (The 4 Main Tabs)
 
 At the bottom of your screen, you will find 4 main sections:
 
 ```
 ┌──────────────┬──────────────┬──────────────┬──────────────┐
-│  🔄 Generator │   🔒 Vault   │  🛡️ Security │  ⚙️ Settings  │
+│   Generator │    Vault   │   Security │   Settings  │
 └──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
-1. **🔄 Generator**: Create super-strong passwords, memorable word passphrases, numeric PINs, and 2FA secrets.
-2. **🔒 Vault**: Your encrypted safe where all your saved accounts, logins, and notes live.
-3. **🛡️ Security**: A health dashboard that spots weak or reused passwords and checks your phone's safety.
-4. **⚙️ Settings**: Change themes (Obsidian Gold or Platinum Silver), enable Android Autofill, and back up your vault.
+1. ** Generator**: Create super-strong passwords, memorable word passphrases, numeric PINs, and 2FA secrets.
+2. ** Vault**: Your encrypted safe where all your saved accounts, logins, and notes live.
+3. ** Security**: A health dashboard that spots weak or reused passwords and checks your phone's safety.
+4. ** Settings**: Change themes (Obsidian Gold or Platinum Silver), enable Android Autofill, and back up your vault.
 
 ---
 
-## 💡 Common Use Cases & How to Use Them
+##  Common Use Cases & How to Use Them
 
 ---
 
@@ -117,7 +111,7 @@ Store your logins, usernames, passwords, and sensitive notes safely.
    - **Password**: Type it or tap the dice icon to auto-generate a secure password.
    - **Category**: Group into *Personal*, *Work*, *Finance*, or *Social*.
    - **2FA Secret (Optional)**: If you want Kunjika to generate your rotating 6-digit authenticator codes.
-   - **Notes (Optional)**: Any recovery codes or security questions (these are also encrypted).
+   - **Notes (Optional)**: Additional details. Notes are protected by SQLCipher database encryption, not separately encrypted at the field level.
 4. Tap **Save**.
 
 #### How to find and use a saved password:
@@ -161,13 +155,13 @@ sequenceDiagram
     User->>Phone: Touches fingerprint sensor to approve
     Phone->>PC: Securely beams encrypted password
     PC->>PC: Decrypts and displays masked credential
-    Note over PC: Close view to clear displayed fields (best-effort; memory is not guaranteed erased)
+    Note over PC: Close view to clear displayed fields on a best-effort basis
 ```
 
 #### Step-by-Step Instructions:
-1. On your computer (Chrome, Edge, Brave, or Opera), open:  
-   👉 **[https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)**
-2. On your phone, open Kunjika, tap the account you want to use, and tap **⚡ Web Drop**.
+1. On your computer, open the hosted companion page in a Web Bluetooth-compatible browser:
+    **[https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)**
+2. On your phone, open Kunjika, tap the account you want to use, and tap ** Web Drop**.
 3. Point your phone camera at your computer screen to scan the QR code.
 4. Authenticate on the phone to start Bluetooth pairing.
 5. Compare the **6-digit Pairing Code** on both screens. Confirm on the browser, then approve sending on the phone.
@@ -194,7 +188,7 @@ Bought a new phone or want to share a Wi-Fi or family password with another devi
 
 ### Use Case 6: Checking Your Vault Health & Security Status
 
-Tap the **🛡️ Security** tab to audit your passwords and device health:
+Tap the ** Security** tab to audit your passwords and device health:
 
 - **Vault Hygiene**:
   - **Weak Passwords**: Flags passwords shorter than 12 characters.
@@ -210,7 +204,7 @@ Tap the **🛡️ Security** tab to audit your passwords and device health:
 
 Kunjika has no Android internet permission, so **you** choose where exported backups are stored.
 
-1. Go to the **⚙️ Settings** tab.
+1. Go to the ** Settings** tab.
 2. Tap **Print Local Database Passphrase**.
 3. Authenticate with your fingerprint or Master PIN.
 4. Kunjika generates an unencrypted PDF containing the local SQLCipher passphrase. Store it securely.
@@ -222,105 +216,60 @@ Kunjika has no Android internet permission, so **you** choose where exported bac
 
 Tired of copying and pasting? Let Android fill your logins automatically:
 
-1. Open Kunjika and go to **⚙️ Settings**.
+1. Open Kunjika and go to ** Settings**.
 2. Tap **Autofill Service**.
 3. Select **Kunjika** as your default autofill provider in Android Settings.
 4. Next time you open an app or website login form, tap the password box and choose Kunjika to unlock with your fingerprint and fill your credentials with a single tap!
 
 ---
 
-## 🧪 14-Day Google Play Closed Testing Guide
+## Feature Walkthrough
 
-> [!IMPORTANT]
-> **Why 14-Day Testing is Required for Google Play Store Production Approval:**
-> Under Google Play Console policies for personal developer accounts, **at least 20 testers must remain continuously opted-in for at least 14 consecutive days** with demonstrated real-world engagement before Google grants production access to publish Kunjika publicly.
->
-> **The 3 Golden Rules for Closed Beta Testers:**
-> 1. 📲 **Do NOT uninstall the app** for at least 14 days after opting in. Keeping the app installed is required for the Play Console counter to advance.
-> 2. ⚡ **Open and interact with the app regularly** (daily or every 1–2 days). Google tracks active engagement signals; dormant or abandoned installs may cause Google's review system to reject production access.
-> 3. 💬 **Submit private feedback on Google Play** during or at the end of your 14-day test cycle.
+Use the checklist below to explore Kunjika at your own pace. The old closed-testing schedule has been retired now that the app is publicly listed.
 
----
-
-### 📅 14-Day Testing Schedule & Feature Roadmap
-
-To ensure comprehensive test coverage across every feature of Kunjika, follow this recommended day-by-day testing progression:
-
-| Phase | Days | Focus Area | What to Test & Verify |
-| :--- | :---: | :--- | :--- |
-| **Phase 1** | **Days 1–2** | **Installation & Biometric Onboarding** | • Join via the Google Play Closed Test opt-in link.<br>• Install Kunjika from the Play Store on your Android device.<br>• Complete onboarding and review local storage and transfer boundaries.<br>• Set a **Master PIN of at least 6 digits** and link biometrics.<br>• Test locking and unlocking the app 3–4 times using both PIN and biometrics. |
-| **Phase 2** | **Days 3–5** | **Password Generation & Vault Operations** | • Explore all 4 generation styles in the **Generator** tab: Random Passwords, Diceware Passphrases, Numeric PINs, and TOTP Secrets.<br>• Observe the real-time **Entropy & Crack Time Indicator**.<br>• Verify that newly generated items appear in the **Generation History** card.<br>• Add 4–5 sample accounts to the **Vault** across different categories (*Personal*, *Work*, *Finance*, *Social*).<br>• Test the Vault search bar and category filter chips. |
-| **Phase 3** | **Days 6–8** | **2FA TOTP Authenticator & Android Autofill** | • Add a 2FA secret key to an account (or test key `JBSWY3DPEHPK3PXP`).<br>• Verify the rotating 6-digit code.<br>• Go to **⚙️ Settings > Autofill Service** and set Kunjika as your Android default.<br>• Unlock Kunjika first. Autofill uses exact saved web host matching and is unavailable while the vault is locked. |
-| **Phase 4** | **Days 9–11** | **Web Drop (PC Sync) & Offline Sharing** | • Use a trusted computer and browser; the hosted companion page is mutable and cannot protect a compromised receiver.<br>• Scan the QR. Authenticate on the phone to start pairing, compare the six-digit codes, confirm on the browser, and approve on the phone.<br>• The browser does not automatically copy the password. Clipboard history may retain anything you copy.<br>• Close the view for best-effort display cleanup; memory erasure is not guaranteed.<br>• *(Optional)* Test phone-to-phone encrypted QR transfer. |
-| **Phase 5** | **Days 12–13** | **Security Audits, Themes & Emergency Backups** | • Open the **🛡️ Security** tab: verify weak/reused password checks, root detection status, and hardware key attestation.<br>• Go to **Settings** and toggle between **Obsidian Gold** and **Platinum Silver** themes.<br>• Test auto-lock timeout behavior by switching between apps or letting the screen turn off.<br>• Generate an **Emergency Recovery Kit** in Settings and inspect the exported offline document. |
-| **Phase 6** | **Day 14+** | **Google Play Store Feedback & Continuous Opt-In** | • Open Kunjika's listing in the **Google Play Store** app.<br>• Tap **Leave feedback for developer** to share your testing experience.<br>• **Keep Kunjika installed** until the developer announces official public launch! |
-
----
-
-### 🧪 High-Priority Test Cases & Edge Cases to Try
+### Useful checks and edge cases
 
 Try executing these specific scenarios to help uncover edge cases and stress-test the app:
 
-#### 1. ✈️ 100% Offline Airplane Mode Test
+#### 1.  Local Features in Airplane Mode
 * Turn on **Airplane Mode** (disable Wi-Fi and Mobile Data entirely).
 * Open Kunjika, generate credentials, edit vault items, and test biometrics.
-* **Expected Result**: Kunjika functions flawlessly with 0% network reliance and no network timeout errors.
+* **Expected Result**: Local vault, generator, and authentication features remain available. Online services outside the app, including Play Integrity through Google Play services, may need connectivity.
 
-#### 2. 🛡️ Screen Privacy & Anti-Spyware Protection (`FLAG_SECURE`)
+#### 2.  Screen Privacy & Anti-Spyware Protection (`FLAG_SECURE`)
 * Attempt to take a screenshot inside the app (`Power + Volume Down`).
 * Open Android's Recent Apps / App Switcher view.
 * **Expected Result**: Android blocks screenshot capture (or displays a security warning) and blanks the preview card in the app switcher, preventing malware from capturing passwords.
 
-#### 3. ⏱️ Clipboard Clearing Check
+#### 3.  Clipboard behavior
 * Copy a password or TOTP code from the Vault.
-* Paste it into a text note and wait 30–45 seconds.
-* Try pasting again.
+* Paste it into a text note.
 * **Expected Result**: Kunjika marks copied secrets as sensitive where supported, but does not clear the clipboard. Other apps or clipboard history may retain copied content.
 
-#### 4. 🔒 Rate Limiting & Master PIN Protection
+#### 4.  Rate Limiting & Master PIN Protection
 * Lock Kunjika and intentionally enter an incorrect PIN several times.
 * **Expected Result**: The app should enforce progressive delays/vibrations and lock out repeated brute-force attempts.
 
-#### 5. 🔄 App Lifecycle & Auto-Lock Test
+#### 5.  App Lifecycle & Auto-Lock Test
 * Unlock Kunjika, navigate to your vault, and switch to another app (e.g., Settings or YouTube) for 2 minutes.
 * Return to Kunjika.
-* **Expected Result**: Kunjika should immediately require biometric or Master PIN re-authentication before displaying your vault items.
+* **Expected Result**: Behavior follows your configured auto-lock timeout and lock-on-exit settings.
 
 ---
 
-### 💬 How to Submit Helpful Feedback on Google Play
+### Feedback and support
 
-Constructive tester feedback in the Play Store provides critical proof of active testing during Google's review process.
-
-#### Step-by-Step Instructions:
-1. Open the **Google Play Store** app on your testing phone.
-2. Tap your profile picture in the top-right corner -> **Manage apps & device**.
-3. Under the **Installed** tab, find **Kunjika (Beta / Early Access)** and tap it.
-4. Scroll down to the **Private feedback to developer** section.
-5. Tap the text box, write your feedback, and tap **Submit**.
-
-#### What to Mention in Your Feedback:
-* **Your Device & OS**: (e.g., *Google Pixel 8, Android 15* or *Samsung Galaxy S24, One UI 6.1*)
-* **What Worked Well**: (e.g., *Instant biometric unlock, smooth TOTP timer, fast Web Drop pairing*)
-* **Any Issues or Usability Quirks**: (e.g., *Autofill suggestion positioning, button touch targets, or contrast in bright sunlight*)
-* **Performance**: (e.g., *App launches instantly, zero lag, smooth 60/120fps animations*)
-
-> [!CAUTION]
-> **Please do NOT uninstall Kunjika on Day 14!**
-> Google Play reviews the production access application after the 14-day mark. If testers uninstall immediately on day 14 while the review is pending, the active tester count may fall below 20, causing Google to reset the testing cycle. Please keep Kunjika installed until the app is officially approved and live.
+Open the [Kunjika Google Play listing](https://play.google.com/store/apps/details?id=com.kunjika.app) to leave honest feedback, or use the project support links to report a bug. Include your device model, Android version, and steps to reproduce. Never include passwords or backup files in a report.
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+##  Frequently Asked Questions (FAQ)
 
-### Q: Why do I need to keep Kunjika installed for at least 14 continuous days?
-Google Play enforces this rule for all personal developer accounts to guarantee that new apps have been tested by real people on real hardware before being distributed to the public. If any tester uninstalls, the 20-tester minimum may be broken, which can reset Google's 14-day progress counter.
+### How can I help improve Kunjika?
+Share honest feedback through the Play Store listing or report issues through the project support links. Do not include credentials or private backup data.
 
-### Q: Do I need to use Kunjika every single day of the test?
-While you don't need to spend hours in the app, opening it daily or every other day to perform quick tasks (generating a password, viewing an account, or testing autofill) generates active engagement metrics that Google's algorithm evaluates when approving production access.
-
-### Q: Does Kunjika ever send my data to the internet?
-**No, never.** Kunjika does not even have the Android Internet permission (`android.permission.INTERNET`) declared in its manifest. Even if someone tried to add tracking code, the Android operating system would physically block any network request.
+### Q: Does Kunjika sync my vault to the internet?
+Kunjika has no account or cloud-sync service, and the Android app manifest removes the `INTERNET` permission. You can still choose to copy, export, or transfer selected data. The optional Play Integrity token request uses Google Play services; see the privacy policy for details and limitations.
 
 ### Q: What happens if I forget my Master PIN?
 The Master PIN is an app access gate, not the SQLCipher key. The recovery PDF contains the local database passphrase but is unencrypted and does not include the Keystore field-encryption keys; use an encrypted `.kunjika` export to migrate entries to another phone.
@@ -335,28 +284,28 @@ Kunjika's **`.kunjika` portable backup files** are encrypted with your custom **
 Go to **Settings → Encrypted Offline Backup → Save File**. Kunjika uses Android's official Storage Access Framework (SAF) file picker, allowing you to choose any storage destination—such as a USB-C flash drive, external SD card, or local download folder—completely offline without Kunjika ever needing internet permission.
 
 ### Q: How does Kunjika help me remember to back up my passwords?
-Kunjika automatically tracks changes to your vault. Whenever you add or edit 5 or more credentials, a discreet **"Backup Recommended"** banner chip appears at the top of your Vault screen to remind you to export a fresh backup before you forget.
+Kunjika does not currently show an automatic backup reminder. Create and verify an encrypted backup periodically, and keep its passphrase separately.
 
-### Q: Why does opening the Vault require BOTH my fingerprint AND Master PIN?
-Kunjika supports Master PIN and configured biometric unlock. These are app-level access controls; the Master PIN is not combined with the database key, and a compromised/rooted device can bypass app-level controls.
+### Q: Do I need both my fingerprint and Master PIN to open the Vault?
+No. You can unlock with your Master PIN, and on supported devices you can enable biometric unlock. These are app-level controls; the Master PIN is not the database key, and a compromised/rooted device can bypass app-level controls.
 
 ### Q: What are "High-Security Entries" and how do they protect my sensitive accounts?
-You can mark critical accounts (like Banking, Crypto Wallets, or Primary Email) as **"High Security"**. Even when your vault is unlocked, viewing, revealing, or copying a High-Security password or 2FA code requires an additional **Biometric Step-Up re-verification**, preventing an attacker who snatched an unlocked phone from accessing your most valuable credentials.
+You can mark selected accounts as **High Security**. Depending on device support and the action, revealing or copying sensitive values can require biometric re-verification. This is an additional app-level check, not protection against a compromised device.
 
 ### Q: What is the Anti-Coercion Duress PIN and how does the Decoy Vault work?
-Under physical coercion or threat, you can enter a pre-configured secret **Duress PIN** instead of your real Master PIN. Kunjika will open a convincing **Decoy Vault** populated with realistic dummy accounts (e.g. Netflix, Spotify, School), completely concealing your real encrypted passwords.
+The optional **Duress PIN** opens a decoy view with dummy entries instead of the normal vault list. This app-level feature cannot guarantee protection from a person with device access or a compromised operating system.
 
 ### Q: Why is there a 5-second countdown timer when I export a backup?
-The 5-second safety delay (`5... 4... 3... Cancel`) prevents accidental exports or unauthorized rapid bulk extraction of your vault if someone briefly handles your unlocked device, giving you time to tap "Cancel Export".
+The 5-second delay gives you a chance to cancel an export you did not intend to start. It is a safety prompt, not protection against someone who controls an unlocked device.
 
 ### Q: What browsers work with Web Drop?
 Web Drop uses the Web Bluetooth standard, which is natively supported in **Google Chrome**, **Microsoft Edge**, **Brave**, and **Opera** on Windows, macOS, Linux, and ChromeOS.
 
 ---
 
-## 📚 Need More Technical Details?
+##  Need More Technical Details?
 
 For engineers, security auditors, or curious minds:
-- **[🏗️ Technical Architecture](architecture.md)** — MVVM structure, KeyStore TEE, and GATT Bluetooth protocol.
-- **[🛡️ Cryptographic Security Deep-Dive](security.md)** — Double-Lock encryption, PBKDF2 parameters, and local blockchain audit log.
-- **[✨ Full Feature Specifications](features.md)** — Exhaustive list of all app specifications and configurations.
+- **[ Technical Architecture](architecture.md)** — MVVM structure, Android Keystore, and GATT Bluetooth protocol.
+- **[ Cryptographic Security Deep-Dive](security.md)** — SQLCipher, PBKDF2 parameters, and the local signed audit chain with its limitations.
+- **[ Full Feature Specifications](features.md)** — Exhaustive list of all app specifications and configurations.

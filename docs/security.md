@@ -1,16 +1,16 @@
-# 🛡️ Security Deep-Dive
+#  Security Deep-Dive
 
-[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
-[![Encryption](https://img.shields.io/badge/encryption-Double--Lock%20AES--256--GCM-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](security.md)
-[![Network](https://img.shields.io/badge/network-100%25%20Air--Gapped-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
-[![Audit](https://img.shields.io/badge/tamper%20defense-Blockchain%20Ledger-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](security.md)
+[![Encryption](https://img.shields.io/badge/encryption-SQLCipher%20%2B%20AES--GCM-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](security.md)
+[![Network](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Audit](https://img.shields.io/badge/audit-local%20signed%20chain-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](security.md)
 
 Kunjika is designed for local-first use. The Android manifest removes the app's `INTERNET` permission, but Bluetooth, operating-system services, clipboard integrations, backups, and a receiving computer remain part of the security boundary. Keystore hardware backing depends on the device and is not guaranteed everywhere.
 
 ---
 
-## 🗝️ Encryption Strategy: "Double-Lock" Architecture
+##  Encryption Strategy: "Double-Lock" Architecture
 
 Kunjika does not simply encrypt the database file; it encrypts every sensitive field *before* it is written to an encrypted database.
 
@@ -66,7 +66,7 @@ graph LR
 ### 1. Hardware Security Module (Android KeyStore)
 Cryptographic keys are generated in Android Keystore. Hardware backing is device-dependent and is reported only when the platform confirms TEE or StrongBox:
 - **Master Encryption Key**: AES-256-GCM key used for field-level credential encryption.
-- **Identity Key**: Elliptic curve (`secp256r1`) key used for signing blockchain ledger blocks.
+- **Identity Key**: Elliptic curve (`secp256r1`) key used to sign local audit-chain blocks.
 - **Biometric Key**: AES-256 key initialized with `setUserAuthenticationRequired(true)` when biometric unlock is configured.
 
 ### 2. Database Protection (SQLCipher)
@@ -76,18 +76,18 @@ Cryptographic keys are generated in Android Keystore. Hardware backing is device
 
 ---
 
-## 🔐 Hardware-Bound Biometric PIN Storage
+##  Biometric PIN Unlock
 
-To provide frictionless biometric unlock without weakening the Master PIN or persisting plaintext credentials in storage or RAM:
+Biometric unlock uses Android Keystore to protect a stored PIN for convenience. The PIN is not persisted as plaintext, but it is used in app memory during authentication; app code cannot guarantee secure erasure from memory.
 
 1. **Authentication-Gated Cipher**: When biometrics are enabled, an AES-256-GCM key is generated in Android Keystore requiring biometric authorization for its use (`setUserAuthenticationRequired(true)`). Hardware backing depends on the device.
 2. **Cryptographic Wrapping**: Upon successful initial PIN entry and biometric verification, the Master PIN is encrypted using the authenticated `BiometricPrompt.CryptoObject` cipher.
-3. **Persisting Encrypted Payload**: The resulting ciphertext and initialization vector (IV) are persisted in `UserPreferences`. Plaintext is cleared from memory.
+3. **Persisting Encrypted Payload**: The resulting ciphertext and initialization vector (IV) are persisted in `UserPreferences`. The PIN may exist temporarily in app memory during unlock; secure erasure cannot be guaranteed for Kotlin/Java strings.
 4. **Biometric Unwrapping**: On subsequent app launches, a biometric prompt authorizes the KeyStore cipher to decrypt the stored PIN directly into volatile memory for database unlocking. If biometrics are modified or removed at the OS level, the KeyStore key is automatically invalidated by Android.
 
 ---
 
-## 🧱 Local Signed Audit Chain
+##  Local Signed Audit Chain
 
 Kunjika maintains a locally signed hash chain intended to make some edits detectable. It is not an immutable blockchain and cannot reliably detect full ledger deletion, tail truncation, or an attacker controlling the app and its signing environment.
 
@@ -119,7 +119,7 @@ graph RL
 
     subgraph Block ["Block Structure"]
         H[Content Hash SHA-256]
-        S[ECDSA Hardware Signature]
+        S[ECDSA Android Keystore Signature]
         T[Timestamp]
         P[Previous Block Hash]
     end
@@ -139,7 +139,7 @@ graph RL
 
 ---
 
-## 🛡️ Environmental Integrity & Tamper Protection
+##  Environmental Integrity & Tamper Protection
 
 Kunjika incorporates multi-layered runtime environmental checks to detect compromised execution environments:
 
@@ -162,9 +162,9 @@ Heuristic scanning flags emulated environments to prevent dynamic analysis in au
 
 ---
 
-## 📂 Direct Web Drop Cryptographic Protocol
+##  Direct Web Drop Cryptographic Protocol
 
-Web Drop enables wireless credential transfer to desktop/laptop browsers without internet access, third-party relays, or accounts.
+Web Drop transfers a selected credential directly over Bluetooth without a cloud relay or account. The hosted companion page needs to be loaded in the browser first, and the receiving computer must be trusted.
 
 ```mermaid
 %%{init: {
@@ -183,14 +183,14 @@ Web Drop enables wireless credential transfer to desktop/laptop browsers without
   }
 }}%%
 graph TD
-    subgraph Browser ["💻 Web Companion (best-effort memory cleanup)"]
+    subgraph Browser [" Web Companion (best-effort memory cleanup)"]
         B_KP[Generate Ephemeral P-256 Keypair] --> QR[Display One-minute QR]
         B_SAS[Derive transcript comparison code]
         B_DEC[AES-256-GCM Decrypt]
         WIPE[Clear visible fields on close]
     end
 
-    subgraph Phone ["📱 Kunjika Android App"]
+    subgraph Phone [" Kunjika Android App"]
         CAM[Scan QR Code via CameraX] --> P_KP[Validate session & Generate P-256 Key]
         P_KP --> ECDH[Derive Shared Secret via HKDF]
         ECDH --> P_SAS[Compute 6-Digit Visual SAS]
@@ -198,7 +198,7 @@ graph TD
         BIO -->|Success| P_ADV[Advertise session BLE service]
         P_ADV --> P_ENC[AES-256-GCM Encrypt after code confirmation]
         P_ENC --> BLE_TX[BLE GATT Server Stream with Retries]
-        P_ENC --> LEDGER[Record EXPORT_BLE in Blockchain]
+        P_ENC --> LEDGER[Record EXPORT_BLE in local signed audit chain]
     end
 
     QR -.->|Visual Scan| CAM
@@ -234,11 +234,11 @@ graph TD
    - Transmits AES-256-GCM ciphertext in sequence-numbered chunks with notification retries for error-free delivery.
 6. **Best-effort cleanup**:
    - The browser does not automatically copy passwords. Closing the transfer view clears visible credential fields and drops references, but JavaScript cannot guarantee memory erasure or delete operating-system clipboard history.
-7. **Blockchain Audit Trail**:
-   - Every Web Drop transaction commits an `EXPORT_BLE` block into the local ledger.
+7. **Local Audit Trail**:
+   - Web Drop records an `EXPORT_BLE` event in the local signed audit chain. The chain can help detect some edits but is not immutable and cannot guarantee detection of deletion or rollback.
 
 ---
 
-## 📑 Backup Security & Cache Purging
+##  Backup Security & Cache Purging
 - **Encrypted Vault Backups**: Password-protected vault exports encrypted with AES-256-GCM using PBKDF2 key derivation.
 - **Recovery kit cleanup**: The generated PDF is deleted from app cache after a delay. Deletion does not guarantee physical erasure on flash storage; protect the PDF and delete exported copies yourself.

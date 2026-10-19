@@ -1,15 +1,15 @@
-# 🏗️ Kunjika Architecture
+#  Kunjika Architecture
 
-[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Design](https://img.shields.io/badge/pattern-Clean%20MVVM%20%2B%20Compose-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
-[![Security Core](https://img.shields.io/badge/security%20core-TEE%20%2B%20SQLCipher-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
+[![Security Core](https://img.shields.io/badge/security%20core-Android%20Keystore%20%2B%20SQLCipher-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 
 Kunjika uses a local-first architecture with Android Keystore and encrypted local storage. Hardware backing varies by device, and Bluetooth, operating-system integrations, and the receiving computer remain in scope.
 
 ---
 
-## 🏛️ High-Level Component Architecture
+##  High-Level Component Architecture
 
 The architecture encrypts vault data at rest and uses authenticated encryption for Web Drop payloads in transit. The Android app removes its `INTERNET` permission; Bluetooth and other operating-system integrations are still communication channels.
 
@@ -31,7 +31,7 @@ The architecture encrypts vault data at rest and uses authenticated encryption f
 }}%%
 graph TB
     %% Definitions
-    subgraph UI ["🎨 UI Layer (Jetpack Compose & Material 3)"]
+    subgraph UI [" UI Layer (Jetpack Compose & Material 3)"]
         Nav[MainNavigation]
         Auth[Auth Screen]
         Gen[Generator Screen & History]
@@ -42,14 +42,14 @@ graph TB
         Glossy[Glossy Design System]
     end
 
-    subgraph VM ["🧠 ViewModel Layer"]
+    subgraph VM [" ViewModel Layer"]
         AVM[AuthViewModel]
         GVM[GeneratorViewModel]
         VVM[VaultViewModel]
         SVM[SettingsViewModel]
     end
 
-    subgraph Domain ["🛡️ Security & Core Logic"]
+    subgraph Domain [" Security & Core Logic"]
         direction LR
         BC[BlockchainManager]
         KE[KeystoreManager]
@@ -62,7 +62,7 @@ graph TB
         PIM[PlayIntegrityManager]
     end
 
-    subgraph Data ["💾 Data Layer (Persistence)"]
+    subgraph Data [" Data Layer (Persistence)"]
         Repo[PasswordRepository]
         Room[(Room + SQLCipher)]
         DS[(UserPreferences / DataStore)]
@@ -106,18 +106,18 @@ graph TB
 ```
 
 > [!NOTE]
-> **Layered Decoupling**: The **UI Layer** interacts strictly through **ViewModels**, delegating cryptographic operations to isolated **Security Core** singletons and managers. Storage persistence is doubly protected via **Room + SQLCipher** and hardware-encrypted **DataStore** preferences.
+> **Layered Decoupling**: The **UI Layer** interacts through **ViewModels**, delegating cryptographic operations to security managers. Vault records are stored in Room + SQLCipher; DataStore contains app preferences and PIN-related values, some of which are separately wrapped or hashed.
 
 ---
 
-## 🔄 Core Data Flows
+##  Core Data Flows
 
 ### 1. Double-Lock Encryption Flow
 Kunjika implements a two-stage encryption pipeline:
-1. **Field-Level Encryption**: Every sensitive credential field is encrypted with an individual AES-256-GCM cipher keyed by the Android KeyStore TEE master key.
-2. **Database-Level Encryption**: SQLCipher uses a random 256-bit passphrase wrapped by Android Keystore. The Master PIN gates the app UI; it is not the database key.
+1. **Selected-Field Encryption**: Password and TOTP secret values use AES-256-GCM with an Android Keystore key. Other record metadata is protected by the encrypted SQLCipher database, not individually field-encrypted.
+2. **Database-Level Encryption**: SQLCipher uses a random passphrase wrapped by Android Keystore. The Master PIN gates the app UI; it is not the database key. Hardware backing varies by device.
 
-### 2. Hardware-Bound Biometric PIN Storage Flow
+### 2. Biometric-Authorized PIN Storage Flow
 To achieve instant biometric unlock without compromising PIN entropy or persisting plaintext:
 ```mermaid
 %%{init: {
@@ -145,11 +145,11 @@ To achieve instant biometric unlock without compromising PIN entropy or persisti
 }}%%
 sequenceDiagram
     autonumber
-    participant User as 👤 User
-    participant Auth as 📱 AuthScreen / ViewModel
-    participant Bio as 🛡️ BiometricPrompt (CryptoObject)
-    participant KS as 🔐 Android KeyStore (TEE)
-    participant Prefs as 💾 UserPreferences (DataStore)
+    participant User as  User
+    participant Auth as  AuthScreen / ViewModel
+    participant Bio as  BiometricPrompt (CryptoObject)
+    participant KS as  Android KeyStore (TEE)
+    participant Prefs as  UserPreferences (DataStore)
 
     User->>Auth: Setup Master PIN
     Auth->>KS: Generate Biometric Key (requires user auth)
@@ -173,7 +173,7 @@ sequenceDiagram
 ### 3. Local Signed Audit Chain
 Mutations write signed entries to a local hash chain:
 - **Vault Row Digest**: HMAC-SHA-256 of the modified serialized row using a Keystore-held key.
-- **Hardware Signature**: Signed with an elliptic curve (`secp256r1`) private key residing inside the device's TEE/StrongBox.
+- **Keystore Signature**: Signed with an elliptic curve (`secp256r1`) private key in Android Keystore; hardware backing varies by device.
 - **Signed Hash Chain**: Blocks link to the previous block and use a local Keystore signing key. This is tamper-evident for some edits, but cannot reliably detect full deletion, tail truncation, or compromise of the running app.
 
 ### 4. Environmental Integrity & Tamper Protection
@@ -188,23 +188,23 @@ Enables secure transmission of passwords to desktop browsers without network acc
 - **Ephemeral ECDH and HKDF**: Both sides derive transcript-bound keys from ephemeral P-256 keys, the session ID, and both public keys.
 - **Pairing confirmation**: After biometric authorization, both screens show a six-digit comparison code. The browser requires a confirmation click before the phone can release the credential.
 - **Per-session BLE service**: A random service UUID is advertised only after biometric approval; the phone sends AES-256-GCM ciphertext over BLE.
-- **Audit Log**: An `EXPORT_BLE` block is appended to the local blockchain ledger.
+- **Audit Log**: An `EXPORT_BLE` event is appended to the local signed audit chain, which can detect some edits but is not immutable.
 
 ---
 
-## 🛠️ Technology Stack & Dependencies
+##  Technology Stack & Dependencies
 
 | Component | Technology | Version | Purpose |
 | :--- | :--- | :--- | :--- |
-| **Language** | Kotlin | `2.2.10` | 100% modern coroutine-first Android codebase |
-| **Build System** | Android Gradle Plugin (AGP) | `9.4.0` | Modern build toolchain |
-| **Compiler Plugin** | KSP (Kotlin Symbol Processing) | `2.3.6` | Room annotation processing |
-| **UI Toolkit** | Jetpack Compose (BOM) | `2025.02.00` | Declarative UI with Material 3 |
-| **Navigation** | Navigation Compose | `2.8.7` | Type-safe in-app navigation |
-| **Database** | Room + SQLCipher | `2.8.4` / `4.6.1` | Local SQLite database with 256-bit AES encryption |
+| **Language** | Kotlin | `2.4.21` | Android app implementation |
+| **Build System** | Android Gradle Plugin (AGP) | `9.4.1` | Android build toolchain |
+| **Compiler Plugin** | KSP (Kotlin Symbol Processing) | `2.3.12` | Room annotation processing |
+| **UI Toolkit** | Jetpack Compose (BOM) | `2026.09.00` | Declarative UI with Material 3 |
+| **Navigation** | Navigation Compose | `2.10.2` | In-app navigation |
+| **Database** | Room + SQLCipher | `2.8.5` / `4.19.1` | Encrypted local SQLite database |
 | **Biometrics** | AndroidX Biometric | `1.1.0` | Biometric authentication & `CryptoObject` |
-| **Security Integrity** | Google Play Integrity | `1.6.0` | Application attestation and tamper protection |
-| **Preferences** | Jetpack DataStore | `1.1.2` | Encrypted key-value storage |
+| **Integrity Signal** | Google Play Integrity | `1.6.0` | Requests a Play Integrity token; this project has no backend to verify it |
+| **Preferences** | Jetpack DataStore | `1.2.1` | Local key-value settings |
 | **Camera & Barcode** | CameraX + ML Kit Barcode | `1.4.1` / `17.3.0` | QR code scanning for offline sync |
-| **Bluetooth** | Android Bluetooth Low Energy | API 35 Native | BLE GATT Peripheral server for Web Drop |
+| **Bluetooth** | Android Bluetooth Low Energy | Android platform API | BLE GATT peripheral server for Web Drop |
 | **Desktop Companion**| HTML5 / Vanilla JS / WebCrypto | Native | Browser receiver with best-effort memory cleanup |

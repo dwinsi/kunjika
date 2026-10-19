@@ -1,6 +1,6 @@
-# ✨ Kunjika Features
+#  Kunjika Features
 
-[![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
 [![Sync](https://img.shields.io/badge/sync-Offline%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
@@ -9,7 +9,7 @@ Kunjika combines local encrypted storage and offline transfer options with a mod
 
 ---
 
-## 🚀 Key Modules
+##  Key Modules
 
 ### 1. Smart Generator Engine (4-in-1)
 Kunjika features an intelligent, multi-mode cryptographic generator designed for diverse authentication scenarios:
@@ -36,7 +36,7 @@ Kunjika features an intelligent, multi-mode cryptographic generator designed for
 - **Encrypted Storage**: SQLCipher encrypts the database. Password and TOTP-secret fields also use AES-GCM with Android Keystore keys; metadata is protected by the database encryption, not separately field-encrypted.
 - **Built-In TOTP Authenticator**: Integrated two-factor authenticator displaying animated circular countdown timers without needing external apps like Google Authenticator.
 - **Categorization & Filtering**: Organize credentials by **Personal**, **Work**, **Finance**, and **Social** with instant search, favorite pinning, and credential strength indicators.
-- **Encrypted Secure Notes**: Attach encrypted metadata, recovery keys, and notes to any vault entry.
+- **Notes**: Add notes to a vault entry. Notes are stored as database fields and protected by SQLCipher database encryption, not separately encrypted at the field level.
 
 ---
 
@@ -71,24 +71,24 @@ sequenceDiagram
     participant S as Sender Device
     participant R as Receiver Device
     S->>S: Encrypt Payload (AES-256-GCM)
-    Note over S: Derive Key via PBKDF2 (100,000 iter) from 6-Digit Code
+    Note over S: Derive Key via PBKDF2-HMAC-SHA-256 (600,000 iterations) from random 16-Digit Code
     S->>S: Generate Dynamic QR Code
-    S->>S: Display QR + 6-Digit Transfer Code
+    S->>S: Display QR + 16-Digit Transfer Code separately
     R->>S: Scan QR Code via CameraX
-    Note over R: Prompt User for 6-Digit Transfer Code
+    Note over R: Prompt User for 16-Digit Transfer Code
     R->>R: Derive Key & Authenticate Payload
     Note over R: Save Decrypted Item to Vault
 ```
 
 > [!NOTE]
-> **Encrypted QR Sequence**: The payload is encrypted with AES-256-GCM using PBKDF2-HMAC-SHA-256 and a random 16-digit transfer code. The QR and code are shown in separate views; do not photograph or share both.
+> **Encrypted QR Sequence**: The payload is encrypted with AES-256-GCM using PBKDF2-HMAC-SHA-256 (600,000 iterations) and a random 16-digit transfer code. The QR and code are shown in separate views; do not photograph or share both.
 
 ---
 
 ### 4. Direct Web Drop (Phone-to-PC Wireless Sync)
 Eliminates manual typing of 32+ character high-entropy passwords on desktop and laptop computers without cloud accounts or relays.
 
-- **No cloud relay during transfer**: Once loaded, the companion communicates directly with the phone over Bluetooth. The page itself is hosted remotely; use a trusted copy, computer, and browser.
+- **No cloud relay during transfer**: Once the companion page is loaded, it communicates directly with the phone over Bluetooth. Loading the hosted page requires internet access; the Android app itself does not require ordinary internet access. Use a trusted computer, browser, and page source.
 - **Ephemeral ECDH P-256 and HKDF-SHA-256**: The session key is derived from both public keys and a one-minute session ID.
 - **Pairing code confirmation**: Biometric approval starts BLE advertising. Compare the six-digit codes on both screens, confirm on the browser, then approve sending on the phone.
 - **Per-session BLE service UUID**: The phone advertises a random service UUID only after biometric approval.
@@ -122,9 +122,9 @@ Eliminates manual typing of 32+ character high-entropy passwords on desktop and 
 }}%%
 sequenceDiagram
     autonumber
-    participant Browser as 💻 Web Companion (Browser)
-    participant Phone as 📱 Kunjika App (Android)
-    participant BLE as 📡 Web Bluetooth (GATT)
+    participant Browser as  Web Companion (Browser)
+    participant Phone as  Kunjika App (Android)
+    participant BLE as  Web Bluetooth (GATT)
 
     Browser->>Browser: Generate Ephemeral P-256 ECDH Keypair
     Browser->>Browser: Render One-minute QR (Session ID + PubKey + BLE Service UUID)
@@ -138,7 +138,7 @@ sequenceDiagram
     User->>Phone: Compare codes and approve send
     Phone->>BLE: Stream Chunked AES-256-GCM Ciphertext (with Retries)
     Browser->>Browser: Decrypt with WebCrypto & Display Masked Password
-    Phone->>Phone: Record EXPORT_BLE Block in Local Blockchain
+    Phone->>Phone: Record EXPORT_BLE in local signed audit chain
     User->>Browser: Close transfer view for best-effort visible-field cleanup
 ```
 
@@ -170,21 +170,21 @@ The Security Audit suite provides proactive threat detection and integrity analy
 ---
 
 ### 7. System Integration & Access Control
-- **Biometric-Backed PIN Storage**: Hardware-bound encryption for the Master PIN using KeyStore TEE ciphers via `BiometricPrompt.CryptoObject`, providing zero-friction instant biometric unlock.
+- **Biometric Unlock**: When enabled, an Android Keystore key protects a stored PIN and `BiometricPrompt.CryptoObject` authorizes its use. Hardware backing depends on the device. The PIN is an app access gate, not the database encryption key.
 - **Native Android Autofill**: Integrated Autofill framework support for autofilling apps and websites.
-- **Screen Capture Protection**: App-wide `FLAG_SECURE` blocks screenshots, screen mirroring, and system app switcher previews.
+- **Screen Capture Mitigation**: App-wide `FLAG_SECURE` blocks ordinary screenshots and hides the app preview in recents on Android. It cannot block every capture method or a compromised OS.
 - **Local Database Passphrase PDF**: Generate an unencrypted copy of the local SQLCipher passphrase. It does not restore field-encrypted entries on a new device; use an encrypted vault export for migration.
 
 ---
 
-## 📋 Feature Roadmap
+##  Feature Roadmap
 - [x] TOTP Authenticator & Generator
 - [x] Persistent Generation History
 - [x] Local signed audit chain
 - [x] Encrypted QR Sync (Phone-to-Phone)
 - [x] Direct Web Drop (Web Bluetooth + transcript-based pairing confirmation)
 - [x] PBKDF2 PIN Hashing (600,000 iterations for newly set PINs)
-- [x] Biometric-Backed PIN Storage (TEE unwrap)
+- [x] Biometric unlock through Android Keystore and `BiometricPrompt.CryptoObject` (hardware backing varies)
 - [x] Google Play Integrity API Integration
 - [x] Obsidian Gold & Platinum Dual-Theme System
 - [x] Real-Time Root & Emulator Detection
