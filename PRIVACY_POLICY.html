@@ -94,7 +94,7 @@
 <body>
     <div class="card">
         <h1>Privacy Policy for Kunjika</h1>
-        <p><strong>Effective Date: August 26, 2026</strong><br><strong>Last Updated: October 19, 2026 (source version 1.8.0)</strong></p>
+        <p><strong>Effective Date: August 26, 2026</strong><br><strong>Last Updated: October 19, 2026 (source version 1.9.0, version code 19)</strong></p>
 
         <p>Kunjika is a local-first password manager. The Android app removes the <code>INTERNET</code> permission and does not provide user accounts or cloud synchronization. Bluetooth, QR, clipboard, operating-system integrations, and receiving devices remain data-sharing paths that require your care.</p>
 
@@ -113,17 +113,17 @@
         <p>Vault protection uses SQLCipher and Android Keystore, with additional AES-GCM encryption for password and TOTP-secret fields. Hardware backing depends on the device:</p>
         <ul>
             <li><strong>At Rest</strong>: Password and TOTP-secret fields use AES-256-GCM with Android Keystore keys. The database uses SQLCipher with a random passphrase wrapped by Android Keystore. Other metadata is protected by database encryption, not separately field-encrypted. The Master PIN is an app access gate, not the database key.</li>
-            <li><strong>Biometric Protection</strong>: When enabled, biometric unlock uses Android Keystore and <code>BiometricPrompt.CryptoObject</code> to authorize use of an encrypted PIN. The PIN may exist temporarily in app memory during authentication.</li>
+            <li><strong>Biometric App Access</strong>: The app can request authentication through Android <code>BiometricPrompt</code>. If an encrypted PIN payload exists, the app attempts to unwrap and verify it. With no saved payload, the current UI can mark the app authenticated after the biometric prompt without verifying the Master PIN. This is an app access convenience, not a guarantee against device or app-process compromise.</li>
             <li><strong>Phone-to-Phone QR Transfer</strong>: Uses AES-GCM with a PBKDF2-HMAC-SHA-256-derived key (600,000 iterations) and a random 16-digit transfer code. The QR and code are displayed separately; protect both.</li>
             <li><strong>Phone-to-PC Web Drop</strong>: Uses ephemeral P-256 ECDH, transcript-bound HKDF-SHA-256, AES-GCM, and a six-digit comparison code over Bluetooth. Compare both screens and approve the transfer on the phone.</li>
         </ul>
 
         <h2>3. Permissions Used</h2>
         <ul>
-            <li><strong>Biometric</strong>: To allow you to unlock your vault securely using your device's fingerprint or face recognition.</li>
+            <li><strong>Biometric / Fingerprint</strong>: To authorize optional biometric unlock and Keystore cryptographic operations; available methods and hardware backing depend on the device.</li>
             <li><strong>Camera</strong>: Used to scan pairing and transfer QR codes. Kunjika does not save scanned frames as photos.</li>
-            <li><strong>Bluetooth</strong>: Used for a user-initiated Web Drop transfer to a nearby browser. Advertising ends when the session ends.</li>
-            <li><strong>Vibrate</strong>: To provide haptic feedback during authentication.</li>
+            <li><strong>Bluetooth</strong>: Current Bluetooth permissions and legacy Bluetooth permissions on older Android versions are used for a user-initiated Web Drop transfer. Advertising begins after phone authorization and ends when the session ends.</li>
+            <li><strong>Vibrate</strong>: Used for haptic feedback in supported transfer and authentication flows.</li>
         </ul>
 
         <h2>4. Device and App Integrity Checks</h2>

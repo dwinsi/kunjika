@@ -1,13 +1,33 @@
 #  Kunjika Release Notes
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
 [![Target SDK](https://img.shields.io/badge/target%20SDK-36-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Platform](https://img.shields.io/badge/min%20Android-8.0%20(API%2026)-34D399?style=flat-square&labelColor=064E3B&color=34D399)](README.md)
 
 > This changelog follows the repository source version. Play Store rollout availability may differ by track. See [security.md](docs/security.md) for current implementation details and limitations.
 
-## v1.8.0 (Current Source Version) - October 2026
+## v1.9.0 (Current Source Version) - October 19, 2026
+
+### Web Drop Reliability
+- Added the Web Companion URL to the phone's Web Drop scanner screen.
+- Restricted the camera scanner to QR codes and made it handle one detected code per scan.
+- Wait for Android to report successful GATT service registration before starting BLE advertising.
+- Clarified that the user authorizes pairing on the phone, then starts the Bluetooth device picker from the computer browser.
+
+### PIN and Vault Responsiveness
+- Show progress during Master PIN setup and app unlock, and ignore duplicate submissions while verification is running.
+- Do not wait for the first PIN-creation audit entry before opening the vault.
+- Move vault list filtering and password-health analysis off the UI thread.
+
+### Current Security Notes
+- Newly set PINs use PBKDF2-HMAC-SHA-256 with 600,000 iterations; older hashes are upgraded after successful verification.
+- Phone-to-phone QR transfer uses a random 16-digit transfer code, PBKDF2-HMAC-SHA-256 (600,000 iterations), and AES-GCM. Protect the QR and code separately.
+- Web Drop uses ephemeral P-256 ECDH, HKDF-SHA-256, AES-GCM, a user-compared code, and explicit phone approval. The hosted page and receiving computer remain part of the trust boundary.
+- Browser clipboard copying is user-initiated. Kunjika does not automatically copy or clear the browser clipboard; clipboard managers may retain copies.
+- SQLCipher uses a random passphrase wrapped by Android Keystore. The Master PIN gates app access; it is not the database key. Hardware backing varies by device.
+
+## v1.8.0 (October 2026)
 
 ### Usability and Privacy
 - Added an optional Duress PIN that opens a decoy vault view.
@@ -22,7 +42,7 @@
 - Added a startup loading and retry state for vault initialization failures.
 - Added a timeout to a root-detection process probe.
 
-### Current Security Notes
+### Security Notes at v1.8.0
 - Newly set PINs use PBKDF2-HMAC-SHA-256 with 600,000 iterations. Older hashes are upgraded after successful verification.
 - Phone-to-phone QR transfer uses a random 16-digit transfer code, PBKDF2-HMAC-SHA-256 (600,000 iterations), and AES-GCM. Protect the QR and code separately.
 - Web Drop uses ephemeral P-256 ECDH, HKDF-SHA-256, AES-GCM, a user-compared code, and explicit phone approval. The hosted page and receiving computer remain part of the trust boundary.

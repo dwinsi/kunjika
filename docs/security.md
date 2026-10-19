@@ -1,6 +1,6 @@
 #  Security Deep-Dive
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Encryption](https://img.shields.io/badge/encryption-SQLCipher%20%2B%20AES--GCM-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](security.md)
 [![Network](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
@@ -72,18 +72,16 @@ Cryptographic keys are generated in Android Keystore. Hardware backing is device
 ### 2. Database Protection (SQLCipher)
 - **Random Database Passphrase**: SQLCipher uses a random 256-bit passphrase stored wrapped by Android Keystore. The Master PIN is an app access gate, not the database key.
 - **PIN Verification**: Newly set PINs use PBKDF2-HMAC-SHA-256 at 600,000 iterations with exponential app-level delays after failures. Root access can bypass the app and reset app data; existing PINs shorter than six digits should be changed.
+- **PIN responsiveness**: PIN derivation runs off the UI thread. The UI displays progress while setup or verification is in progress; this does not reduce the PBKDF2 work factor.
 - **No Static Keys**: There are no hardcoded or static decryption keys anywhere in the application code.
 
 ---
 
-##  Biometric PIN Unlock
+##  Biometric App Access
 
-Biometric unlock uses Android Keystore to protect a stored PIN for convenience. The PIN is not persisted as plaintext, but it is used in app memory during authentication; app code cannot guarantee secure erasure from memory.
+The app can request biometric authentication through Android `BiometricPrompt`. Biometrics are an app access convenience; they do not unlock SQLCipher directly, and the Master PIN is not the database key. The current authentication UI invokes biometric unlock without passing the current PIN. If an encrypted PIN payload and IV already exist, the app attempts to unwrap and verify that PIN. If they do not exist, the current code can mark the app authenticated after a successful biometric prompt without verifying the Master PIN. Treat that path as biometric authorization of the app UI, not as proof that the Master PIN was checked.
 
-1. **Authentication-Gated Cipher**: When biometrics are enabled, an AES-256-GCM key is generated in Android Keystore requiring biometric authorization for its use (`setUserAuthenticationRequired(true)`). Hardware backing depends on the device.
-2. **Cryptographic Wrapping**: Upon successful initial PIN entry and biometric verification, the Master PIN is encrypted using the authenticated `BiometricPrompt.CryptoObject` cipher.
-3. **Persisting Encrypted Payload**: The resulting ciphertext and initialization vector (IV) are persisted in `UserPreferences`. The PIN may exist temporarily in app memory during unlock; secure erasure cannot be guaranteed for Kotlin/Java strings.
-4. **Biometric Unwrapping**: On subsequent app launches, a biometric prompt authorizes the KeyStore cipher to decrypt the stored PIN directly into volatile memory for database unlocking. If biometrics are modified or removed at the OS level, the KeyStore key is automatically invalidated by Android.
+An Android Keystore AES-GCM key is configured to require biometric authorization. Hardware backing and enrollment invalidation behavior depend on the device and Android implementation. PINs and credentials can exist temporarily in app memory; Kotlin/Java strings cannot be reliably zeroed.
 
 ---
 
@@ -226,11 +224,11 @@ graph TD
    - Android parses the browser's 65-byte uncompressed public key (`0x04 || X || Y`) and computes the Diffie-Hellman shared secret.
    - HKDF-SHA-256 derives separate encryption and pairing-code keys, bound to the session ID and both public keys.
 3. **Visual Short Authentication String (SAS)**:
-   - Both devices derive a six-digit comparison code from the session transcript. After biometric authorization, the user compares both screens and confirms on the browser before approving the send on the phone.
+   - The phone derives a six-digit comparison code from the session transcript after scanning the QR. After biometric authorization, the user clicks **Pair Bluetooth** on the computer, compares both screens, confirms in the browser, then approves the send on the phone.
 4. **Hardware Biometric Authorization**:
    - Android `BiometricPrompt` (`BIOMETRIC_STRONG`) must succeed before BLE advertising begins.
 5. **BLE GATT Transfer with Reliable Chunking**:
-   - Phone advertises a per-session random GATT service UUID only after biometric approval.
+   - Phone registers its GATT service and advertises a per-session random UUID only after biometric approval; advertising begins after Android reports successful service registration.
    - Transmits AES-256-GCM ciphertext in sequence-numbered chunks with notification retries for error-free delivery.
 6. **Best-effort cleanup**:
    - The browser does not automatically copy passwords. Closing the transfer view clears visible credential fields and drops references, but JavaScript cannot guarantee memory erasure or delete operating-system clipboard history.

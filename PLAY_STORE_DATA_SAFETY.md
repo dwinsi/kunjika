@@ -1,11 +1,11 @@
 #  Google Play Data Safety Information
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
 [![Data Safety](https://img.shields.io/badge/data%20safety-review%20before%20submission-34D399?style=flat-square&labelColor=064E3B&color=34D399)](PLAY_STORE_DATA_SAFETY.md)
 [![Collection](https://img.shields.io/badge/collection-review%20release%20behavior-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](PLAY_STORE_DATA_SAFETY.md)
 
-This is a code-based checklist for source version 1.8.0 (version code 18). Verify every answer against the exact release artifact, current Play Console questionnaire, and any third-party SDK behavior before submitting; this file is not a certification.
+This is a code-based checklist for source version 1.9.0 (version code 19). Verify every answer against the exact release artifact, current Play Console questionnaire, and any third-party SDK behavior before submitting; this file is not a certification.
 
 ---
 
@@ -30,10 +30,12 @@ All permissions requested by Kunjika are used strictly for **App Functionality**
 | Permission | Category | Specific Purpose in Kunjika |
 | :--- | :--- | :--- |
 | `android.permission.USE_BIOMETRIC` | Authentication | Biometric approval for vault access and Android Keystore `CryptoObject` operations; hardware backing varies by device. |
+| `android.permission.USE_FINGERPRINT` | Authentication | Legacy biometric permission for compatibility with older Android versions. |
 | `android.permission.CAMERA` | Hardware | Scanning dynamic pairing and transfer QR codes for Offline Sync and Web Drop. |
+| `android.permission.BLUETOOTH` / `BLUETOOTH_ADMIN` (max API 30) | Device Connection | Legacy Bluetooth permissions for Web Drop BLE on Android 11 and earlier. |
 | `android.permission.BLUETOOTH_ADVERTISE` | Device Connection | Broadcasting local GATT peripheral advertisements exclusively during an active, user-initiated Web Drop transfer to a nearby desktop browser. Never used for beaconing, background telemetry, or location tracking. |
 | `android.permission.BLUETOOTH_CONNECT` | Device Connection | Streaming encrypted credential chunks to the paired browser during an active Web Drop session. |
-| `android.permission.VIBRATE` | System Utilities | Haptic confirmation for biometric authentication and PIN entry. |
+| `android.permission.VIBRATE` | System Utilities | Haptic confirmation in supported transfer and authentication flows. |
 
 ---
 

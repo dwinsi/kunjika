@@ -1,6 +1,6 @@
 #  Kunjika Architecture
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Design](https://img.shields.io/badge/pattern-Clean%20MVVM%20%2B%20Compose-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
 [![Security Core](https://img.shields.io/badge/security%20core-Android%20Keystore%20%2B%20SQLCipher-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
@@ -117,8 +117,8 @@ Kunjika implements a two-stage encryption pipeline:
 1. **Selected-Field Encryption**: Password and TOTP secret values use AES-256-GCM with an Android Keystore key. Other record metadata is protected by the encrypted SQLCipher database, not individually field-encrypted.
 2. **Database-Level Encryption**: SQLCipher uses a random passphrase wrapped by Android Keystore. The Master PIN gates the app UI; it is not the database key. Hardware backing varies by device.
 
-### 2. Biometric-Authorized PIN Storage Flow
-To achieve instant biometric unlock without compromising PIN entropy or persisting plaintext:
+### 2. Optional Biometric App Access
+Biometric authentication is an optional app access path. The current UI does not provide the Master PIN when initializing its stored biometric payload; treat biometric unlock as authorization of the app UI, not independent verification of the Master PIN.
 ```mermaid
 %%{init: {
   'theme': 'base',
@@ -151,23 +151,18 @@ sequenceDiagram
     participant KS as  Android KeyStore (TEE)
     participant Prefs as  UserPreferences (DataStore)
 
-    User->>Auth: Setup Master PIN
-    Auth->>KS: Generate Biometric Key (requires user auth)
-    Auth->>Bio: Initialize AES-GCM Cipher
-    User->>Bio: Authenticate Biometrics (Fingerprint/Face)
-    Bio->>Auth: Return Hardware-Authorized Cipher
-    Auth->>Auth: Encrypt Master PIN with Cipher
-    Auth->>Prefs: Store Encrypted PIN + IV in DataStore
-    Note over Prefs: Plaintext PIN is never persisted!
+    User->>Auth: Set or enter Master PIN
+    Auth->>Auth: Derive salted PBKDF2-HMAC-SHA-256 verifier off the UI thread
+    Auth->>Prefs: Store verifier and per-PIN salt
+    Auth->>Auth: Verify PIN and open app access gate
 
-    %% Unlock Flow
-    User->>Auth: Subsequent App Launch
-    Auth->>KS: Retrieve Biometric Key
-    Auth->>Bio: Initialize Decryption Cipher with IV
-    User->>Bio: Authenticate Biometrics
-    Bio->>Auth: Return Decryption Cipher
-    Auth->>Prefs: Read Encrypted PIN & Decrypt in RAM
-    Auth->>Auth: Unlock Vault & Derive SQLCipher Key
+    %% Optional Biometric Flow
+    User->>Bio: Request biometric app access
+    Auth->>KS: Prepare authentication-gated Keystore cipher
+    User->>Bio: Authenticate with an enrolled biometric
+    Bio->>Auth: Return authorized CryptoObject
+    Auth->>Prefs: Read biometric ciphertext and IV, if present
+    Auth->>Auth: Apply current biometric unlock path
 ```
 
 ### 3. Local Signed Audit Chain
@@ -186,8 +181,8 @@ Before granting access to sensitive cryptographic operations:
 ### 5. Direct Web Drop Flow (BLE GATT with Reassembly)
 Enables secure transmission of passwords to desktop browsers without network access:
 - **Ephemeral ECDH and HKDF**: Both sides derive transcript-bound keys from ephemeral P-256 keys, the session ID, and both public keys.
-- **Pairing confirmation**: After biometric authorization, both screens show a six-digit comparison code. The browser requires a confirmation click before the phone can release the credential.
-- **Per-session BLE service**: A random service UUID is advertised only after biometric approval; the phone sends AES-256-GCM ciphertext over BLE.
+- **Pairing confirmation**: The phone derives its six-digit code after scanning the QR. After biometric authorization and GATT service registration, it advertises; the user clicks **Pair Bluetooth** in the browser, compares the codes, confirms in the browser, then approves sending on the phone.
+- **Per-session BLE service**: A random service UUID is advertised only after biometric approval and successful asynchronous GATT service registration; the phone sends AES-256-GCM ciphertext over BLE.
 - **Audit Log**: An `EXPORT_BLE` event is appended to the local signed audit chain, which can detect some edits but is not immutable.
 
 ---
@@ -205,6 +200,6 @@ Enables secure transmission of passwords to desktop browsers without network acc
 | **Biometrics** | AndroidX Biometric | `1.1.0` | Biometric authentication & `CryptoObject` |
 | **Integrity Signal** | Google Play Integrity | `1.6.0` | Requests a Play Integrity token; this project has no backend to verify it |
 | **Preferences** | Jetpack DataStore | `1.2.1` | Local key-value settings |
-| **Camera & Barcode** | CameraX + ML Kit Barcode | `1.4.1` / `17.3.0` | QR code scanning for offline sync |
+| **Camera & Barcode** | CameraX + ML Kit Barcode | `1.6.2` / `17.3.0` | QR code scanning for offline sync and Web Drop |
 | **Bluetooth** | Android Bluetooth Low Energy | Android platform API | BLE GATT peripheral server for Web Drop |
 | **Desktop Companion**| HTML5 / Vanilla JS / WebCrypto | Native | Browser receiver with best-effort memory cleanup |

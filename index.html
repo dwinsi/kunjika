@@ -1825,7 +1825,7 @@
                     <div class="feature-icon-badge icon-indigo"></div>
                     <h3>Built-in 2FA Authenticator</h3>
                     <p>Full RFC 6238 TOTP engine built right into your vault. Generates rotating 6-digit codes with live animated 30-second countdown rings. No need for standalone authenticator apps.</p>
-                    <div class="feature-footer-tag">✓ Unified Passwords + TOTP</div>
+                    <div class="feature-footer-tag">Unified Passwords + TOTP</div>
                 </div>
 
                 <div class="feature-box">
@@ -1838,7 +1838,7 @@
                 <div class="feature-box">
                     <div class="feature-icon-badge icon-gold"></div>
                     <h3>PIN and Optional Biometrics</h3>
-                    <p>Use your Master PIN or enable biometric unlock on supported devices. High-Security entries can require biometric re-verification for selected actions.</p>
+                    <p>Use your Master PIN or optional biometric app access on supported devices. In the current no-saved-PIN flow, a biometric prompt can open the app without verifying the Master PIN. High-Security entries can require biometric re-verification for selected actions.</p>
                     <div class="feature-footer-tag">Optional biometric approval</div>
                 </div>
 
@@ -1865,7 +1865,7 @@
                         <p>Set up your local vault on Android</p>
                     </div>
                     <div class="shot-card">
-                        <img src="docs/images/screenshot_phone_02.png" alt="Biometric PIN Unlock Screen" loading="lazy">
+                        <img src="docs/images/screenshot_phone_02.png" alt="Master PIN and biometric app access screen" loading="lazy">
                         <h4>PIN and Optional Biometrics</h4>
                         <p>Biometric availability and Keystore backing vary by device</p>
                     </div>
@@ -2263,7 +2263,7 @@
                     <div class="step-card">
                         <div class="step-badge">2</div>
                         <h4>Scan & Confirm SAS</h4>
-                        <p>Scan the session QR with Kunjika. After you authenticate on the phone, both screens display a six-digit comparison code. Compare the codes before confirming in the browser and approving the send on the phone.</p>
+                        <p>Scan the session QR with Kunjika. Tap <strong>Authorize Pairing</strong> on the phone and approve with biometrics. Then click <strong>Pair Bluetooth</strong> on the computer and select the phone. Compare the six-digit codes before confirming in the browser and approving the send on the phone.</p>
                     </div>
                     <div class="step-card">
                         <div class="step-badge">3</div>
@@ -2388,7 +2388,7 @@
                     <span class="faq-icon">▼</span>
                 </div>
                 <div class="faq-answer">
-                    No. The Master PIN is the app's access gate. Biometric unlock is optional on supported devices. Biometrics do not make a compromised device safe, and the PIN may exist temporarily in app memory during authentication.
+                    No. The Master PIN is the app's access gate. Biometric app access is optional on supported devices. In the current no-saved-PIN flow, a biometric prompt can open the app without verifying the Master PIN. Biometrics do not make a compromised device safe, and the PIN may exist temporarily in app memory during authentication.
                 </div>
             </div>
 
@@ -2597,7 +2597,7 @@
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">
-        <span>✓</span> Copied to clipboard!
+        Copied to clipboard!
     </div>
 
     <!-- Interactive Generator & UI Logic -->
@@ -2739,7 +2739,7 @@
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById('copy-btn');
                 btn.classList.add('copied');
-                btn.innerHTML = '<span>✓ Copied</span>';
+                btn.textContent = 'Copied';
 
                 const toast = document.getElementById('toast');
                 toast.classList.add('show');

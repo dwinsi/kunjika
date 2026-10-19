@@ -4,7 +4,7 @@
 
 [![Google Play](https://img.shields.io/badge/Google_Play-Install%20App-34D399?style=flat-square&labelColor=064E3B&color=34D399&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.kunjika.app)
 [![Project Website](https://img.shields.io/badge/Project%20Website-GitHub%20Pages-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B&logo=githubpages&logoColor=white)](https://dwinsi.github.io/kunjika/)
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Platform](https://img.shields.io/badge/platform-Android%208%2B%20(API%2026)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
 [![Security](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](docs/security.md)
@@ -35,9 +35,9 @@ Kunjika is a local-first password manager and authenticator for Android. Its enc
 | ** Encrypted Local Vault** | SQLCipher uses a random passphrase wrapped by Android Keystore; hardware backing varies by device. | Protects copied database files. The Master PIN is an app access gate, not the database encryption key; root or app-process compromise can bypass it. |
 | ** Password & PIN Generator** | Generates passwords, multi-word passphrases, and numeric PINs, plus TOTP setup secrets. | Choose the format for each account and revisit generated items in local history. |
 | ** Built-In TOTP Authenticator** | Generates rotating six-digit codes for entries with a saved TOTP secret. | Keep a login and its authenticator code together, or use a separate authenticator if you prefer more separation. |
-| ** Web Drop (Send to PC)** | Beam passwords from your phone to your computer browser using Bluetooth & QR code. | No typing 30-character passwords on your PC keyboard, no cables, and no cloud relays. |
+| **Web Drop (Send to PC)** | Transfer a selected credential from your phone to a compatible browser using QR pairing and Bluetooth. | No cable or cloud relay is used for the transfer; the browser and receiving computer must be trusted. |
 | ** Phone-to-Phone QR Transfer** | Move credentials between two phones by scanning a secure, encrypted QR code. | Transfer passwords to a new phone without using cloud backups, cables, or Wi-Fi. |
-| ** Biometric Unlock** | Use a supported biometric to authorize convenient unlock. | The PIN exists in app memory during use; device compromise can expose it. |
+| **Biometric App Access** | Use Android biometric authentication as an optional app access path. | The current UI does not verify the Master PIN on the no-saved-PIN biometric path; see the security guide. |
 | ** Local Audit Chain** | A local HMAC-protected chain records vault changes. | Can help detect some edits; it is not immutable and cannot reliably detect full deletion or rollback. |
 | ** Vault & Device Checks** | Reviews password strength/reuse and reports selected device environment signals. | Helps you spot issues; checks are advisory and cannot guarantee device security. |
 | ** Obsidian Gold & Platinum Themes** | Choose between dark and light themes with custom Compose components. | Personalize the app's appearance. |
@@ -146,9 +146,9 @@ sequenceDiagram
     PC->>PC: Display dynamic QR Code on computer screen
     User->>Phone: Open Credential -> Tap "Send to PC"
     Phone->>PC: Scan QR Code using phone camera (Reads PC's Public Key)
-    Phone->>User: Prompt for Fingerprint / Face authentication
-    User->>Phone: Biometric approved
-    Phone->>BLE: Start advertising and establish ECDH session
+    User->>Phone: Approve Bluetooth advertising with biometrics
+    Phone->>BLE: Register per-session GATT service, then advertise
+    User->>PC: Click "Pair Bluetooth" and select the phone
     PC->>User: Display transcript-derived 6-digit comparison code
     User->>PC: Confirm matching code
     User->>Phone: Approve sending
@@ -162,10 +162,11 @@ sequenceDiagram
 
 1. **Open Web Companion**: On your computer browser, open the [Web Companion](https://dwinsi.github.io/kunjika/web-companion/). It runs entirely in your browser's local memory.
 2. **Scan the Screen**: On your phone, tap "Send to PC" and scan the QR code displayed on your monitor.
-3. **Hardware Biometric Gate**: Approve the transfer on your phone with your fingerprint or face.
-4. **Direct Bluetooth Stream**: Once the companion page is loaded, the phone encrypts the selected credential and sends it directly over Bluetooth. No cloud relay is used during the transfer.
-5. **Visual Code Check**: Compare the transcript-derived six-digit codes on both screens before confirming in the browser and approving the send on the phone. This helps detect session substitution but does not authenticate the hosted page itself.
-6. **Copy only when needed**: The companion does not auto-copy. Clipboard history and host software can retain anything copied; closing the view only clears visible fields on a best-effort basis.
+3. **Authorize on the phone**: Tap **Authorize Pairing** and approve with biometrics. The phone starts advertising only after approval and GATT service setup.
+4. **Connect from the computer**: Click **Pair Bluetooth** in the companion page and choose the phone in the browser's device picker. The browser requires this user gesture.
+5. **Visual Code Check**: Compare the six-digit codes on both screens, confirm in the browser, then approve sending on the phone. This can help detect session substitution but does not authenticate the hosted page itself.
+6. **Direct Bluetooth Stream**: The selected credential is encrypted and sent directly over Bluetooth; no cloud relay is used during transfer.
+7. **Copy only when needed**: The companion does not auto-copy. Clipboard history and host software can retain anything copied; closing the view only clears visible fields on a best-effort basis.
 
 ---
 
@@ -350,7 +351,7 @@ graph TB
 | **1. Presentation** | **Compose UI & Glossy Theme** | Renders all screens, high-contrast dark/light themes, 3D specular shine reflections, and interactive dialogs. | Jetpack Compose, Material 3, custom glossy canvas modifiers. |
 | **2. Controller** | **ViewModels** | Coordinates user actions, handles input validation, and ensures data is passed cleanly to the cryptographic engine. | Android Architecture Components, StateFlow, Coroutines. |
 | **3. Security Core** | **`KeystoreManager`** | Generates and manages the Master Encryption Key in Android Keystore. | Android Keystore; hardware backing varies by device. |
-| **3. Security Core** | **`BiometricKeyManager`** | Uses biometric authorization for a Keystore cipher that protects a saved PIN. The PIN may exist temporarily in app memory during use. | `BiometricPrompt.CryptoObject`, AES-256-GCM. |
+| **3. Security Core** | **`BiometricKeyManager`** | Provides an authentication-gated Keystore cipher used by the biometric app access flow. Current UI behavior and limitations are documented in the security guide. | `BiometricPrompt.CryptoObject`, AES-256-GCM. |
 | **3. Security Core** | **`BlockchainManager`** | Records vault modifications in a local signed audit chain with known deletion and rollback limitations. | Elliptic Curve (`secp256r1`) signatures and HMAC digests. |
 | **3. Security Core** | **`WebDropCrypto` & `BLE`** | Enables direct, wireless password sharing to desktop browsers with zero cloud relays. | Web Bluetooth GATT server, ephemeral ECDH P-256, HKDF-SHA-256, AES-GCM. |
 | **3. Security Core** | **`QrEncryptionManager`** | Encrypts phone-to-phone data transfer packages into scannable QR codes. | PBKDF2-HMAC-SHA-256 (600,000 iterations), AES-256-GCM, random 16-digit code. |

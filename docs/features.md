@@ -1,6 +1,6 @@
 #  Kunjika Features
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Generator](https://img.shields.io/badge/generator-4--in--1%20Smart%20Engine-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](features.md)
 [![Sync](https://img.shields.io/badge/sync-Offline%20Web%20Drop-34D399?style=flat-square&labelColor=064E3B&color=34D399)](features.md)
@@ -91,8 +91,10 @@ Eliminates manual typing of 32+ character high-entropy passwords on desktop and 
 - **No cloud relay during transfer**: Once the companion page is loaded, it communicates directly with the phone over Bluetooth. Loading the hosted page requires internet access; the Android app itself does not require ordinary internet access. Use a trusted computer, browser, and page source.
 - **Ephemeral ECDH P-256 and HKDF-SHA-256**: The session key is derived from both public keys and a one-minute session ID.
 - **Pairing code confirmation**: Biometric approval starts BLE advertising. Compare the six-digit codes on both screens, confirm on the browser, then approve sending on the phone.
+- **Explicit connection steps**: After scanning the QR, authorize pairing on the phone; then click **Pair Bluetooth** on the computer and select the phone in the browser's device picker.
 - **Per-session BLE service UUID**: The phone advertises a random service UUID only after biometric approval.
 - **No automatic clipboard copy**: The browser displays the password masked and copies only after a user action. Clipboard history may retain copied content.
+- **QR scanner reliability**: The app scans QR codes only and handles each detected code once. Expired sessions must be refreshed on the companion page.
 - **Best-effort memory cleanup**: Closing the view clears visible fields and drops references; JavaScript cannot guarantee memory erasure.
 - **Tamper-evident audit trail**: Web Drop writes an event to a local signed hash chain, with the limits described in the security guide.
 
@@ -170,7 +172,7 @@ The Security Audit suite provides proactive threat detection and integrity analy
 ---
 
 ### 7. System Integration & Access Control
-- **Biometric Unlock**: When enabled, an Android Keystore key protects a stored PIN and `BiometricPrompt.CryptoObject` authorizes its use. Hardware backing depends on the device. The PIN is an app access gate, not the database encryption key.
+- **Biometric App Access**: Android `BiometricPrompt` can authorize app access. The current UI does not supply the Master PIN when creating a saved biometric PIN payload; on that path, a successful prompt can open the app without verifying the Master PIN. See the security guide. Hardware backing varies by device.
 - **Native Android Autofill**: Integrated Autofill framework support for autofilling apps and websites.
 - **Screen Capture Mitigation**: App-wide `FLAG_SECURE` blocks ordinary screenshots and hides the app preview in recents on Android. It cannot block every capture method or a compromised OS.
 - **Local Database Passphrase PDF**: Generate an unencrypted copy of the local SQLCipher passphrase. It does not restore field-encrypted entries on a new device; use an encrypted vault export for migration.
@@ -184,7 +186,7 @@ The Security Audit suite provides proactive threat detection and integrity analy
 - [x] Encrypted QR Sync (Phone-to-Phone)
 - [x] Direct Web Drop (Web Bluetooth + transcript-based pairing confirmation)
 - [x] PBKDF2 PIN Hashing (600,000 iterations for newly set PINs)
-- [x] Biometric unlock through Android Keystore and `BiometricPrompt.CryptoObject` (hardware backing varies)
+- [x] Optional biometric app access through Android `BiometricPrompt`; see the documented no-saved-PIN limitation
 - [x] Google Play Integrity API Integration
 - [x] Obsidian Gold & Platinum Dual-Theme System
 - [x] Real-Time Root & Emulator Detection

@@ -6,7 +6,7 @@ layout: default
 
 ### Local-first password manager and authenticator for Android
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](./RELEASE_NOTES.html)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](./RELEASE_NOTES.html)
 [![Platform](https://img.shields.io/badge/platform-Android%208%2B%20(API%2026)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![License](https://img.shields.io/badge/license-MIT-FBBF24?style=flat-square&labelColor=07090E&color=FBBF24)](./LICENSE)
 
@@ -25,7 +25,7 @@ layout: default
 - Create passphrase-protected encrypted backups.
 - Transfer a selected credential between Android devices using encrypted QR.
 - Use Web Drop to send a selected credential over Bluetooth to a browser after pairing-code comparison and phone approval.
-- Set a master PIN, optionally use biometric unlock, and configure a duress PIN that opens a decoy view.
+- Set a master PIN, optionally use biometric app access, and configure a duress PIN that opens a decoy view. The current no-saved-PIN biometric path can open the app without verifying the Master PIN; see the security guide.
 - View selected security checks and a local signed audit chain.
 
 ## Local-first by design

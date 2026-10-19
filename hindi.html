@@ -553,7 +553,7 @@
         }
 
         .concept-bullets li::before {
-            content: "✓";
+            content: "OK";
             color: var(--accent-gold);
             position: absolute;
             left: 0;
@@ -1604,7 +1604,7 @@
                         <span class="en-term">Integrated Two-Factor Auth</span>
                     </h3>
                     <p class="concept-body">
-                        अलग से Google Authenticator डाउनलोड करने की आवश्यकता नहीं है। अपने सभी 2FA क्यूआर कोड्स कुंजिका में सहेजें और हर 30 सेकंड में स्वतः रिफ्रेश होने वाले कोड्स पाएं।
+                        Kunjika में TOTP secret सहेजें और आम तौर पर हर 30 सेकंड में बदलने वाले codes पाएं। यदि आप second factor को अलग रखना चाहते हैं, तो अलग authenticator का उपयोग करें।
                     </p>
                 </div>
 
@@ -1649,7 +1649,7 @@
                         <ul class="step-checklist">
                             <li>ऐप खोलें और स्वागत स्क्रीन पर आगे बढ़ें।</li>
                             <li>कम से कम छह अंकों का <strong>Master PIN</strong> चुनें और पुष्टि करें।</li>
-                            <li><strong>बायोमेट्रिक्स (Fingerprint / Face Unlock)</strong> सक्रिय करें ताकि बार-बार पिन दर्ज न करना पड़े।</li>
+                            <li><strong>Biometric App Access</strong> वैकल्पिक है। मौजूदा no-saved-PIN flow में biometric prompt के बाद app खुल सकता है, भले Master PIN verify न हुआ हो।</li>
                         </ul>
                         <div class="step-callout">
                             <strong>महत्वपूर्ण:</strong> अपना Master PIN याद रखें और encrypted backup सुरक्षित रखें। Kunjika account या remote password-reset service नहीं देता।
@@ -1697,7 +1697,7 @@
                             <li>सेवा का नाम (जैसे SBI, Gmail, Amazon), यूजरनेम और पासवर्ड भरें।</li>
                             <li>श्रेणी चुनें: <strong>Personal</strong>, <strong>Work</strong>, <strong>Finance</strong>, या <strong>Social</strong>।</li>
                             <li>अतिसंवेदनशील जानकारी (जैसे बैंक रिकवरी कोड्स) के लिए सीक्रेट नोट्स जोड़ें।</li>
-                            <li>नियमित उपयोग वाले खातों को तारांकित (★ Favorite) करें।</li>
+                            <li>नियमित उपयोग वाले खातों को Favorite control से पसंदीदा बनाएं।</li>
                         </ul>
                     </div>
                     <div class="step-frame">
@@ -1714,12 +1714,12 @@
                         <span class="step-index">4</span>
                         <h3>चरण 4: कंप्यूटर पर पासवर्ड भेजें (Web Drop)</h3>
                         <p>
-                            क्या आपको कंप्यूटर पर लंबा और कठिन पासवर्ड देख-देखकर टाइप करने में परेशानी होती है? कुंजिका का <strong>Web Drop</strong> फीचर इसे चुटकियों में हल कर देता है:
+                            कंप्यूटर पर लंबा पासवर्ड टाइप करने के बजाय, Kunjika का <strong>Web Drop</strong> चुने हुए credential को Bluetooth से browser तक भेजता है:
                         </p>
                         <ul class="step-checklist">
                             <li>कंप्यूटर ब्राउज़र में वेब साथी खोलें: <br><a href="./web-companion/" target="_blank" style="color: var(--accent-gold); font-weight: 600; text-decoration: underline;">dwinsi.github.io/kunjika/web-companion/</a></li>
                             <li>कंप्यूटर स्क्रीन पर आने वाले क्यूआर कोड को फोन से स्कैन करें।</li>
-                            <li>फोन पर authenticate करें, दोनों स्क्रीन के छह अंकों के comparison code मिलाएं, browser में confirm करें और फोन पर send approve करें।</li>
+                            <li>फोन पर <strong>Authorize Pairing</strong> दबाकर biometrics से अनुमति दें। फिर कंप्यूटर पर <strong>Pair Bluetooth</strong> दबाएं और browser device picker में फोन चुनें। छह अंकों के codes मिलाएं, browser में confirm करें और फोन पर भेजने की अनुमति दें।</li>
                             <li>Browser में credential दिखेगा। Copy करना user action है; clipboard manager इसे रख सकता है और JavaScript memory cleanup की guarantee नहीं दे सकता।</li>
                         </ul>
                     </div>
@@ -1929,7 +1929,7 @@
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        नहीं। Master PIN app का access gate है। समर्थित devices पर biometric unlock वैकल्पिक है। यह device compromise से सुरक्षा की guarantee नहीं देता।
+                        नहीं। Master PIN app का access gate है। Biometric App Access वैकल्पिक है; मौजूदा no-saved-PIN flow में biometric prompt के बाद app खुल सकता है, भले Master PIN verify न हुआ हो। यह device compromise से सुरक्षा की guarantee नहीं देता।
                     </div>
                 </div>
 
@@ -2190,7 +2190,7 @@
             
             navigator.clipboard.writeText(display.textContent).then(() => {
                 const oldText = btn.textContent;
-                btn.textContent = '✓ कॉपी हुआ';
+                btn.textContent = 'कॉपी हुआ';
                 btn.style.color = '#10B981';
                 btn.style.borderColor = '#10B981';
                 setTimeout(() => {

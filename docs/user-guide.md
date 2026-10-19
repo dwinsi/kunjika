@@ -4,7 +4,7 @@
   <p><em>Local-first encrypted password vault for Android</em></p>
 </div>
 
-[![Version](https://img.shields.io/badge/version-1.8.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Security](https://img.shields.io/badge/design-local--first-34D399?style=flat-square&labelColor=064E3B&color=34D399)](security.md)
 [![Companion](https://img.shields.io/badge/Web%20Drop-Bluetooth%20PC%20Transfer-818CF8?style=flat-square&labelColor=07090E&color=818CF8)](https://dwinsi.github.io/kunjika/web-companion/)
 >  **Install Kunjika:** [Open the Google Play listing](https://play.google.com/store/apps/details?id=com.kunjika.app)
@@ -41,9 +41,9 @@ Swipe through the quick onboarding screens explaining how Kunjika keeps your cre
 > [!WARNING]
 > **Keep your Master PIN safe.** It gates app access but is not the database encryption key. An encrypted export or printed database passphrase may help with recovery; the printed passphrase alone does not restore entries on a different phone.
 
-### Step 3: Enable Biometrics (Fingerprint / Face Unlock)
-- Tap **Unlock with Biometrics** to link your fingerprint or face recognition.
-- From now on, you can unlock your vault in less than a second with your fingerprint!
+### Step 3: Optional Biometric Unlock
+- If your device supports biometrics, you can enable biometric app access in Kunjika's settings. In the current no-saved-PIN flow, a successful prompt can open the app without verifying the Master PIN; see the security guide.
+- You can also unlock with your Master PIN. Verification can take a short moment while its key-derivation work completes.
 
 ---
 
@@ -123,7 +123,7 @@ Store your logins, usernames, passwords, and sensitive notes safely.
 
 ### Use Case 3: Using the Built-In 2FA Authenticator (TOTP)
 
-You no longer need a separate app like Google Authenticator or Microsoft Authenticator!
+Kunjika includes a TOTP authenticator, so you can keep a TOTP secret with a vault entry if that suits your setup. You can also use a separate authenticator for more separation between factors.
 
 1. When a website (e.g., GitHub, Google, Binance) asks you to set up Two-Factor Authentication (2FA), it provides a secret key (or text code).
 2. Copy that secret key into the **TOTP Secret** field when creating or editing the entry in Kunjika.
@@ -136,7 +136,7 @@ You no longer need a separate app like Google Authenticator or Microsoft Authent
 
 Ever get annoyed trying to manually type a 30-character password like `w9#mK$2P!v8xQ...` from your phone screen onto your laptop keyboard?
 
-**Kunjika Web Drop** solves this problem instantly **without cables, without cloud accounts, and without Wi-Fi**:
+**Kunjika Web Drop** sends a selected credential directly over Bluetooth after the companion page has loaded. There is no cloud relay in the transfer path; you need a compatible browser and a computer you trust.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'darkMode': true, 'background': '#07090E', 'actorBkg': '#0F141C', 'actorBorder': '#F59E0B', 'actorTextColor': '#FDE68A', 'actorLineColor': '#818CF8'}}}%%
@@ -150,9 +150,12 @@ sequenceDiagram
     PC->>PC: Generates pairing QR code & one-time crypto keys
     User->>Phone: Opens account in Vault -> Taps "Web Drop"
     Phone->>PC: Scans QR code displayed on computer screen
-    Phone->>Phone: Connects via Bluetooth (BLE)
-    Note over PC,Phone: Both screens display matching 6-digit code (e.g. 544 655)
-    User->>Phone: Touches fingerprint sensor to approve
+    User->>Phone: Authorize Pairing with biometrics
+    Phone->>Phone: Register GATT service and start advertising
+    User->>PC: Click "Pair Bluetooth" and select the phone
+    Note over PC,Phone: Both screens display a six-digit code for comparison
+    User->>PC: Confirm the matching code
+    User->>Phone: Approve sending
     Phone->>PC: Securely beams encrypted password
     PC->>PC: Decrypts and displays masked credential
     Note over PC: Close view to clear displayed fields on a best-effort basis
@@ -163,10 +166,11 @@ sequenceDiagram
     **[https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)**
 2. On your phone, open Kunjika, tap the account you want to use, and tap ** Web Drop**.
 3. Point your phone camera at your computer screen to scan the QR code.
-4. Authenticate on the phone to start Bluetooth pairing.
-5. Compare the **6-digit Pairing Code** on both screens. Confirm on the browser, then approve sending on the phone.
-6. The password appears masked in the browser. Reveal or copy it only when needed; copied text may be retained by clipboard history or other software.
-7. Close the transfer view to clear visible fields. JavaScript cannot guarantee that browser memory or clipboard history is erased.
+4. Tap **Authorize Pairing** on your phone and approve with biometrics.
+5. Click **Pair Bluetooth** on the computer and choose the phone in the browser's device picker.
+6. Compare the **6-digit Pairing Code** on both screens. Confirm on the browser, then approve sending on the phone.
+7. The password appears masked in the browser. Reveal or copy it only when needed; copied text may be retained by clipboard history or other software.
+8. Close the transfer view to clear visible fields. JavaScript cannot guarantee that browser memory or clipboard history is erased.
 
 ---
 
@@ -193,7 +197,7 @@ Tap the ** Security** tab to audit your passwords and device health:
 - **Vault Hygiene**:
   - **Weak Passwords**: Flags passwords shorter than 12 characters.
   - **Reused Passwords**: Alerts you if the same password is used across multiple services (so a breach at one doesn't compromise the others).
-  - **Aging Passwords**: Reminds you to rotate passwords that haven't been updated in over a year.
+  - **Aging Passwords**: Flags credentials that have not been updated in over 90 days. This is a review reminder, not a requirement to rotate every password on a schedule.
 - **Device Environment Audit**:
   - Verifies that your phone is not running unauthorized root modifications or malicious malware debuggers.
   - Reports whether Android confirms hardware-backed Keystore protection; this varies by device and is not remote key attestation.
@@ -219,7 +223,7 @@ Tired of copying and pasting? Let Android fill your logins automatically:
 1. Open Kunjika and go to ** Settings**.
 2. Tap **Autofill Service**.
 3. Select **Kunjika** as your default autofill provider in Android Settings.
-4. Next time you open an app or website login form, tap the password box and choose Kunjika to unlock with your fingerprint and fill your credentials with a single tap!
+4. In a supported app or website, tap the login field and choose Kunjika from Android Autofill. Authenticate with the method offered by the app, then select the credential.
 
 ---
 
@@ -287,7 +291,7 @@ Go to **Settings → Encrypted Offline Backup → Save File**. Kunjika uses Andr
 Kunjika does not currently show an automatic backup reminder. Create and verify an encrypted backup periodically, and keep its passphrase separately.
 
 ### Q: Do I need both my fingerprint and Master PIN to open the Vault?
-No. You can unlock with your Master PIN, and on supported devices you can enable biometric unlock. These are app-level controls; the Master PIN is not the database key, and a compromised/rooted device can bypass app-level controls.
+No. You can unlock with your Master PIN, and on supported devices you can enable biometric app access. In the current no-saved-PIN flow the biometric prompt can open the app without verifying the Master PIN. These are app-level controls; the Master PIN is not the database key, and a compromised/rooted device can bypass app-level controls.
 
 ### Q: What are "High-Security Entries" and how do they protect my sensitive accounts?
 You can mark selected accounts as **High Security**. Depending on device support and the action, revealing or copying sensitive values can require biometric re-verification. This is an additional app-level check, not protection against a compromised device.
@@ -299,7 +303,7 @@ The optional **Duress PIN** opens a decoy view with dummy entries instead of the
 The 5-second delay gives you a chance to cancel an export you did not intend to start. It is a safety prompt, not protection against someone who controls an unlocked device.
 
 ### Q: What browsers work with Web Drop?
-Web Drop uses the Web Bluetooth standard, which is natively supported in **Google Chrome**, **Microsoft Edge**, **Brave**, and **Opera** on Windows, macOS, Linux, and ChromeOS.
+Web Drop requires a browser that supports Web Bluetooth and a platform that permits Bluetooth device access. Support varies by browser version and operating system; use a current Chromium-based desktop browser such as Chrome or Edge and verify Bluetooth is available. The companion page must first be loaded from the hosted site.
 
 ---
 
