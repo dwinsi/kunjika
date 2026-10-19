@@ -48,6 +48,7 @@ class KunjikaBlePeripheral(
     private var gattServer: BluetoothGattServer? = null
     private var connectedDevice: BluetoothDevice? = null
     private var isAdvertising = false
+    private var isStarted = false
 
     private var transferCharacteristic: BluetoothGattCharacteristic? = null
 
@@ -65,6 +66,17 @@ class KunjikaBlePeripheral(
     }
 
     private val gattServerCallback = object : BluetoothGattServerCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onServiceAdded(status: Int, service: BluetoothGattService) {
+            if (service.uuid != serviceUuid) return
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+                Log.e(TAG, "GATT service registration failed: $status")
+                onError("Bluetooth service setup failed (code $status). Try pairing again.")
+                return
+            }
+            startAdvertising()
+        }
+
         @SuppressLint("MissingPermission")
         override fun onCharacteristicReadRequest(
             device: BluetoothDevice,
@@ -152,6 +164,7 @@ class KunjikaBlePeripheral(
 
     @SuppressLint("MissingPermission")
     fun start(): Boolean {
+        if (isStarted) return true
         if (!isBluetoothEnabled()) {
             onError("Bluetooth is disabled. Please enable Bluetooth.")
             return false
@@ -196,14 +209,31 @@ class KunjikaBlePeripheral(
             service.addCharacteristic(transferCharacteristic!!)
             service.addCharacteristic(ackChar)
 
-            gattServer?.addService(service)
+            val added = gattServer?.addService(service) == true
+            if (!added) {
+                onError("Could not register the Bluetooth service. Try pairing again.")
+                stop()
+                return false
+            }
+            isStarted = true
+            return true
+        } catch (e: SecurityException) {
+            onError("Bluetooth permissions required: ${e.message}")
+            return false
+        } catch (e: Exception) {
+            onError("Error starting BLE service: ${e.message}")
+            return false
+        }
+    }
 
-            // Start Advertising
+    @SuppressLint("MissingPermission")
+    private fun startAdvertising() {
+        try {
             val settings = AdvertiseSettings.Builder()
                 .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
                 .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
                 .setConnectable(true)
-                .setTimeout(60000) // 60-second timeout
+                .setTimeout(60000)
                 .build()
 
             val data = AdvertiseData.Builder()
@@ -216,13 +246,10 @@ class KunjikaBlePeripheral(
                 .build()
 
             advertiser?.startAdvertising(settings, data, scanResponse, advertiseCallback)
-            return true
         } catch (e: SecurityException) {
             onError("Bluetooth permissions required: ${e.message}")
-            return false
         } catch (e: Exception) {
-            onError("Error starting BLE service: ${e.message}")
-            return false
+            onError("Error starting BLE advertising: ${e.message}")
         }
     }
 
@@ -293,6 +320,7 @@ class KunjikaBlePeripheral(
             gattServer?.close()
             gattServer = null
             connectedDevice = null
+            isStarted = false
         } catch (e: Exception) {
             Log.w(TAG, "Error stopping BLE: ${e.message}")
         }

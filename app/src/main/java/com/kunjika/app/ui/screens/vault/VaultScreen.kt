@@ -41,6 +41,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,7 +122,27 @@ fun VaultScreen(
     var showPinModal by remember { mutableStateOf(false) }
     var vaultPinInput by remember { mutableStateOf("") }
     var pinError by remember { mutableStateOf<String?>(null) }
+    var isVerifyingPin by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    fun submitVaultPin() {
+        if (isVerifyingPin) return
+        isVerifyingPin = true
+        scope.launch {
+            try {
+                if (authViewModel?.verifyMasterPin(vaultPinInput) == true) {
+                    vaultViewModel.unlockVault()
+                    showPinModal = false
+                    vaultPinInput = ""
+                    pinError = null
+                } else {
+                    pinError = "Incorrect Master PIN"
+                }
+            } finally {
+                isVerifyingPin = false
+            }
+        }
+    }
 
     val spotlightState = rememberSpotlightState()
     val hasSeenVaultTour by (settingsViewModel?.hasSeenVaultTour?.collectAsState() ?: remember { mutableStateOf(true) })
@@ -292,16 +313,7 @@ fun VaultScreen(
                             ),
                             keyboardActions = KeyboardActions(
                                 onDone = {
-                                    scope.launch {
-                                        if (authViewModel?.verifyMasterPin(vaultPinInput) == true) {
-                                            vaultViewModel.unlockVault()
-                                            showPinModal = false
-                                            vaultPinInput = ""
-                                            pinError = null
-                                        } else {
-                                            pinError = "Incorrect Master PIN"
-                                        }
-                                    }
+                                    submitVaultPin()
                                 }
                             )
                         )
@@ -317,20 +329,19 @@ fun VaultScreen(
                 },
                 confirmButton = {
                     Button(
-                        onClick = {
-                            scope.launch {
-                                if (authViewModel?.verifyMasterPin(vaultPinInput) == true) {
-                                    vaultViewModel.unlockVault()
-                                    showPinModal = false
-                                    vaultPinInput = ""
-                                    pinError = null
-                                } else {
-                                    pinError = "Incorrect Master PIN"
-                                }
-                            }
-                        }
+                        onClick = { submitVaultPin() },
+                        enabled = !isVerifyingPin
                     ) {
-                        Text("Unlock Vault")
+                        if (isVerifyingPin) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Checking PIN…")
+                        } else {
+                            Text("Unlock Vault")
+                        }
                     }
                 },
                 dismissButton = {

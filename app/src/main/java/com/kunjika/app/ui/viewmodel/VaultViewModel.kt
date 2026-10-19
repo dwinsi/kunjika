@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class SecurityAuditSummary(
@@ -123,11 +125,13 @@ class VaultViewModel(private val repository: PasswordRepository) : ViewModel() {
                     item.notes.contains(query, ignoreCase = true)
             matchesCategory && matchesQuery
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val auditSummary: StateFlow<SecurityAuditSummary> = allPasswords.combine(MutableStateFlow(Unit)) { list, _ ->
         computeAudit(list)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SecurityAuditSummary())
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SecurityAuditSummary())
 
     private val _isChainValid = MutableStateFlow(true)
     val isChainValid: StateFlow<Boolean> = _isChainValid.asStateFlow()

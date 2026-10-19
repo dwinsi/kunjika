@@ -35,6 +35,9 @@ class AuthViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private val _isAuthenticating = MutableStateFlow(false)
+    val isAuthenticating: StateFlow<Boolean> = _isAuthenticating.asStateFlow()
+
     private val _isBiometricEnabled = MutableStateFlow(true)
     val isBiometricEnabled: StateFlow<Boolean> = _isBiometricEnabled.asStateFlow()
 
@@ -74,16 +77,31 @@ class AuthViewModel(
     }
 
     fun setupMasterPin(pin: String) {
+        if (_isAuthenticating.value) return
         if (pin.length < 6) {
             _errorMessage.value = "PIN must be at least 6 digits"
             return
         }
+        _isAuthenticating.value = true
         viewModelScope.launch {
-            userPreferences.setMasterPin(pin)
-            passwordRepository?.recordPinCreateBlock()
-            _errorMessage.value = null
-            VaultSession.markUnlocked()
-            _authState.value = AuthState.Authenticated
+            try {
+                userPreferences.setMasterPin(pin)
+                _errorMessage.value = null
+                VaultSession.markUnlocked()
+                _authState.value = AuthState.Authenticated
+
+                // Audit signing can be slow on first use while the Keystore key is created.
+                // Let the user enter the vault while that non-critical record is written.
+                passwordRepository?.let { repository ->
+                    viewModelScope.launch {
+                        runCatching { repository.recordPinCreateBlock() }
+                    }
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Could not secure the Master PIN. Please try again."
+            } finally {
+                _isAuthenticating.value = false
+            }
         }
     }
 
@@ -92,24 +110,32 @@ class AuthViewModel(
     }
 
     fun unlockWithPin(pin: String) {
+        if (_isAuthenticating.value) return
+        _isAuthenticating.value = true
         viewModelScope.launch {
-            val pinMode = userPreferences.verifyPinMode(pin)
-            when (pinMode) {
-                UserPreferences.PinMode.MASTER -> {
-                    _isDecoyMode.value = false
-                    _errorMessage.value = null
-                    VaultSession.markUnlocked()
-                    _authState.value = AuthState.Authenticated
+            try {
+                val pinMode = userPreferences.verifyPinMode(pin)
+                when (pinMode) {
+                    UserPreferences.PinMode.MASTER -> {
+                        _isDecoyMode.value = false
+                        _errorMessage.value = null
+                        VaultSession.markUnlocked()
+                        _authState.value = AuthState.Authenticated
+                    }
+                    UserPreferences.PinMode.DURESS -> {
+                        _isDecoyMode.value = true
+                        _errorMessage.value = null
+                        VaultSession.markUnlocked()
+                        _authState.value = AuthState.Authenticated
+                    }
+                    UserPreferences.PinMode.INVALID -> {
+                        _errorMessage.value = "Incorrect Master PIN"
+                    }
                 }
-                UserPreferences.PinMode.DURESS -> {
-                    _isDecoyMode.value = true
-                    _errorMessage.value = null
-                    VaultSession.markUnlocked()
-                    _authState.value = AuthState.Authenticated
-                }
-                UserPreferences.PinMode.INVALID -> {
-                    _errorMessage.value = "Incorrect Master PIN"
-                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Could not verify the PIN. Please try again."
+            } finally {
+                _isAuthenticating.value = false
             }
         }
     }

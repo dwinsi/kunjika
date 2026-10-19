@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -65,6 +66,7 @@ import com.kunjika.app.ui.viewmodel.AuthViewModel
 fun AuthScreen(authViewModel: AuthViewModel, isRooted: Boolean) {
     val authState by authViewModel.authState.collectAsState()
     val errorMessage by authViewModel.errorMessage.collectAsState()
+    val isAuthenticating by authViewModel.isAuthenticating.collectAsState()
     val isBiometricEnabled by authViewModel.isBiometricEnabled.collectAsState()
 
     val context = LocalContext.current
@@ -229,16 +231,32 @@ fun AuthScreen(authViewModel: AuthViewModel, isRooted: Boolean) {
                             authViewModel.unlockWithPin(pin)
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !isAuthenticating
                 ) {
-                    Text(
-                        text = if (isSetup) {
-                            if (!isConfirmStep) "Next" else "Set Master PIN"
-                        } else "Unlock Vault",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color(0xFF0F172A)
-                    )
+                    if (isAuthenticating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            color = Color(0xFF0F172A)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = if (isSetup) "Securing your vault…" else "Checking PIN…",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color(0xFF0F172A)
+                        )
+                    } else {
+                        Text(
+                            text = if (isSetup) {
+                                if (!isConfirmStep) "Next" else "Set Master PIN"
+                            } else "Unlock Vault",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color(0xFF0F172A)
+                        )
+                    }
                 }
 
                 val activity = context.findActivity()

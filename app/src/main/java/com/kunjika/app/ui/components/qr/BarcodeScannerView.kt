@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -22,6 +23,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
@@ -31,11 +33,13 @@ fun BarcodeScannerView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+    val currentOnBarcodeDetected = rememberUpdatedState(onBarcodeDetected)
+    val barcodeDelivered = remember { AtomicBoolean(false) }
 
     val scanner = remember {
         try {
             val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_ALL_FORMATS)
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build()
             BarcodeScanning.getClient(options)
         } catch (t: Throwable) {
@@ -78,10 +82,11 @@ fun BarcodeScannerView(
                             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
                             activeScanner.process(image)
                                 .addOnSuccessListener { barcodes ->
-                                    for (barcode in barcodes) {
-                                        barcode.rawValue?.let { value ->
-                                            onBarcodeDetected(value)
-                                        }
+                                    val value = barcodes.firstNotNullOfOrNull { barcode ->
+                                        barcode.rawValue?.takeIf { it.isNotBlank() }
+                                    }
+                                    if (value != null && barcodeDelivered.compareAndSet(false, true)) {
+                                        currentOnBarcodeDetected.value(value)
                                     }
                                 }
                                 .addOnFailureListener {
