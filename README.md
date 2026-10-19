@@ -2,6 +2,8 @@
 
 ### *A Local-First Encrypted Password Vault & Generator for Android*
 
+[![Google Play](https://img.shields.io/badge/Google_Play-Install%20App-34D399?style=flat-square&labelColor=064E3B&color=34D399&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.kunjika.app)
+[![Project Website](https://img.shields.io/badge/Project%20Website-GitHub%20Pages-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B&logo=githubpages&logoColor=white)](https://dwinsi.github.io/kunjika/)
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](RELEASE_NOTES.md)
 [![Platform](https://img.shields.io/badge/platform-Android%2015%2B%20(API%2035)-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](https://developer.android.com)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](docs/features.md)
@@ -19,8 +21,10 @@ Most password managers store your passwords on a company's cloud server. If that
 - **No Cloud. No Accounts. No Internet Permission.** The Android app has no ordinary internet access; local sharing features still transfer selected data over Bluetooth, QR, clipboard, Autofill, or exports.
 - **Local-first storage**: Vault data is encrypted on-device. Sharing or copying a credential moves it into the security boundary of the receiving device or app.
 
-> 📖 **New to Kunjika? Check out our visual [User Guide & Step-by-Step Walkthrough](docs/user-guide.md)** with screenshots and everyday use cases!  
-> 🧪 **Participating in Closed Beta? Open the interactive [14-Day Play Store Testing Portal](https://dwinsi.github.io/kunjika/testing.html)** to track your daily testing missions and review instructions!
+> 🌐 **Explore the interactive [Kunjika Project Website](https://dwinsi.github.io/kunjika/)** for an in-depth feature tour, high-resolution screenshots, plain-language privacy breakdown, setup guide, live password generator demo, and community support!  
+> 📲 **Install on Android:** [Get Kunjika on Google Play Store](https://play.google.com/store/apps/details?id=com.kunjika.app) (Requires Android 15+).  
+> 📖 **Visual Walkthrough:** Check out our [User Guide & Step-by-Step Walkthrough](docs/user-guide.md) with screenshots and everyday use cases!  
+> 🧪 **Participating in Closed Beta?** Open the interactive [14-Day Play Store Testing Portal](https://dwinsi.github.io/kunjika/testing.html) to track daily testing missions!
 
 ---
 
@@ -385,7 +389,9 @@ graph TB
 
 ## 📚 Further Documentation
 
+- [🌐 Interactive Project Site & Online Guide](https://dwinsi.github.io/kunjika/)
 - [📖 User Guide & Quickstart (Screenshots & Use Cases)](docs/user-guide.md)
+- [🇮🇳 हिंदी मार्गदर्शिका (Hindi Guide)](https://dwinsi.github.io/kunjika/hindi.html)
 - [🏗️ Deep Architecture Overview](docs/architecture.md)
 - [🛡️ Cryptography & Threat Model](docs/security.md)
 - [✨ Complete Feature Guide](docs/features.md)
@@ -398,6 +404,12 @@ graph TB
 
 ## 🚀 Getting Started
 
+### For Users & Testers
+- **Install from Google Play**: [Google Play Store Listing](https://play.google.com/store/apps/details?id=com.kunjika.app) (Android 15+)
+- **Interactive Project Website**: [https://dwinsi.github.io/kunjika/](https://dwinsi.github.io/kunjika/)
+- **14-Day Tester Portal**: [Testing Instructions & Missions](https://dwinsi.github.io/kunjika/testing.html)
+- **Web Drop Companion (PC)**: [https://dwinsi.github.io/kunjika/web-companion/](https://dwinsi.github.io/kunjika/web-companion/)
+
 ### For Developers
 1. Clone the repository:
    ```bash
@@ -409,6 +421,17 @@ graph TB
 
 ---
 
+## 💬 Community, Support & Bug Reports
+
+Kunjika is an open-source project dedicated to local-first security and digital sovereignty.
+- 🐛 **Report a Bug**: [Open an issue on GitHub Issues](https://github.com/dwinsi/kunjika/issues) (include device model, Android version, and reproduction steps).
+- 💬 **Ask Questions & Ideas**: [Join GitHub Discussions](https://github.com/dwinsi/kunjika/discussions).
+- 🌐 **Project Site**: [https://dwinsi.github.io/kunjika/](https://dwinsi.github.io/kunjika/)
+- ✉️ **Developer Contact**: Ashwin Singh ([winsimash@gmail.com](mailto:winsimash@gmail.com) / [@dwinsi](https://github.com/dwinsi))
+
+---
+
 ## ⚖️ License
 
 Kunjika is open-source software licensed under the [MIT License](LICENSE).
+

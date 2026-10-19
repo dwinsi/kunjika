@@ -1227,14 +1227,455 @@
             .output-actions { justify-content: center; }
             .footer-grid { grid-template-columns: 1fr; }
         }
+
+        /* Google Play Badge Button */
+        .btn-playstore {
+            background: #000000;
+            color: #FFFFFF !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border-radius: var(--radius-md);
+            padding: 10px 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(52, 211, 153, 0.25);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-playstore:hover {
+            border-color: var(--emerald-400);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-playstore svg {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .btn-playstore-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            line-height: 1.15;
+        }
+
+        .btn-playstore-text .subtext {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .btn-playstore-text .maintext {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.2px;
+        }
+
+        /* Nav-specific playstore button */
+        .btn-nav-playstore {
+            padding: 7px 14px;
+            gap: 8px;
+            border-radius: var(--radius-sm);
+        }
+        .btn-nav-playstore svg {
+            width: 18px;
+            height: 18px;
+        }
+        .btn-nav-playstore .btn-playstore-text .subtext {
+            font-size: 8px;
+        }
+        .btn-nav-playstore .btn-playstore-text .maintext {
+            font-size: 12px;
+        }
+
+        /* Features Overview Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .feature-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .feature-box:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px var(--gold-glow);
+        }
+
+        .feature-icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+            border: 1px solid;
+        }
+
+        .icon-gold { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: var(--gold-400); }
+        .icon-emerald { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: var(--emerald-400); }
+        .icon-indigo { background: rgba(129, 140, 248, 0.12); border-color: rgba(129, 140, 248, 0.3); color: var(--indigo-300); }
+        .icon-rose { background: rgba(244, 63, 94, 0.12); border-color: rgba(244, 63, 94, 0.3); color: var(--rose-400); }
+
+        .feature-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .feature-footer-tag {
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Plain-Language Privacy Section */
+        .privacy-showcase {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(15, 20, 28, 0.85) 100%);
+            border: 1.5px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-xl);
+            padding: 44px 36px;
+            margin-bottom: 100px;
+            position: relative;
+        }
+
+        .privacy-highlight-banner {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .privacy-highlight-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+
+        .privacy-highlight-text h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--emerald-300);
+            margin-bottom: 4px;
+        }
+
+        .privacy-highlight-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .privacy-pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 36px;
+        }
+
+        .privacy-pillar-card {
+            background: rgba(7, 9, 14, 0.7);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-md);
+            padding: 24px 20px;
+        }
+
+        .privacy-pillar-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--emerald-400);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .privacy-pillar-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .permissions-box {
+            background: rgba(7, 9, 14, 0.85);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .permissions-box h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .permission-row {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            align-items: baseline;
+        }
+
+        .permission-row:last-child {
+            border-bottom: none;
+        }
+
+        .permission-tag {
+            font-family: var(--font-mono);
+            color: var(--indigo-300);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .permission-desc {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .privacy-footer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 24px;
+        }
+
+        /* Setup Guide Section */
+        .setup-section {
+            margin-bottom: 100px;
+        }
+
+        .setup-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 36px;
+        }
+
+        .setup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 28px 22px;
+            position: relative;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setup-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .setup-step-num {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+            color: #07090E;
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 14px var(--gold-glow);
+        }
+
+        .setup-card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .setup-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            flex-grow: 1;
+        }
+
+        .setup-tip {
+            font-size: 12px;
+            color: var(--gold-300);
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            line-height: 1.4;
+        }
+
+        /* Support & Community Section */
+        .support-section {
+            margin-bottom: 100px;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 36px;
+        }
+
+        .support-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .support-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .support-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .support-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .support-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .support-btn {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .support-btn-primary {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold-300);
+            border: 1px solid var(--border-accent);
+        }
+
+        .support-btn-primary:hover {
+            background: var(--gold-500);
+            color: #07090E;
+        }
+
+        .support-btn-indigo {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--indigo-300);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+
+        .support-btn-indigo:hover {
+            background: var(--indigo-500);
+            color: #FFFFFF;
+        }
+
+        .support-btn-emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald-300);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .support-btn-emerald:hover {
+            background: var(--emerald-500);
+            color: #042F2E;
+        }
+
+        @media (max-width: 992px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .privacy-pillars-grid { grid-template-columns: 1fr; }
+            .setup-grid { grid-template-columns: repeat(2, 1fr); }
+            .support-grid { grid-template-columns: 1fr; }
+            .permission-row { grid-template-columns: 1fr; gap: 4px; }
+        }
+
+        @media (max-width: 768px) {
+            .features-grid { grid-template-columns: 1fr; }
+            .setup-grid { grid-template-columns: 1fr; }
+            .privacy-highlight-banner { flex-direction: column; text-align: center; }
+            .privacy-footer-actions { flex-direction: column; text-align: center; }
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Announcement Bar -->
     <div class="announcement-banner">
-        🚀 <strong>Kunjika Closed Beta is Live!</strong> Help test on Google Play and earn tester credit. 
-        <a href="./testing.html">Open 14-Day Tester Portal →</a>
+        🚀 <strong>Kunjika on Google Play!</strong> Sovereign, 100% offline password vault & 2FA authenticator for Android 15+.
+        <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" target="_blank" rel="noopener">Install from Google Play →</a>
+        <span style="opacity: 0.5; margin: 0 8px;">|</span>
+        <a href="./testing.html">14-Day Tester Portal</a>
         <span style="opacity: 0.5; margin: 0 8px;">|</span>
         <a href="./hindi.html" style="color: var(--gold-300);">🇮🇳 हिंदी में समझें (Hindi Guide) →</a>
     </div>
@@ -1252,18 +1693,30 @@
 
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#why-kunjika" class="nav-link">Why Kunjika?</a></li>
-                    <li><a href="#what-you-achieve" class="nav-link">What You Achieve</a></li>
-                    <li><a href="#generator-demo" class="nav-link">Live Generator</a></li>
+                    <li><a href="#features" class="nav-link">Features</a></li>
+                    <li><a href="#privacy" class="nav-link">Privacy</a></li>
+                    <li><a href="#setup" class="nav-link">Setup</a></li>
+                    <li><a href="#generator-demo" class="nav-link">Generator</a></li>
                     <li><a href="#web-drop" class="nav-link">Web Drop</a></li>
-                    <li><a href="#comparison" class="nav-link">Comparison</a></li>
                     <li><a href="#faq" class="nav-link">FAQ</a></li>
+                    <li><a href="#support" class="nav-link">Support & Bugs</a></li>
                 </ul>
             </nav>
 
             <div class="nav-actions">
+                <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" class="btn-playstore btn-nav-playstore" target="_blank" rel="noopener" title="Install Kunjika from Google Play">
+                    <svg viewBox="0 0 512 512">
+                        <path fill="#00C1A6" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/>
+                        <path fill="#0083D6" d="M47 36v440l240-220L47 36z"/>
+                        <path fill="#FF3333" d="M325.3 277.7l60.1 60.1L104.6 499l220.7-221.3z"/>
+                        <path fill="#FFD400" d="M465 256c0 14-8 27-21 34l-58.6 33.7-60.1-60.1 60.1-60.1 58.6 33.7c13 7 21 20 21 33.8z"/>
+                    </svg>
+                    <div class="btn-playstore-text">
+                        <span class="subtext">GET IT ON</span>
+                        <span class="maintext">Google Play</span>
+                    </div>
+                </a>
                 <a href="./hindi.html" class="btn-nav-secondary" title="हिंदी यूजर गाइड" style="border-color: rgba(245, 158, 11, 0.4); color: var(--gold-300);">🇮🇳 हिंदी</a>
-                <a href="./docs/user-guide.html" class="btn-nav-secondary">📖 User Guide</a>
                 <a href="./web-companion/" class="btn-nav-primary">⚡ Web Drop</a>
             </div>
         </div>
@@ -1290,14 +1743,26 @@
             </p>
 
             <div class="hero-actions">
-                <a href="./web-companion/" class="btn-large-primary">
+                <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" class="btn-playstore" target="_blank" rel="noopener" style="padding: 12px 26px;">
+                    <svg viewBox="0 0 512 512" style="width: 32px; height: 32px;">
+                        <path fill="#00C1A6" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/>
+                        <path fill="#0083D6" d="M47 36v440l240-220L47 36z"/>
+                        <path fill="#FF3333" d="M325.3 277.7l60.1 60.1L104.6 499l220.7-221.3z"/>
+                        <path fill="#FFD400" d="M465 256c0 14-8 27-21 34l-58.6 33.7-60.1-60.1 60.1-60.1 58.6 33.7c13 7 21 20 21 33.8z"/>
+                    </svg>
+                    <div class="btn-playstore-text">
+                        <span class="subtext" style="font-size: 11px;">GET IT ON</span>
+                        <span class="maintext" style="font-size: 19px;">Google Play</span>
+                    </div>
+                </a>
+                <a href="./web-companion/" class="btn-large-secondary">
                     <span>⚡ Launch Web Drop Companion</span>
                 </a>
-                <a href="./testing.html" class="btn-large-secondary">
-                    <span>🧪 14-Day Tester Portal</span>
+                <a href="#setup" class="btn-large-ghost">
+                    <span>🛠️ 2-Min Setup Guide</span>
                 </a>
-                <a href="./docs/user-guide.html" class="btn-large-ghost">
-                    <span>📖 User Guide & Walkthrough</span>
+                <a href="#privacy" class="btn-large-ghost">
+                    <span>🔒 Privacy Explained</span>
                 </a>
             </div>
 
@@ -1328,6 +1793,172 @@
                 <div class="stat-number">4-in-1</div>
                 <div class="stat-label">Smart Generator</div>
                 <div class="stat-desc">Passwords, Diceware, PINs & 2FA Secrets</div>
+            </div>
+        </section>
+
+        <!-- Feature Overview Section -->
+        <section id="features" class="features-section">
+            <div class="section-header">
+                <span class="section-tag">Feature Overview</span>
+                <h2 class="section-title">Everything You Need. Zero Cloud Compromise.</h2>
+                <p class="section-desc">
+                    A comprehensive suite of sovereign cybersecurity tools built directly into Android 15+. Double-lock hardware encryption, instant offline PC sync, and true zero-network privacy.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-gold">🎯</div>
+                    <h3>4-in-1 Smart Generator</h3>
+                    <p>Generate high-entropy passwords, memorable multi-word Diceware passphrases, numeric PINs, or raw 2FA authenticator secret keys with instant real-time entropy ratings and crack-time metrics.</p>
+                    <div class="feature-footer-tag">✓ Shannon Entropy Analysis & Volatile History</div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-emerald">🔐</div>
+                    <h3>Sovereign Encrypted Vault</h3>
+                    <p>Encrypted local database using SQLCipher 256-bit AES. Sensitive fields are shielded with AES-256-GCM. Passphrases are cryptographically wrapped by Android KeyStore hardware (TEE / StrongBox).</p>
+                    <div class="feature-footer-tag">✓ Hardware TEE Double-Lock</div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-indigo">⏰</div>
+                    <h3>Built-in 2FA Authenticator</h3>
+                    <p>Full RFC 6238 TOTP engine built right into your vault. Generates rotating 6-digit codes with live animated 30-second countdown rings. No need for standalone authenticator apps.</p>
+                    <div class="feature-footer-tag">✓ Unified Passwords + TOTP</div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-indigo">⚡</div>
+                    <h3>Web Drop: Direct PC Beam</h3>
+                    <p>Beam passwords wirelessly from phone to computer browser via direct Web Bluetooth (BLE). Uses ephemeral ECDH P-256 key agreement, 6-digit visual SAS code verification, and a 30s auto-shredder.</p>
+                    <div class="feature-footer-tag">✓ Zero Cloud Relays & Zero Cables</div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-gold">💎</div>
+                    <h3>Biometric Step-Up & Dual Auth</h3>
+                    <p>Unlock smoothly via fingerprint hardware verification. Flag critical credentials (Banking, Crypto) as "High Security" to enforce biometric re-verification before viewing or copying.</p>
+                    <div class="feature-footer-tag">✓ BiometricPrompt.CryptoObject</div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon-badge icon-rose">🛡️</div>
+                    <h3>Anti-Coercion Duress Decoy</h3>
+                    <p>Entering your secret Duress PIN unlocks a realistic decoy vault pre-populated with dummy accounts—safeguarding your real sensitive credentials if forced or coerced to unlock.</p>
+                    <div class="feature-footer-tag">✓ Plausible Deniability</div>
+                </div>
+            </div>
+
+            <!-- Screenshots Showcase Gallery -->
+            <div class="screenshot-showcase-box" style="margin-top: 20px;">
+                <div class="section-header" style="margin-bottom: 30px;">
+                    <span class="section-tag" style="color: var(--indigo-300);">App Interface Tour</span>
+                    <h3 style="font-size: 26px; font-weight: 800; color: #FFF; margin-bottom: 8px;">Designed for Modern Android 15+</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary);">Obsidian Gold & Midnight Indigo dark theme with high-contrast Material 3 glassmorphism.</p>
+                </div>
+
+                <div class="screenshot-grid">
+                    <div class="shot-card">
+                        <img src="docs/images/screenshot_phone_01.png" alt="Kunjika Zero Network Onboarding Screen" loading="lazy">
+                        <h4>Offline Onboarding</h4>
+                        <p>Zero-network guarantee verified at launch</p>
+                    </div>
+                    <div class="shot-card">
+                        <img src="docs/images/screenshot_phone_02.png" alt="Biometric PIN Unlock Screen" loading="lazy">
+                        <h4>Hardware KeyStore Unlock</h4>
+                        <p>Fingerprint unwrap via Secure Enclave</p>
+                    </div>
+                    <div class="shot-card">
+                        <img src="docs/images/screenshot_phone_03.png" alt="4-in-1 Password Generator Screen" loading="lazy">
+                        <h4>4-in-1 Generator</h4>
+                        <p>Real-time entropy meter & crack time</p>
+                    </div>
+                    <div class="shot-card">
+                        <img src="docs/images/screenshot_phone_04.png" alt="Sovereign Vault Organization Screen" loading="lazy">
+                        <h4>Sovereign Vault</h4>
+                        <p>Category grouping & instant search</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plain-Language Privacy Explanation -->
+        <section id="privacy" class="privacy-section">
+            <div class="section-header">
+                <span class="section-tag" style="color: var(--emerald-400);">Privacy First & Always</span>
+                <h2 class="section-title gradient-text-gold">Plain-Language Privacy: What 'Zero-Network' Actually Means</h2>
+                <p class="section-desc">
+                    We believe privacy should be mathematically verifiable, not just promised in marketing copy. Here is the exact truth about how your data is protected.
+                </p>
+            </div>
+
+            <div class="privacy-showcase">
+                <div class="privacy-highlight-banner">
+                    <div class="privacy-highlight-icon">🛡️</div>
+                    <div class="privacy-highlight-text">
+                        <h4>Kernel-Level Zero-Internet Guarantee</h4>
+                        <p>In Android, an app cannot send or receive internet packets without declaring <code>android.permission.INTERNET</code>. Kunjika explicitly removes this permission from its binary manifest (<code>tools:node="remove"</code>). The Android operating system kernel refuses to allocate network sockets to Kunjika. It is physically impossible for the app to connect to the internet.</p>
+                    </div>
+                </div>
+
+                <div class="privacy-pillars-grid">
+                    <div class="privacy-pillar-card">
+                        <h4>🚫 Zero Telemetry & Trackers</h4>
+                        <p>No Google Analytics, no Firebase, no Facebook SDK, no advertising IDs, no diagnostic crash uploaders. Kunjika collects, logs, and transmits exactly 0 bytes of user data.</p>
+                    </div>
+                    <div class="privacy-pillar-card">
+                        <h4>🏢 Zero Cloud Accounts</h4>
+                        <p>No email address required, no username to create, no central password reset server. There is no cloud database or honeypot that hackers can breach to reach your passwords.</p>
+                    </div>
+                    <div class="privacy-pillar-card">
+                        <h4>📱 100% On-Device Vault</h4>
+                        <p>All passwords, notes, and 2FA keys reside exclusively inside your phone's encrypted flash memory, protected by hardware silicon ciphers and an encrypted SQLCipher database.</p>
+                    </div>
+                </div>
+
+                <div class="permissions-box">
+                    <h4>📋 Transparent Breakdown of Device Permissions</h4>
+                    <div class="permission-row">
+                        <span class="permission-tag">USE_BIOMETRIC</span>
+                        <span class="permission-desc">Authorizes vault access and cryptographically unwraps your Master PIN using the device's hardware KeyStore (TEE / StrongBox). Plaintext PIN is never persisted to disk.</span>
+                    </div>
+                    <div class="permission-row">
+                        <span class="permission-tag">CAMERA</span>
+                        <span class="permission-desc">Used exclusively for scanning local QR codes (adding 2FA authenticator secret keys and Web Drop pairing codes). Camera frames are processed strictly in volatile RAM via CameraX and ML Kit; no photos or videos are ever saved to disk or transmitted.</span>
+                    </div>
+                    <div class="permission-row">
+                        <span class="permission-tag">BLUETOOTH_ADVERTISE / CONNECT</span>
+                        <span class="permission-desc">Used strictly during an active Web Drop session to broadcast a localized BLE peripheral service and beam encrypted credentials directly to your laptop's browser over local radio waves. Deactivates immediately after transmission. Never used for beaconing, location tracking, or telemetry.</span>
+                    </div>
+                    <div class="permission-row">
+                        <span class="permission-tag">Storage Access Framework</span>
+                        <span class="permission-desc">Kunjika does not request broad file access. When you choose to export an encrypted <code>.kunjika</code> backup, it uses the official Android system file picker (SAF) to let you pick a USB drive, SD card, or local folder.</span>
+                    </div>
+                </div>
+
+                <div class="permissions-box" style="background: rgba(15, 20, 28, 0.6); border-color: rgba(245, 158, 11, 0.25);">
+                    <h4 style="color: var(--gold-400);">⚖️ Clear & Grounded Security Boundaries</h4>
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px;">
+                        • <strong>Hardware Backing:</strong> KeyStore hardware protection depends on your device hardware (TEE vs StrongBox).<br>
+                        • <strong>Access Gate:</strong> The Master PIN is an access gate in the application UI, while the database is encrypted with a random passphrase wrapped by Android KeyStore.<br>
+                        • <strong>Local Data Sharing:</strong> When you use Web Drop, QR sync, clipboard copy, Android Autofill, or file export, selected credentials leave Kunjika into the receiving application or device.
+                    </p>
+                </div>
+
+                <div class="privacy-footer-actions">
+                    <div>
+                        <span style="font-size: 13px; color: var(--text-muted);">Want complete technical and legal details?</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="./PRIVACY_POLICY.html" class="btn-large-secondary" style="padding: 10px 18px; font-size: 14px;">
+                            <span>🔒 Read Full Privacy Policy</span>
+                        </a>
+                        <a href="./PLAY_STORE_DATA_SAFETY.html" class="btn-large-ghost" style="padding: 10px 18px; font-size: 14px;">
+                            <span>📊 Play Store Data Safety Sheet</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1464,9 +2095,76 @@
 
                 <div class="achieve-card">
                     <div class="card-icon-box">🧱</div>
-                    <h3>Tamper-Proof Audit Guarantee</h3>
-                    <p>Every create, update, and delete operation is signed by hardware cryptography into an on-device blockchain ledger, ensuring verifiable tamper-evidence.</p>
-                    <div class="achieve-tag">Local Blockchain Ledger</div>
+                    <h3>Local Audit Chain</h3>
+                    <p>A local HMAC and EC-signed audit chain records vault modifications, helping detect unauthorized edits to stored credentials (with known rollback/deletion limitations).</p>
+                    <div class="achieve-tag">Local Signed Audit Log</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup Instructions Section -->
+        <section id="setup" class="setup-section">
+            <div class="section-header">
+                <span class="section-tag" style="color: var(--gold-400);">Quickstart Guide</span>
+                <h2 class="section-title">Get Started in 6 Simple Steps</h2>
+                <p class="section-desc">
+                    Setting up your sovereign vault takes under 2 minutes. No credit card, no email registration, and no cloud accounts required.
+                </p>
+            </div>
+
+            <div class="setup-grid">
+                <div class="setup-card">
+                    <div class="setup-step-num">1</div>
+                    <h4>Install from Google Play</h4>
+                    <p>Download and install Kunjika on your Android 15+ device directly from the official Google Play listing.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Direct link:</strong> <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" target="_blank" rel="noopener" style="color: var(--gold-400); font-weight: bold;">Google Play Store</a>
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-step-num">2</div>
+                    <h4>Set Master PIN & Biometrics</h4>
+                    <p>Choose a secure 6+ digit Master PIN on initial launch. Link your fingerprint or face scan for instant hardware-backed KeyStore unlock.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Tip:</strong> Optional Dual-Factor unlock requires BOTH fingerprint AND PIN for ultimate security.
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-step-num">3</div>
+                    <h4>Add Passwords & 2FA Codes</h4>
+                    <p>Use the 4-in-1 generator to create high-entropy passwords, or add existing logins with titles, usernames, notes, and 2FA authenticator secret keys.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Tip:</strong> Scan 2FA QR codes directly with your camera to start rotating 30s TOTP codes.
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-step-num">4</div>
+                    <h4>Enable Android Autofill</h4>
+                    <p>Go to your phone's <strong>Settings → Passwords & Autofill → Preferred service</strong> and select <strong>Kunjika</strong> for 1-tap logins in Chrome and apps.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Tip:</strong> Autofill requires biometric verification before credentials are provided.
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-step-num">5</div>
+                    <h4>Try Web Drop to PC</h4>
+                    <p>Open <strong>dwinsi.github.io/kunjika/web-companion/</strong> on your computer (Chrome/Edge/Brave). Scan the pairing QR with your phone and beam your password over Bluetooth.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Tip:</strong> Decrypted in PC RAM with an automatic 30-second clipboard shredder!
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-step-num">6</div>
+                    <h4>Export Encrypted Backup</h4>
+                    <p>Go to <strong>Settings → Encrypted Offline Backup</strong>. Enter a strong backup passphrase, and save your portable <code>.kunjika</code> file to a USB flash drive or SD card.</p>
+                    <div class="setup-tip">
+                        💡 <strong>Tip:</strong> Uses Android's Storage Access Framework for 100% offline file export.
+                    </div>
                 </div>
             </div>
         </section>
@@ -1581,39 +2279,7 @@
             </div>
         </section>
 
-        <!-- App UI Screenshots Showcase -->
-        <section class="screenshots-section">
-            <div class="section-header">
-                <span class="section-tag">Crafted for Excellence</span>
-                <h2 class="section-title">Obsidian Gold & Midnight Indigo Interface</h2>
-                <p class="section-desc">
-                    Engineered with custom glossy components, 3D specular highlights, and an ergonomic 4-tab workflow designed for Android 15+.
-                </p>
-            </div>
-
-            <div class="screenshot-grid">
-                <div class="shot-card">
-                    <img src="docs/images/screenshot_phone_01.png" alt="Onboarding Screen">
-                    <h4>Offline Onboarding</h4>
-                    <p>Zero-network guarantee verified at launch</p>
-                </div>
-                <div class="shot-card">
-                    <img src="docs/images/screenshot_phone_02.png" alt="Biometric PIN Unlock">
-                    <h4>Biometric PIN Storage</h4>
-                    <p>Instant fingerprint unwrap via KeyStore</p>
-                </div>
-                <div class="shot-card">
-                    <img src="docs/images/screenshot_phone_03.png" alt="Password Generator">
-                    <h4>4-in-1 Generator</h4>
-                    <p>Real-time strength meter & history</p>
-                </div>
-                <div class="shot-card">
-                    <img src="docs/images/screenshot_phone_04.png" alt="Vault Organization">
-                    <h4>Sovereign Vault</h4>
-                    <p>Category grouping & instant search</p>
-                </div>
-            </div>
-        </section>
+<!-- Screenshots merged into #features above -->
 
         <!-- Comparison Table -->
         <section id="comparison" class="table-section">
@@ -1853,23 +2519,85 @@
                     Yes. Kunjika is 100% free and open-source software licensed under the MIT License. There are no subscriptions, no ads, no trackers, and no premium paywalls.
                 </div>
             </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Where can I ask questions or report a bug?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    We welcome all questions, bug reports, and feature suggestions on our official GitHub repository! You can file an issue on <a href="https://github.com/dwinsi/kunjika/issues" target="_blank" rel="noopener" style="color: var(--gold-400);">GitHub Issues</a>, start a conversation on <a href="https://github.com/dwinsi/kunjika/discussions" target="_blank" rel="noopener" style="color: var(--indigo-300);">GitHub Discussions</a>, or email the developer at <a href="mailto:winsimash@gmail.com" style="color: var(--emerald-400);">winsimash@gmail.com</a>.
+                </div>
+            </div>
+        </section>
+
+        <!-- Support, Bug Reports & Questions Section -->
+        <section id="support" class="support-section">
+            <div class="section-header">
+                <span class="section-tag" style="color: var(--indigo-300);">Community & Support</span>
+                <h2 class="section-title">Report Bugs, Ask Questions & Get Help</h2>
+                <p class="section-desc">
+                    Kunjika is an open-source project dedicated to digital sovereignty. Found an issue, have a question, or want to suggest a new feature? We are here to help.
+                </p>
+            </div>
+
+            <div class="support-grid">
+                <div class="support-card">
+                    <div class="support-icon">🐛</div>
+                    <h4>Report a Bug</h4>
+                    <p>Encountered an issue or unexpected behavior on your Android device? Open a ticket on GitHub Issues so we can track and resolve it promptly.</p>
+                    <a href="https://github.com/dwinsi/kunjika/issues/new/choose" target="_blank" rel="noopener" class="support-btn support-btn-primary">
+                        <span>Report Bug on GitHub →</span>
+                    </a>
+                </div>
+
+                <div class="support-card">
+                    <div class="support-icon">💬</div>
+                    <h4>Ask Questions & Request Features</h4>
+                    <p>Have questions about cryptography, how offline backups work, or ideas for new features? Join the discussion with the developer and community.</p>
+                    <a href="https://github.com/dwinsi/kunjika/discussions" target="_blank" rel="noopener" class="support-btn support-btn-indigo">
+                        <span>Join GitHub Discussions →</span>
+                    </a>
+                </div>
+
+                <div class="support-card">
+                    <div class="support-icon">✉️</div>
+                    <h4>Contact Developer</h4>
+                    <p>Prefer direct communication? Reach out to lead developer <strong>Ashwin Singh</strong> for general inquiries, feedback, or security reports.</p>
+                    <a href="mailto:winsimash@gmail.com?subject=Kunjika%20Support%20%2F%20Inquiry" class="support-btn support-btn-emerald">
+                        <span>Email winsimash@gmail.com →</span>
+                    </a>
+                </div>
+            </div>
         </section>
 
         <!-- Final CTA Banner -->
         <section class="cta-bottom-banner">
             <h2 class="gradient-text-gold">Take Back Your Digital Sovereignty</h2>
             <p>
-                Join thousands of users who have cut the cloud cord. Experience the peace of mind of 100% offline security and effortless PC sync today.
+                Cut the cloud cord. Experience the complete peace of mind of 100% offline security, zero subscriptions, and effortless PC sync today.
             </p>
-            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-                <a href="./testing.html" class="btn-large-primary">
-                    <span>🧪 Join 14-Day Closed Beta</span>
+            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; align-items: center;">
+                <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" class="btn-playstore" target="_blank" rel="noopener" style="padding: 12px 26px;">
+                    <svg viewBox="0 0 512 512" style="width: 30px; height: 30px;">
+                        <path fill="#00C1A6" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/>
+                        <path fill="#0083D6" d="M47 36v440l240-220L47 36z"/>
+                        <path fill="#FF3333" d="M325.3 277.7l60.1 60.1L104.6 499l220.7-221.3z"/>
+                        <path fill="#FFD400" d="M465 256c0 14-8 27-21 34l-58.6 33.7-60.1-60.1 60.1-60.1 58.6 33.7c13 7 21 20 21 33.8z"/>
+                    </svg>
+                    <div class="btn-playstore-text">
+                        <span class="subtext" style="font-size: 11px;">GET IT ON</span>
+                        <span class="maintext" style="font-size: 18px;">Google Play</span>
+                    </div>
                 </a>
                 <a href="./web-companion/" class="btn-large-secondary">
                     <span>⚡ Launch Web Drop Companion</span>
                 </a>
+                <a href="#setup" class="btn-large-ghost">
+                    <span>🛠️ Setup Instructions</span>
+                </a>
                 <a href="./docs/user-guide.html" class="btn-large-ghost">
-                    <span>📖 Read User Guide</span>
+                    <span>📖 Full User Guide</span>
                 </a>
             </div>
         </section>
@@ -1893,10 +2621,11 @@
                 <div class="footer-col">
                     <h5>Get Started</h5>
                     <ul class="footer-links">
+                        <li><a href="https://play.google.com/store/apps/details?id=com.kunjika.app" target="_blank" rel="noopener" style="color: var(--emerald-400); font-weight: 700;">📲 Google Play Store</a></li>
                         <li><a href="./hindi.html" style="color: var(--gold-400); font-weight: 600;">🇮🇳 हिंदी गाइड (Hindi Guide)</a></li>
-                        <li><a href="./testing.html">14-Day Tester Portal</a></li>
                         <li><a href="./web-companion/">Web Drop Companion</a></li>
                         <li><a href="./docs/user-guide.html">User Guide & Quickstart</a></li>
+                        <li><a href="./testing.html">14-Day Tester Portal</a></li>
                         <li><a href="./RELEASE_NOTES.html">Release Notes (v1.1.2)</a></li>
                     </ul>
                 </div>
@@ -1912,12 +2641,14 @@
                 </div>
 
                 <div class="footer-col">
-                    <h5>Legal & Privacy</h5>
+                    <h5>Community & Legal</h5>
                     <ul class="footer-links">
                         <li><a href="./PRIVACY_POLICY.html">Privacy Policy (0-Data)</a></li>
                         <li><a href="./PLAY_STORE_DATA_SAFETY.html">Play Store Data Safety</a></li>
-                        <li><a href="https://github.com/dwinsi/kunjika/blob/main/LICENSE">MIT License</a></li>
+                        <li><a href="https://github.com/dwinsi/kunjika/issues" target="_blank" rel="noopener">Report Bugs (Issues)</a></li>
+                        <li><a href="https://github.com/dwinsi/kunjika/discussions" target="_blank" rel="noopener">Ask Questions (Discussions)</a></li>
                         <li><a href="https://github.com/dwinsi/kunjika">GitHub Source Code</a></li>
+                        <li><a href="https://github.com/dwinsi/kunjika/blob/main/LICENSE">MIT License</a></li>
                     </ul>
                 </div>
             </div>

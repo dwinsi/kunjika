@@ -1,5 +1,7 @@
 # 📚 Kunjika Documentation Index
 
+[![Google Play](https://img.shields.io/badge/Google_Play-Install%20App-34D399?style=flat-square&labelColor=064E3B&color=34D399&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.kunjika.app)
+[![Project Website](https://img.shields.io/badge/Project%20Website-GitHub%20Pages-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B&logo=githubpages&logoColor=white)](https://dwinsi.github.io/kunjika/)
 [![Version](https://img.shields.io/badge/version-1.1.2-F59E0B?style=flat-square&labelColor=07090E&color=F59E0B)](../RELEASE_NOTES.md)
 [![Theme](https://img.shields.io/badge/theme-Obsidian%20Gold%20%26%20Midnight%20Indigo-F59E0B?style=flat-square&labelColor=1E1B4B&color=F59E0B)](features.md)
 [![Architecture](https://img.shields.io/badge/architecture-Security--First%20Clean-818CF8?style=flat-square&labelColor=1E1B4B&color=818CF8)](architecture.md)
@@ -11,6 +13,8 @@ Welcome to the technical documentation for **Kunjika** (v1.1.2). This documentat
 
 ## 📖 Table of Contents
 
+0. **[🌐 Interactive Project Website & Online Guide](https://dwinsi.github.io/kunjika/)**
+   - Detailed feature overview, real-time in-browser password generator, screenshots tour, plain-language privacy explanation, setup instructions, FAQs, and support links.
 1. **[📖 User Guide & Quickstart](user-guide.md)**
    - Simple, step-by-step beginner guide with screenshots, common use cases (generating passwords, vault search, 2FA codes, Web Drop to PC, phone-to-phone transfer), and FAQs.
 2. **[🇮🇳 हिंदी यूजर गाइड (Hindi User Guide)](user-guide-hindi.md)** / **[🌐 हिंदी वेब पेज (Web Page)](https://dwinsi.github.io/kunjika/hindi.html)**
