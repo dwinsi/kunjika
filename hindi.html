@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>कुंजिका (Kunjika) - साइबर सुरक्षा मार्गदर्शिका और ऑफलाइन पासवर्ड वॉल्ट</title>
-    <meta name="description" content="पासवर्ड मैनेजर क्या है? 2FA ऑथेंटिकेशन और कॉम्प्लेक्स पासवर्ड की आवश्यकता क्यों है? जानिए सरल हिंदी में। 100% ऑफलाइन, सॉवरेन पासवर्ड मैनेजर कुंजिका (Kunjika)।">
+    <title>कुंजिका (Kunjika) - Local-First Password Manager</title>
+    <meta name="description" content="Kunjika एक local-first Android password manager और authenticator है। Encrypted vault, password generator, Autofill, TOTP और user-initiated transfer के बारे में सरल हिंदी में जानें।">
     <meta name="keywords" content="पासवर्ड मैनेजर, 2FA ऑथेंटिकेशन, TOTP, साइबर सुरक्षा, Kunjika, कुंजिका, offline password vault, secure password manager Hindi">
     <meta name="theme-color" content="#090D16">
 
     <!-- Open Graph / Social Meta -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dwinsi.github.io/kunjika/hindi.html">
-    <meta property="og:title" content="कुंजिका (Kunjika) - साइबर सुरक्षा मार्गदर्शिका और ऑफलाइन वॉल्ट">
-    <meta property="og:description" content="Password Manager, 2FA और डेटा सुरक्षा की संपूर्ण जानकारी सरल हिंदी में। बिना इंटरनेट 100% सुरक्षित पासवर्ड वॉल्ट।">
+    <meta property="og:title" content="कुंजिका (Kunjika) - Local-First Password Manager">
+    <meta property="og:description" content="Local-first encrypted vault, Android Autofill, TOTP और user-initiated transfer. No Kunjika account or cloud sync required.">
     <meta property="og:image" content="docs/images/feature_graphic_1024x500.png">
 
     <!-- Google Fonts: Plus Jakarta Sans & Noto Sans Devanagari -->
@@ -674,7 +674,7 @@
             font-weight: 500;
         }
 
-        /* Password Entropy & Crack Time Table */
+        /* Password entropy and strength guidance */
         .table-wrap {
             overflow-x: auto;
             margin: 30px 0;
@@ -1205,7 +1205,7 @@
                 <img src="docs/images/app_icon_512.png" alt="कुंजिका लोगो" class="brand-logo">
                 <div>
                     <span class="brand-name">KUNJIKA</span>
-                    <span class="brand-tag">100% Offline Vault</span>
+                    <span class="brand-tag">Local-First Password Vault</span>
                 </div>
             </a>
 
@@ -1257,8 +1257,8 @@
         <section class="hero container">
             <div class="hero-tags">
                 <span class="tag-pill tag-gold">Sovereign Data Security</span>
-                <span class="tag-pill tag-emerald">100% Offline (Zero Network Permissions)</span>
-                <span class="tag-pill tag-indigo">Open Source Software</span>
+                <span class="tag-pill tag-emerald">No Kunjika Account or Cloud Sync</span>
+                <span class="tag-pill tag-indigo">Android 8 और नए संस्करणों के लिए</span>
             </div>
 
             <h1>
@@ -1267,7 +1267,7 @@
             </h1>
 
             <p class="hero-lead">
-                आधुनिक डिजिटल युग में पासवर्ड चोरी, सिम स्वैपिंग (SIM Swapping) और क्लाउड सर्वर लीक्स से बचाव के लिए सही जानकारी सबसे बड़ा सुरक्षा कवच है। जानिए कि <strong>Password Manager</strong> और <strong>2FA Authentication</strong> कैसे काम करते हैं, और क्यों <strong>कुंजिका (Kunjika)</strong> बिना किसी क्लाउड या इंटरनेट के आपको बैंक-स्तरीय सुरक्षा प्रदान करती है।
+                Kunjika एक local-first Android password manager और authenticator है। इसमें passwords, passphrases, PINs, Android Autofill और TOTP codes एक encrypted local vault में मिलते हैं। Kunjika account या cloud sync जरूरी नहीं है; data export या transfer करना आप चुनते हैं।
             </p>
 
             <div class="hero-cta">
@@ -1279,9 +1279,6 @@
                 </a>
                 <a href="#how-to-use" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 24px;">
                     उपयोग सीखें
-                </a>
-                <a href="./testing.html" class="btn-secondary" style="font-size: 1.05rem; padding: 13px 20px;">
-                    बीटा पोर्टल
                 </a>
             </div>
 
@@ -1348,7 +1345,7 @@
                             आधुनिक समय में साइबर अपराधी पासवर्ड का अनुमान स्वयं नहीं लगाते; वे सुपरकंप्यूटर्स और स्वचालित टूल्स का उपयोग करते हैं:
                         </p>
                         <ul class="concept-bullets">
-                            <li><strong>ब्रूट फोर्स अटैक (Brute Force Attack):</strong> कंप्यूटर प्रति सेकंड अरबों संयोजन आजमाता है। <code>123456</code> या <code>password</code> को तोड़ने में <strong>1 सेकंड से भी कम</strong> समय लगता है।</li>
+                            <li><strong>ब्रूट फोर्स और अनुमान:</strong> कमजोर या आम पासवर्ड जल्दी guess किए जा सकते हैं। वास्तविक समय password, target की rate limits और attacker की क्षमता पर निर्भर करता है।</li>
                             <li><strong>डिक्शनरी अटैक (Dictionary Attack):</strong> सामान्य नाम, शहर, भगवान का नाम या जन्मतिथि (जैसे <code>Amit@1995</code>) पहले से तैयार सूचियों द्वारा मिनटों में हल हो जाते हैं।</li>
                             <li><strong>क्रेडेंशियल स्टफिंग (Credential Stuffing):</strong> जब किसी एक वेबसाइट का डेटा लीक होता है, तो बॉट्स उसी ईमेल और पासवर्ड को बैंक और सोशल मीडिया पर स्वचालित रूप से आजमाते हैं।</li>
                         </ul>
@@ -1395,7 +1392,7 @@
                     </div>
                     <h3 class="concept-title">
                         4. क्लाउड बनाम ऑफलाइन वॉल्ट
-                        <span class="en-term">Cloud Storage vs 100% Offline Vault</span>
+                        <span class="en-term">Cloud Storage vs Local-First Vault</span>
                     </h3>
                     <div class="concept-body">
                         <p>
@@ -1403,7 +1400,7 @@
                         </p>
                         <ul class="concept-bullets">
                             <li><strong>क्लाउड का जोखिम:</strong> रिमोट सर्वर पर सुरक्षा चूक होने की स्थिति में लाखों उपयोगकर्ताओं के वॉल्ट्स एक साथ खतरे में आ सकते हैं।</li>
-                            <li><strong>ऑफलाइन सॉवरेनिटी (Kunjika):</strong> कुंजिका में इंटरनेट अनुमति (Network Permission) ही नहीं होती। आपका डेटा आपके फोन की भौतिक हार्डवेयर चिप (TEE) से कभी बाहर नहीं जाता।</li>
+                            <li><strong>Local-first (Kunjika):</strong> Android app manifest में <code>INTERNET</code> permission नहीं है और Kunjika cloud sync नहीं देता। आप Bluetooth, QR, clipboard, Autofill या backup के जरिए चुना हुआ data share कर सकते हैं। Keystore hardware protection device पर निर्भर है।</li>
                         </ul>
                     </div>
                 </div>
@@ -1426,73 +1423,20 @@
                 </div>
 
                 <div class="twofa-item secure">
-                    <span class="twofa-badge green">आधुनिक मानक (सर्वोत्तम)</span>
-                    <h4>TOTP ऑथेंटिकेटर ऐप की मजबूती</h4>
+                    <span class="twofa-badge green">एक आम विकल्प</span>
+                    <h4>TOTP ऑथेंटिकेटर कोड</h4>
                     <p>
                         कुंजिका में अंतरराष्ट्रीय मानक (RFC 6238) आधारित <strong>TOTP Authenticator</strong> इन-बिल्ट है:
                     </p>
                     <ul class="concept-bullets">
-                        <li><strong>शून्य नेटवर्क निर्भरता:</strong> यह कोड आपके फोन की आंतरिक घड़ी और गणितीय एल्गोरिदम से उत्पन्न होता है। <strong>फ्लाइट मोड में भी काम करता है।</strong></li>
-                        <li><strong>सिम स्वैप से पूर्ण सुरक्षा:</strong> सिम कार्ड चोरी होने पर भी प्रमाणीकरण कोड सुरक्षित रहता है क्योंकि यह केवल फोन के हार्डवेयर से जुड़ा होता है।</li>
-                        <li><strong>30-सेकंड चक्र:</strong> कोड हर 30 सेकंड में स्वतः बदल जाता है, जिससे इसका पुनः उपयोग असंभव है।</li>
+                        <li><strong>Offline code generation:</strong> TOTP कोड फोन की घड़ी और secret से बनता है, इसलिए code generation के लिए network जरूरी नहीं होता।</li>
+                        <li><strong>SIM swap से अलग:</strong> TOTP कोड SIM पर निर्भर नहीं होता, लेकिन account की सुरक्षा service की settings और आपके device की सुरक्षा पर भी निर्भर करती है।</li>
+                        <li><strong>समय आधारित कोड:</strong> कोड आम तौर पर 30 सेकंड के बाद बदलता है; इससे phishing या code theft से पूरी सुरक्षा नहीं मिलती।</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Password Crack Time Table -->
-            <div style="margin-top: 40px;">
-                <h3 style="font-size: 1.45rem; color: var(--text-primary); margin-bottom: 8px; text-align: center; font-weight: 800;">
-                    पासवर्ड जटिलता और क्रैक समय विश्लेषण
-                </h3>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 24px; font-size: 0.98rem;">
-                    आधुनिक GPU कंप्यूटिंग क्लस्टर्स के सामने विभिन्न पासवर्ड संरचनाओं का अनुमानित प्रतिरोध काल:
-                </p>
-
-                <div class="table-wrap">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>पासवर्ड की संरचना (Structure)</th>
-                                <th>उदाहरण (Example)</th>
-                                <th>क्रैक समय (Time to Crack)</th>
-                                <th>सुरक्षा रेटिंग</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>केवल 6-8 छोटे अक्षर या अंक</td>
-                                <td><code>12345678</code> / <code>rahul12</code></td>
-                                <td style="color: var(--accent-rose); font-weight: 700;">0 सेकंड (तात्कालिक)</td>
-                                <td>असुरक्षित</td>
-                            </tr>
-                            <tr>
-                                <td>नाम + जन्मतिथि / सामान्य शब्द</td>
-                                <td><code>Amit@1995</code> / <code>Pooja#123</code></td>
-                                <td style="color: var(--accent-rose); font-weight: 700;">2 सेकंड से 5 मिनट</td>
-                                <td>कमजोर</td>
-                            </tr>
-                            <tr>
-                                <td>10-12 अक्षर (अंक व प्रतीक सहित)</td>
-                                <td><code>k8#Q!v9$L2</code></td>
-                                <td style="color: var(--accent-gold); font-weight: 700;">कुछ माह से 2 वर्ष</td>
-                                <td>मध्यम</td>
-                            </tr>
-                            <tr>
-                                <td><strong>16+ अक्षर जटिल (कुंजिका जनरेटर)</strong></td>
-                                <td><code>x8#M@8vP!4zL$1qR</code></td>
-                                <td style="color: var(--accent-emerald); font-weight: 700;">3.4 लाख वर्ष</td>
-                                <td><strong>अत्यंत सुरक्षित</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>4-5 यादृच्छिक शब्द (Diceware)</strong></td>
-                                <td><code>suraj-pahar-chai-kiran</code></td>
-                                <td style="color: var(--accent-emerald); font-weight: 700;">करोड़ों वर्ष</td>
-                                <td><strong>स्मृति-सुलभ + अटूट</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <p class="section-desc">Password strength depends on length, randomness, uniqueness, and the attack method. Crack-time figures are estimates and cannot predict the security of a real account.</p>
 
         </section>
 
@@ -1516,7 +1460,7 @@
                         एक प्रमुख ऑनलाइन पासवर्ड मैनेजर के क्लाउड बैकअप सर्वर पर अनधिकृत पहुंच के कारण लाखों उपयोगकर्ताओं के एन्क्रिप्टेड वॉल्ट्स डाउनलोड कर लिए गए थे।
                     </p>
                     <div class="case-takeaway">
-                        <strong>सबक:</strong> पासवर्ड्स को इंटरनेट से जुड़े सर्वर्स पर रखना केंद्रीकृत जोखिम उत्पन्न करता है। 100% ऑफलाइन आर्किटेक्चर इस जोखिम को पूरी तरह समाप्त कर देता है।
+                        <strong>सबक:</strong> Local-first storage cloud-sync dependency को हटाता है, लेकिन device compromise, unsafe sharing और backup loss जैसे जोखिम बने रहते हैं।
                     </div>
                 </div>
 
@@ -1607,7 +1551,7 @@
                 <span class="section-badge">Sovereign Architecture</span>
                 <h2 class="section-title">कुंजिका (Kunjika) आपके लिए सही क्यों है?</h2>
                 <p class="section-desc">
-                    कुंजिका को इस उद्देश्य के साथ विकसित किया गया है कि उपयोगकर्ता की गोपनीयता पर कोई समझौता न हो। इसमें कोई ट्रैकिंग नहीं है और शून्य नेटवर्क अनुमति है।
+                    Kunjika local-first vault है। इसमें Kunjika account या cloud sync जरूरी नहीं; sharing, backup और receiving device की जिम्मेदारी उपयोगकर्ता की रहती है।
                 </p>
             </div>
 
@@ -1625,11 +1569,11 @@
                         </svg>
                     </div>
                     <h3 class="concept-title">
-                        1. 100% ऑफलाइन गारंटी
-                        <span class="en-term">Zero Network Permissions</span>
+                        1. Local-First Storage
+                        <span class="en-term">Local-First Data Handling</span>
                     </h3>
                     <p class="concept-body">
-                        कुंजिका में <code>android.permission.INTERNET</code> अनुमति ही शामिल नहीं है। एंड्रॉइड ऑपरेटिंग सिस्टम तकनीकी रूप से यह सुनिश्चित करता है कि ऐप से कोई भी डेटा इंटरनेट या क्लाउड नेटवर्क पर न भेजा जा सके (डेटा केवल ब्लूटूथ या क्यूआर द्वारा आपके प्रत्यक्ष बायोमेट्रिक नियंत्रण में ही ट्रांसफर होता है)।
+                        Android app manifest में <code>android.permission.INTERNET</code> permission नहीं है और Kunjika cloud sync नहीं देता। App Google Play services के जरिए Play Integrity token request कर सकता है। Bluetooth, QR, clipboard, Autofill और file export से चुना हुआ data दूसरी apps या devices तक जा सकता है।
                     </p>
                 </div>
 
@@ -1640,11 +1584,11 @@
                         </svg>
                     </div>
                     <h3 class="concept-title">
-                        2. हार्डवेयर डबल-लॉक एन्क्रिप्शन
-                        <span class="en-term">Hardware TEE & AES-256</span>
+                        2. Encrypted Local Vault
+                        <span class="en-term">Encrypted Local Vault</span>
                     </h3>
                     <p class="concept-body">
-                        प्रत्येक रिकॉर्ड को आपके फोन की भौतिक सुरक्षा चिप (TEE/StrongBox) द्वारा जनरेट की गई एन्क्रिप्शन कीज़ से लॉक किया जाता है। फोन रूट होने पर भी डेटा सुरक्षित रहता है।
+                        Database SQLCipher से protected है; password और TOTP-secret fields पर अतिरिक्त AES-GCM encryption है। Android Keystore की hardware backing device पर निर्भर है। Rooted या compromised device पर सुरक्षा की guarantee नहीं है।
                     </p>
                 </div>
 
@@ -1656,7 +1600,7 @@
                         </svg>
                     </div>
                     <h3 class="concept-title">
-                        3. इन-बिल्ट TOTP 2FA ऑथेंटिकेटर
+                        3. इन-बिल्ट TOTP ऑथेंटिकेटर
                         <span class="en-term">Integrated Two-Factor Auth</span>
                     </h3>
                     <p class="concept-body">
@@ -1673,10 +1617,10 @@
                     </div>
                     <h3 class="concept-title">
                         4. वेब ड्रॉप (Web Drop)
-                        <span class="en-term">Offline Phone-to-PC Sync</span>
+                        <span class="en-term">Bluetooth Phone-to-PC Transfer</span>
                     </h3>
                     <p class="concept-body">
-                        लैपटॉप या कंप्यूटर पर लंबे और जटिल पासवर्ड बार-बार टाइप करने की परेशानी खत्म! चाहे पासवर्ड कितना भी कठिन हो, बिना किसी इंटरनेट या केबल के, सिर्फ ब्लूटूथ और क्यूआर कोड से 2 सेकंड में पासवर्ड कंप्यूटर पर भेजें।
+                        Hosted Web Companion page खोलने के बाद, QR scan करें, phone पर authenticate करें, दोनों स्क्रीन के छह अंकों के codes मिलाएं, browser में confirm करें और phone पर send approve करें। यह सुविधा चुना हुआ credential Bluetooth से भेजती है; trusted computer और browser इस्तेमाल करें।
                     </p>
                 </div>
             </div>
@@ -1688,7 +1632,7 @@
                 <span class="section-badge">Step-by-Step Guide</span>
                 <h2 class="section-title">ऐप का उपयोग कैसे करें?</h2>
                 <p class="section-desc">
-                    कुंजिका को अत्यधिक सहज और सरल बनाया गया है। नीचे दिए गए 5 चरणों का पालन करके आप 2 मिनट में पूरी तरह तैयार हो सकते हैं:
+                    Kunjika शुरू करने के लिए नीचे दिए गए चरणों का पालन करें; आपके device और preferences के अनुसार setup में समय लग सकता है:
                 </p>
             </div>
 
@@ -1700,15 +1644,15 @@
                         <span class="step-index">1</span>
                         <h3>चरण 1: ऐप खोलें और मास्टर पिन (Master PIN) सेट करें</h3>
                         <p>
-                            पहली बार ऐप खोलने पर प्रारंभिक कॉन्फ़िगरेशन में केवल 30 सेकंड का समय लगता है:
+                            पहली बार सेटअप में आपके device और preferences के अनुसार समय लग सकता है:
                         </p>
                         <ul class="step-checklist">
                             <li>ऐप खोलें और स्वागत स्क्रीन पर आगे बढ़ें।</li>
-                            <li>अपना <strong>4 से 8 अंकों का मास्टर पिन</strong> चुनें और पुष्टि करें।</li>
+                            <li>कम से कम छह अंकों का <strong>Master PIN</strong> चुनें और पुष्टि करें।</li>
                             <li><strong>बायोमेट्रिक्स (Fingerprint / Face Unlock)</strong> सक्रिय करें ताकि बार-बार पिन दर्ज न करना पड़े।</li>
                         </ul>
                         <div class="step-callout">
-                            <strong>महत्वपूर्ण:</strong> अपना मास्टर पिन याद रखें या सुरक्षित नोट में रखें। क्योंकि कुंजिका पूरी तरह ऑफलाइन है, इसलिए यहां "पासवर्ड रीसेट" का कोई रिमोट सर्वर नहीं होता।
+                            <strong>महत्वपूर्ण:</strong> अपना Master PIN याद रखें और encrypted backup सुरक्षित रखें। Kunjika account या remote password-reset service नहीं देता।
                         </div>
                     </div>
                     <div class="step-frame">
@@ -1730,8 +1674,8 @@
                         <ul class="step-checklist">
                             <li>नीचे नेविगेशन में <strong>Generator</strong> पर टैप करें।</li>
                             <li>स्वरूप चुनें:
-                                <br>• <strong>Password:</strong> अक्षरों, अंकों और विशेष प्रतीकों का अटूट संयोजन।
-                                <br>• <strong>Passphrase:</strong> याद रखने में आसान 4-5 शब्दों की श्रृंखला (Diceware)।
+                                <br>• <strong>Password:</strong> अक्षरों, अंकों और symbols से unique password बनाएं।
+                                <br>• <strong>Passphrase:</strong> याद रखने योग्य शब्दों की श्रृंखला। कोई password crack-proof नहीं होता।
                                 <br>• <strong>PIN:</strong> वित्तीय सेवाओं के लिए यादृच्छिक संख्यात्मक पिन।
                             </li>
                             <li>स्लाइडर से उपयुक्त लंबाई चुनें (कम से कम 16 अक्षरों की अनुशंसा की जाती है)।</li>
@@ -1775,8 +1719,8 @@
                         <ul class="step-checklist">
                             <li>कंप्यूटर ब्राउज़र में वेब साथी खोलें: <br><a href="./web-companion/" target="_blank" style="color: var(--accent-gold); font-weight: 600; text-decoration: underline;">dwinsi.github.io/kunjika/web-companion/</a></li>
                             <li>कंप्यूटर स्क्रीन पर आने वाले क्यूआर कोड को फोन से स्कैन करें।</li>
-                            <li>फोन पर फिंगरप्रिंट लगाएं—पासवर्ड सीधे ब्लूटूथ के माध्यम से कंप्यूटर के क्लिपबोर्ड पर स्थानांतरित हो जाता है।</li>
-                            <li>30 सेकंड बाद कंप्यूटर की रैम और क्लिपबोर्ड स्वतः साफ हो जाती है।</li>
+                            <li>फोन पर authenticate करें, दोनों स्क्रीन के छह अंकों के comparison code मिलाएं, browser में confirm करें और फोन पर send approve करें।</li>
+                            <li>Browser में credential दिखेगा। Copy करना user action है; clipboard manager इसे रख सकता है और JavaScript memory cleanup की guarantee नहीं दे सकता।</li>
                         </ul>
                     </div>
                 </div>
@@ -1792,7 +1736,7 @@
                         <ul class="step-checklist">
                             <li><strong>Autofill Service:</strong> ऐप सेटिंग्स में जाकर ऑटोफिल सक्षम करें ताकि ऐप्स में लॉगिन करते समय क्रेडेंशियल्स स्वतः भर जाएं।</li>
                             <li><strong>एन्क्रिप्टेड बैकअप:</strong> सेटिंग्स में 'Export Backup' चुनें, एक मजबूत सुरक्षा पासफ्रेज़ सेट करें और फाइल को सुरक्षित स्थान (पेनड्राइव/एसडी कार्ड) पर रखें।</li>
-                            <li><strong>नया फोन लेने पर:</strong> 'Import Backup' दबाकर अपने पासवर्ड्स को आसानी से पुनर्स्थापित (Restore) करें।</li>
+                            <li><strong>नया फोन लेने पर:</strong> encrypted vault backup import करें। Local database recovery kit दूसरे device के लिए portable backup नहीं है।</li>
                         </ul>
                     </div>
                     <div class="step-frame">
@@ -1838,7 +1782,7 @@
                 </p>
                 <ul class="concept-bullets">
                     <li><strong>Password मोड (अक्षर, नंबर और सिंबल):</strong> Uppercase (A-Z), Lowercase (a-z), Numbers (0-9) और Symbols (!@#$) का मजबूत मिश्रण। इसमें भ्रमित करने वाले अक्षरों (जैसे 1, l, I, 0, O) को हटाने का आसान विकल्प भी है।</li>
-                    <li><strong>Passphrase (Diceware - शब्दों वाला पासवर्ड):</strong> 10,000 शब्दों की ऑफलाइन डिक्शनरी से 4 से 6 आसान शब्दों को जोड़कर बनाया गया ऐसा पासवर्ड, जिसे याद रखना आसान हो लेकिन कंप्यूटर कभी क्रैक न कर सके।</li>
+                    <li><strong>Passphrase (शब्दों वाला पासवर्ड):</strong> शब्दों की याद रखने योग्य श्रृंखला बनाएं। सुरक्षा लंबाई और यादृच्छिकता पर निर्भर करती है; कोई password crack-proof नहीं होता।</li>
                     <li><strong>Numeric PIN (पिन कोड):</strong> एटीएम, यूपीआई या फोन स्क्रीन लॉक के लिए 4 से 12 अंकों का रैंडम सुरक्षा कोड।</li>
                     <li><strong>2FA Secret Key (टू-फैक्टर ऑथेंटिकेशन):</strong> Google Authenticator या 2FA सेटअप करने के लिए Base32 सीक्रेट की जनरेट करें।</li>
                 </ul>
@@ -1855,7 +1799,7 @@
                 <ul class="concept-bullets">
                     <li><strong>श्रेणीवार विभाजन:</strong> पर्सनल, वर्क, फाइनेंस और सोशल क्रेडेंशियल्स को अलग-अलग देखना।</li>
                     <li><strong>लाइव 2FA कोड्स:</strong> एकीकृत गोल टाइमर के साथ हर 30 सेकंड में स्वतः अपडेट होने वाले कोड्स।</li>
-                    <li><strong>1-टैप कॉपी:</strong> क्लिपबोर्ड पर कॉपी करें; 30 सेकंड बाद क्लिपबोर्ड स्वतः साफ हो जाता है।</li>
+                    <li><strong>कॉपी:</strong> credential clipboard पर copy करें। Clipboard apps या keyboard software इसे पढ़ या रख सकते हैं।</li>
                 </ul>
             </div>
 
@@ -1870,7 +1814,7 @@
                 <ul class="concept-bullets">
                     <li><strong>कमजोर पासवर्ड्स की पहचान:</strong> कम एंट्रॉपी वाले खातों की सूची।</li>
                     <li><strong>दोहराए गए पासवर्ड्स (Reused Passwords):</strong> एक ही पासवर्ड के कई जगह इस्तेमाल होने पर अलर्ट।</li>
-                    <li><strong>डिवाइस सुरक्षा स्थिति:</strong> हार्डवेयर टीईई (TEE) और स्क्रीन लॉक की स्थिति का सत्यापन।</li>
+                    <li><strong>Device checks:</strong> Root/emulator संकेत और Keystore security level दिखाए जा सकते हैं; ये advisory checks हैं, independent attestation नहीं।</li>
                 </ul>
             </div>
 
@@ -1885,7 +1829,7 @@
                 <ul class="concept-bullets">
                     <li><strong>थीम चयन:</strong> ऑब्सिडियन गोल्ड (Obsidian Gold) या प्लैटिनम सिल्वर (Platinum Silver)।</li>
                     <li><strong>ऑटो-लॉक टाइमर:</strong> ऐप से बाहर जाने पर तत्काल या निर्धारित समय बाद स्वतः लॉक होना।</li>
-                    <li><strong>एन्क्रिप्टेड बैकअप व रीस्टोर:</strong> बिना किसी सर्वर के पूर्ण ऑफ़लाइन बैकअप।</li>
+                    <li><strong>Encrypted backup:</strong> Passphrase-protected backup बनाएं और उसे सुरक्षित जगह रखें। Local database recovery kit दूसरे device पर restore करने का विकल्प नहीं है।</li>
                 </ul>
             </div>
         </section>
@@ -1912,7 +1856,7 @@
                     <div class="meter-track">
                         <div class="meter-fill" id="demo-meter-fill"></div>
                     </div>
-                    <span class="meter-label" id="demo-meter-label">अत्यंत सुरक्षित (128-बिट)</span>
+                    <span class="meter-label" id="demo-meter-label">Strength estimate</span>
                 </div>
 
                 <div class="widget-controls">
@@ -1928,8 +1872,8 @@
                     </button>
                 </div>
 
-                <div class="gen-time-stat">
-                     <strong>सुपरकंप्यूटर द्वारा क्रैक समय:</strong> <span id="demo-crack-time" style="color: var(--accent-emerald); font-weight: 700;">लगभग 3.4 लाख वर्ष</span>
+                <div class="gen-time-stat" id="demo-crack-time">
+                     सुरक्षा संकेतक अनुमान हैं; वे किसी खाते का वास्तविक crack time या सुरक्षा तय नहीं करते।
                 </div>
             </div>
         </section>
@@ -1948,11 +1892,11 @@
                 <!-- FAQ 1 -->
                 <div class="faq-card open">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>1. क्या कुंजिका ऐप वास्तव में बिना इंटरनेट के काम करती है?</span>
+                        <span>1. Kunjika में local-first का क्या अर्थ है?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        जी हां, बिल्कुल। आप अपने फोन की सेटिंग्स (<em>Settings → Apps → Kunjika → Permissions</em>) में जाकर स्वयं देख सकते हैं कि कुंजिका में इंटरनेट (INTERNET) की कोई अनुमति नहीं है। आपका डेटा कभी भी किसी रिमोट सर्वर, क्लाउड या इंटरनेट पर नहीं भेजा जा सकता। जब आप स्वयं <strong>Web Drop</strong> (ब्लूटूथ) या <strong>QR Sync</strong> का उपयोग करते हैं, केवल तभी डेटा आपके प्रत्यक्ष नियंत्रण और बायोमेट्रिक सत्यापन (फिंगरप्रिंट) के बाद, बिना किसी इंटरनेट के सीधे आपके कंप्यूटर या दूसरे फोन पर सुरक्षित एन्क्रिप्टेड रूप में स्थानांतरित होता है।
+                        Android app manifest में <code>INTERNET</code> permission नहीं है और Kunjika account या cloud sync नहीं देता। App Google Play services के जरिए Play Integrity token request कर सकता है। Bluetooth, QR, clipboard, Autofill और file export से चुना हुआ data दूसरे apps या devices तक जा सकता है।
                     </div>
                 </div>
 
@@ -1963,7 +1907,7 @@
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        हाँ, बिल्कुल! कुंजिका (Kunjika) का <strong>पोर्टेबल <code>.kunjika</code> बैकअप</strong> आपके पासवर्ड को आपके <strong>बैकअप पासफ़्रेज़</strong> से सुरक्षित रूप से एन्क्रिप्ट करता है। नए फोन में कुंजिका इंस्टॉल करके अपना बैकअप पासफ़्रेज़ डालें, और ऐप खुद-ब-खुद सारे पासवर्ड नए फोन की चिप (Keystore) में फिर से सुरक्षित कर देगा।
+                        Encrypted vault backup बनाएं और backup file तथा passphrase को सुरक्षित और अलग-अलग रखें। नए device पर restore करने के लिए encrypted backup इस्तेमाल करें। Local database recovery kit दूसरे device पर restore करने का विकल्प नहीं है।
                     </div>
                 </div>
 
@@ -1974,18 +1918,18 @@
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        ऐप की <strong>सेटिंग्स → Encrypted Offline Backup → Save File</strong> पर टैप करें। कुंजिका एंड्रॉयड के ऑफिशियल स्टोरेज पिकर (SAF) का इस्तेमाल करता है, जिससे आप पेनड्राइव, SD कार्ड या कंप्यूटर में बिना इंटरनेट के सीधे फाइल सेव कर सकते हैं।
+                        ऐप की <strong>Settings → Encrypted Offline Backup → Save File</strong> सुविधा से encrypted backup बनाएं और Android file picker में सुरक्षित destination चुनें। Backup file और उसका passphrase सुरक्षित तथा अलग-अलग रखें।
                     </div>
                 </div>
 
                 <!-- FAQ 4 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>4. वॉल्ट खोलने के लिए फिंगरप्रिंट और मास्टर पिन दोनों (PIN + Fingerprint) की आवश्यकता क्यों होती है?</span>
+                        <span>4. क्या vault खोलने के लिए PIN और fingerprint दोनों जरूरी हैं?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        आपकी सुरक्षा को सबसे मजबूत बनाने के लिए कुंजिका वॉल्ट में <strong>डुअल-फैक्टर सिक्योरिटी (2FA)</strong> का उपयोग करता है। <strong>पहला कदम:</strong> बायोमेट्रिक (फिंगरप्रिंट) स्कैन, और <strong>दूसरा कदम:</strong> मास्टर पिन। यदि कोई आपका पिन देख भी ले या सोते समय फिंगरप्रिंट लगाने की कोशिश करे, तब भी बिना दोनों स्टेप्स पूरे किए वॉल्ट नहीं खुलेगा।
+                        नहीं। Master PIN app का access gate है। समर्थित devices पर biometric unlock वैकल्पिक है। यह device compromise से सुरक्षा की guarantee नहीं देता।
                     </div>
                 </div>
 
@@ -1996,7 +1940,7 @@
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        आप अपने बैंक खाते, क्रिप्टोकरेंसी वॉलेट या मुख्य ईमेल को <strong>High-Security</strong> मार्क कर सकते हैं। अगर आपका वॉल्ट खुला भी हो, तब भी हाई-सिक्योरिटी खातों का पासवर्ड देखने या कॉपी करने के लिए हर बार फिर से फिंगरप्रिंट स्कैन (Biometric Step-Up) करना अनिवार्य होता है।
+                        चुनी हुई entries को <strong>High-Security</strong> mark किया जा सकता है। Action और device support के अनुसार password reveal या copy करने से पहले biometric re-verification मांगा जा सकता है। यह app-level check है।
                     </div>
                 </div>
 
@@ -2007,7 +1951,7 @@
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        यदि कोई आपसे जबर्दस्ती ऐप अनलॉक करवाता है, तो आप अपने असली पिन की जगह अपना गुप्त <strong>Duress PIN</strong> दर्ज कर सकते हैं। कुंजिका तुरंत एक <strong>नकली (Decoy Vault)</strong> खोल देगा जिसमें डमी अकाउंट (जैसे Netflix, Spotify) दिखेंगे, और आपका असली एन्क्रिप्टेड वॉल्ट पूरी तरह छुपा रहेगा।
+                        वैकल्पिक <strong>Duress PIN</strong> dummy entries वाला decoy view खोलता है। यह app-level सुविधा device तक पहुंच रखने वाले व्यक्ति या compromised operating system से सुरक्षा की guarantee नहीं देती।
                     </div>
                 </div>
 
@@ -2036,22 +1980,22 @@
                 <!-- FAQ 9 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>9. क्या वेब ड्रॉप (Web Drop) से कंप्यूटर पर पासवर्ड भेजने के लिए इंटरनेट चाहिए?</span>
+                        <span>9. Web Drop कैसे काम करता है और किन चीजों पर भरोसा करना चाहिए?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        बिल्कुल नहीं। वेब ड्रॉप ब्लूटूथ लो एनर्जी (BLE GATT) तकनीक पर काम करता है। आपका फोन और कंप्यूटर आपस में सीधे ब्लूटूथ से जुड़ते हैं। आपका डेटा कभी किसी नेटवर्क या वाई-फाई राउटर से नहीं गुजरता।
+                        Hosted Web Companion page load करने के बाद चुना हुआ credential Bluetooth से browser तक भेजा जाता है; transfer path में cloud relay नहीं है। Session में ephemeral P-256 ECDH, HKDF-SHA-256, AES-GCM और छह अंकों का comparison code इस्तेमाल होता है। Hosted page mutable है और browser को credential decrypt करना पड़ता है। केवल trusted computer और browser पर इस्तेमाल करें।
                     </div>
                 </div>
 
                 <!-- FAQ 10 -->
                 <div class="faq-card">
                     <div class="faq-header" onclick="toggleFaq(this)">
-                        <span>10. क्या कुंजिका के उपयोग के लिए कोई शुल्क या सदस्यता है?</span>
+                        <span>10. ऐप की कीमत और लाइसेंस की जानकारी कहां देखें?</span>
                         <span class="faq-toggle-icon">+</span>
                     </div>
                     <div class="faq-content">
-                        नहीं। कुंजिका 100% मुफ़्त और ओपन-सोर्स सॉफ्टवेयर है। इसमें न कोई विज्ञापन हैं, न ट्रैकर, और न ही कोई इन-ऐप खरीदारी।
+                        वर्तमान Google Play listing में उपलब्ध price और purchase details देखें। Kunjika source MIT-licensed है; listing और source licensing अलग बातें हैं।
                     </div>
                 </div>
             </div>
@@ -2087,19 +2031,19 @@
     <footer class="site-footer">
         <div class="container">
             <p>
-                 2026 <strong>Kunjika (कुंजिका)</strong>. 100% Offline Sovereign Password Vault & 2FA Authenticator.
+                 2026 <strong>Kunjika (कुंजिका)</strong>. Local-first password manager और authenticator.
             </p>
             <div style="margin: 14px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;">
                 <a href="https://play.google.com/store/apps/details?id=com.kunjika.app" target="_blank" rel="noopener" style="color: #34D399; font-weight: bold;"> Google Play Store</a>
                 <a href="./index.html">English Website</a>
-                <a href="./docs/user-guide-hindi.md">यूजर गाइड</a>
+                <a href="./docs/user-guide-hindi.html">यूजर गाइड</a>
                 <a href="./PRIVACY_POLICY.html">गोपनीयता नीति (Privacy Policy)</a>
                 <a href="https://github.com/dwinsi/kunjika/issues" target="_blank" rel="noopener">बग रिपोर्ट (Issues)</a>
                 <a href="https://github.com/dwinsi/kunjika/discussions" target="_blank" rel="noopener">सवाल पूछें (Discussions)</a>
                 <a href="https://github.com/dwinsi/kunjika" target="_blank">GitHub</a>
             </div>
             <p class="footer-note">
-                Zero Cloud. Zero Subscriptions. 100% Sovereign Security for Android.
+                No Kunjika account or cloud sync required. Transfers और backups आपके control में हैं.
             </p>
         </div>
     </footer>
@@ -2167,8 +2111,18 @@
         const charsDigits = "23456789";
         const charsSymbols = "!@#$%^&*()_+-=";
 
+        function secureRandomInt(maxExclusive) {
+            const uint32Range = 0x100000000;
+            const limit = uint32Range - (uint32Range % maxExclusive);
+            const value = new Uint32Array(1);
+            do {
+                crypto.getRandomValues(value);
+            } while (value[0] >= limit);
+            return value[0] % maxExclusive;
+        }
+
         function pickRandom(str) {
-            return str.charAt(Math.floor(Math.random() * str.length));
+            return str.charAt(secureRandomInt(str.length));
         }
 
         function generatePasswordString(len) {
@@ -2185,7 +2139,7 @@
             }
 
             for (let i = result.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = secureRandomInt(i + 1);
                 [result[i], result[j]] = [result[j], result[i]];
             }
 
@@ -2209,23 +2163,23 @@
             if (len < 10) {
                 fill.style.width = '35%';
                 fill.style.background = '#F43F5E';
-                label.textContent = 'साधारण (कमजोर - 35 बिट्स)';
+                label.textContent = 'छोटा पासवर्ड';
                 label.style.color = '#F43F5E';
-                timeStat.textContent = 'लगभग कुछ मिनट या घंटे';
+                timeStat.textContent = 'लंबा, यादृच्छिक और हर खाते के लिए अलग पासवर्ड चुनें।';
                 timeStat.style.color = '#F43F5E';
             } else if (len < 14) {
                 fill.style.width = '70%';
                 fill.style.background = '#F59E0B';
-                label.textContent = 'अच्छा (मध्यम - 75 बिट्स)';
+                label.textContent = 'लंबा पासवर्ड';
                 label.style.color = '#F59E0B';
-                timeStat.textContent = 'लगभग 500 वर्ष';
+                timeStat.textContent = 'सुरक्षा लंबाई, यादृच्छिकता और account reuse पर निर्भर करती है।';
                 timeStat.style.color = '#F59E0B';
             } else {
                 fill.style.width = '100%';
                 fill.style.background = 'linear-gradient(90deg, #10B981, #34D399)';
-                label.textContent = 'अत्यंत सुरक्षित (128+ बिट्स)';
+                label.textContent = 'लंबा और यादृच्छिक पासवर्ड';
                 label.style.color = '#10B981';
-                timeStat.textContent = 'लाखों वर्ष (अटूट)';
+                timeStat.textContent = 'कोई password हर परिस्थिति में crack-proof नहीं होता।';
                 timeStat.style.color = '#10B981';
             }
         }
