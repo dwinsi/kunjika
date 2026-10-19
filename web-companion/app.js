@@ -145,9 +145,9 @@ class WebCompanionApp {
                 clearInterval(this.sessionTimer);
             }
             if (type === "success") {
-                this.statusBadge.textContent = "⚡ Bluetooth Connected";
+                this.statusBadge.textContent = " Bluetooth Connected";
                 this.statusBadge.className = "status-badge ready";
-                this.showToast("⚡ Connected to Kunjika Vault via Bluetooth!");
+                this.showToast(" Connected to Kunjika Vault via Bluetooth!");
             }
         };
 
@@ -269,7 +269,7 @@ class WebCompanionApp {
 
     async handleBleConnect() {
         if (!window.kunjikaBle.isSupported()) {
-            this.showToast("⚠️ Web Bluetooth is disabled or not supported in this browser. Use Chrome, Edge, or enable Web Bluetooth in Brave.");
+            this.showToast(" Web Bluetooth is disabled or not supported in this browser. Use Chrome, Edge, or enable Web Bluetooth in Brave.");
             this.bleStatus.textContent = "Web Bluetooth disabled/unsupported in browser";
             this.bleStatus.className = "ble-status error";
             return;
