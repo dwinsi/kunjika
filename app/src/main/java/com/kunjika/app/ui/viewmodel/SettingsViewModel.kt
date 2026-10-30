@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.kunjika.app.core.backup.BackupManager
 import com.kunjika.app.core.pdf.RecoveryPdfManager
 import com.kunjika.app.core.security.SecurityManager
+import com.kunjika.app.core.update.AppUpdateChecker
+import com.kunjika.app.core.update.UpdateStatus
 import com.kunjika.app.data.preferences.UserPreferences
 import com.kunjika.app.data.repository.PasswordRepository
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +69,12 @@ class SettingsViewModel(
 
     private val _securityStatus = MutableStateFlow(SecurityStatus())
     val securityStatus = _securityStatus.asStateFlow()
+
+    private val _updateStatus = MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
+    val updateStatus: StateFlow<UpdateStatus> = _updateStatus.asStateFlow()
+
+    private var appUpdateChecker: AppUpdateChecker? = null
+    private var isLaunchCheckPerformed = false
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -252,6 +260,35 @@ class SettingsViewModel(
                 _backupStatus.value = "Import from file failed. Check passphrase."
             }
         }
+    }
+
+    fun checkForUpdates(context: Context) {
+        val checker = appUpdateChecker ?: AppUpdateChecker(context.applicationContext).also { appUpdateChecker = it }
+        viewModelScope.launch {
+            _updateStatus.value = UpdateStatus.Checking
+            val status = checker.checkForUpdates()
+            _updateStatus.value = status
+        }
+    }
+
+    fun checkForUpdatesOnLaunch(context: Context) {
+        if (isLaunchCheckPerformed) return
+        isLaunchCheckPerformed = true
+        checkForUpdates(context)
+    }
+
+    fun startAppUpdate(activity: android.app.Activity, appUpdateInfo: com.google.android.play.core.appupdate.AppUpdateInfo) {
+        val checker = appUpdateChecker ?: AppUpdateChecker(activity.applicationContext).also { appUpdateChecker = it }
+        checker.startUpdate(activity, appUpdateInfo)
+    }
+
+    fun openPlayStorePage(context: Context) {
+        val checker = appUpdateChecker ?: AppUpdateChecker(context.applicationContext).also { appUpdateChecker = it }
+        checker.openPlayStoreListing(context)
+    }
+
+    fun dismissUpdateBanner() {
+        _updateStatus.value = UpdateStatus.Idle
     }
 
     fun clearStatus() {

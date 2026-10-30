@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -37,6 +39,7 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -47,6 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -77,6 +81,7 @@ import com.kunjika.app.core.security.BiometricAuthManager
 import com.kunjika.app.core.security.findActivity
 import com.kunjika.app.core.security.ClipboardHelper
 import com.kunjika.app.core.totp.TotpManager
+import com.kunjika.app.core.update.UpdateStatus
 import com.kunjika.app.data.repository.DecryptedPasswordItem
 import com.kunjika.app.ui.components.AntiMoireBackground
 import com.kunjika.app.ui.components.CategoryChip
@@ -114,6 +119,7 @@ fun VaultScreen(
 ) {
     val lockVaultOnTabSelect by (settingsViewModel?.lockVaultOnTabSelect?.collectAsState() ?: remember { mutableStateOf(true) })
     val isVaultUnlocked by vaultViewModel.isVaultUnlocked.collectAsState()
+    val updateStatus by (settingsViewModel?.updateStatus?.collectAsState() ?: remember { mutableStateOf(UpdateStatus.Idle) })
 
     val filteredPasswords by vaultViewModel.filteredPasswords.collectAsState()
     val selectedCategory by vaultViewModel.selectedCategory.collectAsState()
@@ -179,6 +185,10 @@ fun VaultScreen(
     }
 
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        settingsViewModel?.checkForUpdatesOnLaunch(context)
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -422,6 +432,24 @@ fun VaultScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
+
+                if (updateStatus is UpdateStatus.UpdateAvailable) {
+                    val status = updateStatus as UpdateStatus.UpdateAvailable
+                    val activity = context.findActivity()
+                    UpdateAvailableBanner(
+                        updateStatus = status,
+                        onUpdateClick = {
+                            if (activity != null) {
+                                settingsViewModel?.startAppUpdate(activity, status.appUpdateInfo)
+                            } else {
+                                settingsViewModel?.openPlayStorePage(context)
+                            }
+                        },
+                        onDismissClick = {
+                            settingsViewModel?.dismissUpdateBanner()
+                        }
+                    )
+                }
 
                 // Search Bar & Categories Container
                 Column(
@@ -868,6 +896,71 @@ private fun PasswordCardItem(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun UpdateAvailableBanner(
+    updateStatus: UpdateStatus.UpdateAvailable,
+    onUpdateClick: () -> Unit,
+    onDismissClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.primaryContainer,
+        tonalElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(14.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SystemUpdate,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "New Version Available",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "Kunjika update is ready on Google Play.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = onUpdateClick,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Update", style = MaterialTheme.typography.labelMedium)
+            }
+            IconButton(onClick = onDismissClick, modifier = Modifier.size(32.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Dismiss update banner",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             }
         }
     }

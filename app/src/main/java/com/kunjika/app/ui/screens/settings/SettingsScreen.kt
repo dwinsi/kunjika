@@ -53,6 +53,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.Color
+import com.kunjika.app.core.security.findActivity
+import com.kunjika.app.core.update.UpdateStatus
 import com.kunjika.app.ui.components.GlossyButton
 import com.kunjika.app.ui.components.GlossyCard
 import com.kunjika.app.ui.components.GlossyIconBox
@@ -107,6 +109,7 @@ fun SettingsScreen(
     val lockOnExit by settingsViewModel.lockOnExit.collectAsState()
     val autoLockTimeout by settingsViewModel.autoLockTimeoutSec.collectAsState()
     val securityStatus by settingsViewModel.securityStatus.collectAsState()
+    val updateStatus by settingsViewModel.updateStatus.collectAsState()
     val useDynamicColor by settingsViewModel.useDynamicColor.collectAsState()
     val useDarkTheme by settingsViewModel.useDarkTheme.collectAsState()
     val backupStatus by settingsViewModel.backupStatus.collectAsState()
@@ -786,7 +789,52 @@ fun SettingsScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text("Kunjika", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                                Text("Version 1.0.0", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("Version 1.9.0 (Build 19)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Check for Updates Row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    if (updateStatus is UpdateStatus.UpdateAvailable) {
+                                        val status = updateStatus as UpdateStatus.UpdateAvailable
+                                        val activity = context.findActivity()
+                                        if (activity != null) {
+                                            settingsViewModel.startAppUpdate(activity, status.appUpdateInfo)
+                                        } else {
+                                            settingsViewModel.openPlayStorePage(context)
+                                        }
+                                    } else {
+                                        settingsViewModel.checkForUpdates(context)
+                                    }
+                                }
+                                .padding(vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.SystemUpdate, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text("Check for Updates", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                                    when (val status = updateStatus) {
+                                        is UpdateStatus.Checking -> Text("Checking Google Play...", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                                        is UpdateStatus.UpdateAvailable -> Text("⚡ Update Available! Tap to install", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                                        is UpdateStatus.UpToDate -> Text("Kunjika is up to date", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        is UpdateStatus.Error -> Text("Tap to retry update check", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        else -> Text("Check Google Play for new version", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+                            }
+                            if (updateStatus is UpdateStatus.Checking) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                            } else {
+                                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                             }
                         }
                         

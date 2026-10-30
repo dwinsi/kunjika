@@ -4,8 +4,8 @@ kotlin = "2.4.21"
 ksp = "2.3.12"
 
 # App Versioning
-appVersionCode = "19"
-appVersionName = "1.9.0"
+appVersionCode = "20"
+appVersionName = "2.0.0"
 
 coreKtx = "1.19.1"
 lifecycleRuntimeKtx = "2.11.0"
@@ -14,18 +14,19 @@ splashscreen = "1.2.0"
 composeBom = "2026.09.00"
 navigationCompose = "2.10.2"
 room = "2.8.5"
-sqlcipher = "4.19.1"
+sqlcipher = "4.20.0"
 biometric = "1.1.0"
 securityCrypto = "1.1.0"
 playIntegrity = "1.6.0"
-datastorePreferences = "1.2.1"
+playAppUpdate = "2.1.0"
+datastorePreferences = "1.3.0"
 coroutines = "1.11.0"
 materialIconsExtended = "1.7.8"
 leakcanary = "3.0-alpha-9"
 zxing = "3.5.4"
 mlkitBarcode = "17.3.0"
 camera = "1.6.2"
-gson = "2.14.0"
+gson = "2.15.0"
 junit = "4.13.2"
 androidxTestExtJunit = "1.3.0"
 
@@ -56,6 +57,7 @@ sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version = "2.7.1"
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
+playAppUpdate = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 

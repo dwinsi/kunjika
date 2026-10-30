@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.security.crypto)
     implementation(libs.play.integrity)
+    implementation(libs.playAppUpdate)
     implementation(libs.androidx.datastore.preferences)
 
     // QR & Scanning
