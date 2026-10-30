@@ -176,36 +176,37 @@ class WebCompanionApp {
 
         try {
             const qr = qrcode(0, 'M');
+            if (qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
+                qr.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+            }
             qr.addData(payloadStr);
             qr.make();
 
             const moduleCount = qr.getModuleCount();
-            const size = 240;
-            const margin = 10;
-            const cellSize = (size - margin * 2) / moduleCount;
+            const quietZoneModules = 4;
+            const totalModules = moduleCount + quietZoneModules * 2;
+
+            // Integer scaling to prevent sub-pixel module distortion and alignment blur
+            const targetSize = 280;
+            const moduleSize = Math.max(3, Math.floor(targetSize / totalModules));
+            const canvasSize = totalModules * moduleSize;
+
             const ctx = this.qrCanvas.getContext('2d');
-            this.qrCanvas.width = size;
-            this.qrCanvas.height = size;
+            this.qrCanvas.width = canvasSize;
+            this.qrCanvas.height = canvasSize;
 
-            const isDark = document.documentElement.getAttribute("data-theme") !== "light";
-            // In Dark Mode: Deep Obsidian Surface + Sovereign Amber Gold modules
-            // In Light Mode: Clean Platinum Surface + Deep Obsidian High-Contrast modules
-            const bgColor = isDark ? "#0F141C" : "#FFFFFF";
-            const dotColor = isDark ? "#FBBF24" : "#0F172A";
+            // QR Codes require pure high contrast (#FFFFFF background & #000000 modules)
+            // for ML Kit & camera vision binarization across light and dark web themes
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, size, size);
-
-            ctx.fillStyle = dotColor;
+            ctx.fillStyle = "#000000";
             for (let r = 0; r < moduleCount; r++) {
                 for (let c = 0; c < moduleCount; c++) {
                     if (qr.isDark(r, c)) {
-                        ctx.fillRect(
-                            Math.round(margin + c * cellSize),
-                            Math.round(margin + r * cellSize),
-                            Math.ceil(cellSize),
-                            Math.ceil(cellSize)
-                        );
+                        const x = (c + quietZoneModules) * moduleSize;
+                        const y = (r + quietZoneModules) * moduleSize;
+                        ctx.fillRect(x, y, moduleSize, moduleSize);
                     }
                 }
             }
