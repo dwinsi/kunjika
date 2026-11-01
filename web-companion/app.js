@@ -175,7 +175,8 @@ class WebCompanionApp {
         if (!this.qrCanvas || !payloadStr) return;
 
         try {
-            const qr = qrcode(0, 'M');
+            // Use 'L' (Low) error correction to reduce QR density and module count, making it much easier to scan
+            const qr = qrcode(0, 'L');
             if (qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
                 qr.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
             }
@@ -189,16 +190,24 @@ class WebCompanionApp {
             // Integer scaling to prevent sub-pixel module distortion and alignment blur
             const targetSize = 280;
             const moduleSize = Math.max(3, Math.floor(targetSize / totalModules));
-            const canvasSize = totalModules * moduleSize;
+            const canvasLogicalSize = totalModules * moduleSize;
 
+            const dpr = window.devicePixelRatio || 1;
             const ctx = this.qrCanvas.getContext('2d');
-            this.qrCanvas.width = canvasSize;
-            this.qrCanvas.height = canvasSize;
+
+            this.qrCanvas.width = canvasLogicalSize * dpr;
+            this.qrCanvas.height = canvasLogicalSize * dpr;
+            this.qrCanvas.style.width = `${canvasLogicalSize}px`;
+            this.qrCanvas.style.height = `${canvasLogicalSize}px`;
+
+            ctx.scale(dpr, dpr);
+            // Disable image smoothing for sharp pixelated rendering
+            ctx.imageSmoothingEnabled = false;
 
             // QR Codes require pure high contrast (#FFFFFF background & #000000 modules)
             // for ML Kit & camera vision binarization across light and dark web themes
             ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(0, 0, canvasSize, canvasSize);
+            ctx.fillRect(0, 0, canvasLogicalSize, canvasLogicalSize);
 
             ctx.fillStyle = "#000000";
             for (let r = 0; r < moduleCount; r++) {

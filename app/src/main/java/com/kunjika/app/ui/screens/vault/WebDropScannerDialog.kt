@@ -417,7 +417,7 @@ fun WebDropScannerDialog(
                     WebDropState.SCANNING -> {
                         Box(
                             modifier = Modifier
-                                .size(240.dp)
+                                .size(300.dp)
                                 .clip(RoundedCornerShape(16.dp))
                                 .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
                         ) {
